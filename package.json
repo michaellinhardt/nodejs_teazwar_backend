@@ -1,0 +1,57 @@
+{
+  "name": "teazwar_backend",
+  "version": "1.0.0",
+  "description": "TeazWar Backend",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "NODE_ENV=production nodemon --ignore ./src/discord/ --ignore ./src/cron/ --ignore ./src/twitch/ src/index.js --exec babel-node",
+    "dev": "NODE_ENV=development nodemon --ignore ./src/discord/ --ignore ./src/cron/ --ignore ./src/twitch/ src/index.js --exec babel-node",
+    "cron": "NODE_ENV=development nodemon src/cron/index.js --exec babel-node",
+    "twitch": "NODE_ENV=development nodemon src/twitch/index.js --exec babel-node",
+    "discord": "NODE_ENV=development nodemon src/discord/index.js --exec babel-node",
+    "lint": "./node_modules/eslint/bin/eslint.js src",
+    "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
+    "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",
+    "database:dev": "NODE_ENV=development node ./src/application/scripts/run.js",
+    "database:prod": "NODE_ENV=production node ./src/application/scripts/run.js",
+    "ls": "NODE_ENV=development node ./src/application/scripts/run.js ls",
+    "script": "NODE_ENV=development babel-node ./src/application/scripts/run.js"
+  },
+  "author": "Michael Linhardt",
+  "repository": "https://github.com/teazyou/teazwar_backend",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "bluebird": "^3.7.2",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.2.0",
+    "eslint": "^8.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.11",
+    "moment": "^2.29.1",
+    "mysql": "^2.18.1",
+    "node": "^16.10.0",
+    "prettyjson": "^1.2.1",
+    "require-directory": "^2.1.1",
+    "socket.io": "^4.2.0",
+    "socket.io-client": "^4.2.0",
+    "superagent": "^6.1.0",
+    "tmi.js": "^1.8.5",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/register": "^7.15.3",
+    "babel-eslint": "^10.1.0",
+    "nodemon": "^2.0.13"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.5",
+    "utf-8-validate": "^5.0.7"
+  }
+}
