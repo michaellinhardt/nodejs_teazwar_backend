@@ -4,7 +4,6 @@ module.exports = {
     oauth: '0ekw7q9n0rwxnzcr13hp2lkc9cdklq',
 
     chatbot: {
-        sleepBeforeConnect: 1000,
         sleepAfterConnect: 3000,
         bearer: `Bearer ${require('../../knex/seeds').users[0].jwtoken}`,
 

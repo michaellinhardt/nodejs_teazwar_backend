@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const defaultLanguage = require('../../config/files/language.config').default
 const language = require('../../languages')
 
 const replacer = (message, ...args) => {
@@ -10,10 +9,16 @@ const replacer = (message, ...args) => {
   return msg
 }
 
+const extractMessage = (lang, language_file, language_key) => {
+  const message = _.get(language, `${lang}.${language_file}.${language_key}`, language_key)
+  return typeof(message) === 'object' && Array.isArray(message)
+    ? _.sample(message) : message
+}
+
 module.exports = {
 
-  get: (language_key, ...language_args) => {
-    const message = _.get(language, language_key, language_key)
+  get: (lang, language_file, language_key, ...language_args) => {
+    const message = extractMessage(lang, language_file, language_key)
     return replacer(message, ...language_args)
   },
 

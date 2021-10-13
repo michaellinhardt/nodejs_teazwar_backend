@@ -1,7 +1,7 @@
-const { importMerged } = require('../helpers/files/imports.helper')
+const { importByFilename } = require('../helpers/files/imports.helper')
 const languages = {
-    en: importMerged(`${__dirname}/en`),
-    fr: importMerged(`${__dirname}/fr`),
+    en: importByFilename(`${__dirname}/en`, '.en.language'),
+    fr: importByFilename(`${__dirname}/fr`, '.fr.language'),
 }
 
 module.exports = languages
