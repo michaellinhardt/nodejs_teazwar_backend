@@ -1,0 +1,19 @@
+{
+    "extends": [
+      "zavatta"
+    ],
+    "rules": {
+      "indent": [
+        "error",
+        2
+      ],
+      "max-len": [
+        "warn",
+        {
+          "code": 100
+        }
+      ],
+      "no-sync": 0,
+      "camelcase": 0
+    }
+  }
