@@ -15,7 +15,7 @@ export default [
   },
   {
     route: ['get', '/aaaEmtpy/:ok'],
-    isPublic: false,
+    isPublic: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { data: d, body: b } = this

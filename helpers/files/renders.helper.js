@@ -8,10 +8,16 @@ class AppError extends Error {
     this.status = status
     this.payload = { error_key }
   }
-  render (resOrSocket) {
-    return this.status === 'socket'
-      ? console.debug('return error by socket', this.payload)
-      : resOrSocket.status(this.status).json(this.payload)
+  render (renderObject) {
+    if (this.status === 'socket') {
+      return console.debug('return error by socket', this.payload)
+
+    } else if (this.status === 'http') {
+      return renderObject.status(this.status).json(this.payload)
+
+    } else {
+      return console.debug('return error by script', this.payload)
+    }
   }
 }
 
@@ -52,6 +58,25 @@ module.exports = {
       if (socket.headersSent) { return }
       const payload = { error_key: 'server_error' }
       return console.debug('return uncaught error by socket', payload)
+    },
+  },
+
+  script: {
+    Ok: () => console.debug('render ok by script'),
+
+    StopPipeline: class extends AppError {
+      constructor (error_key) {
+        super(error_key, 'script')
+      }
+    },
+
+    DetectError: (socket, err) => {
+      if (err instanceof AppError) { return err.render(socket) }
+      process.stdout.write('Internal Server Error\r\n')
+      process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
+      if (socket.headersSent) { return }
+      const payload = { error_key: 'server_error' }
+      return console.debug('return uncaught error by script', payload)
     },
   },
 

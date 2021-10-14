@@ -19,8 +19,11 @@ class EmptyModel extends ModelSuperclass {}
 export default class {
 
   constructor (requestType, routeParam, body = {}) {
-    this.requestType = requestType === 'http' ? 'http' : 'socket'
+    this.requestType = requestType
     this.routeParam = routeParam
+    const [method, path] = routeParam.route
+    routeParam.method = method
+    routeParam.path = path
     this.build_ressources(body)
   }
 
@@ -73,6 +76,7 @@ export default class {
   }
 
   async StopPipeline (error_key = 'unknow_error') {
+    this.payload = { error_key }
     throw new this.renders.StopPipeline(error_key)
   }
 

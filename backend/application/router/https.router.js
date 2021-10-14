@@ -2,8 +2,8 @@ import express from 'express'
 import requireDirectory from 'require-directory'
 import _ from 'lodash'
 
-import Renders from '../../../helpers/files/renders.helper'
-import Data from '../../../helpers/files/data.helper'
+import RendersHelper from '../../../helpers/files/renders.helper'
+import ControllersHelper from '../../../helpers/files/controllers.helper'
 
 module.exports = {
 
@@ -16,38 +16,19 @@ module.exports = {
       _.forEach(file.default, ctrl => {
 
         const [method, path] = ctrl.route
-        const routeParam = {
-          isPublic: ctrl.isPublic || false,
-          isAdmin: ctrl.isAdmin || false,
-          isMod: ctrl.isMod || false,
-          isSub: ctrl.isSub || false,
-          isFollow: ctrl.isFollow || false,
-        }
+        const routeParam = _.clone(ctrl)
+        delete routeParam.Controller
 
         router[method](path, async (req, res) => {
 
-          routeParam.path = path
-
-          const twitchData = _.get(req, 'body.twitchData', {})
-          const twitch = _.isEmpty(twitchData) ? undefined : Data.extractTwitchData(twitchData)
-
-          const requestParam = _.get(req, 'params', {})
-          const requestBody = _.get(req, 'body', {})
-
-          const jwtoken = _.get(req, `headers['x-access-token']`, undefined)
-
-          const body = {
-            ...requestParam,
-            ...requestBody,
-            twitch,
-            jwtoken,
-          }
+          const body = ControllersHelper.prepareBodyFromHttp(req, path)
 
           try {
             const controller = new ctrl.Controller('http', routeParam, body)
             await controller.requestHandler()
-            Renders.http.Ok(res, controller.payload)
-          } catch (err) { Renders.http.DetectError(res, err) }
+            RendersHelper.http.Ok(res, controller.payload)
+
+          } catch (err) { RendersHelper.http.DetectError(res, err) }
         })
 
       }))
