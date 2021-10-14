@@ -1,45 +1,58 @@
-const response = (res, code = 200, data = {}) => res.status(code).json(data)
-
 class AppError extends Error {
   constructor (error_message, status = 500) {
     super('Server Error')
-
     this.constructor = AppError
     this.__proto__ = AppError.prototype
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
-
     this.status = status
-    this.content = { error_message }
+    this.payload = { error_message }
   }
-
-  render (res) { return res.status(this.status).json(this.content) }
+  render (resOrSocket) {
+    return this.status === 'socket'
+      ? console.debug('return error by socket', this.payload)
+      : resOrSocket.status(this.status).json(this.payload)
+  }
 }
 
 module.exports = {
 
-  Ok: (res, data) => response(res, 200, data),
-
-  StopPipeline: class extends AppError {
-    constructor (error_message) {
-      super(error_message, 400)
-    }
+  http: {
+    Ok: (res, data) => res.status(200).json(data),
+  
+    StopPipeline: class extends AppError {
+      constructor (error_message) {
+        super(error_message, 400)
+      }
+    },
+  
+    DetectError: (res, err) => {
+      if (err instanceof AppError) { return err.render(res) }
+      process.stdout.write('Internal Server Error\r\n')
+      process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
+      if (res.headersSent) { return }
+      const payload = { error_message: 'server.error' }
+      return res.status(500).json(payload)
+    },
   },
 
-  DetectError: (res, err) => {
+  socket: {
+    Ok: () => console.debug('render ok by socket'),
 
-    if (err instanceof AppError) {
-      return err.render(res)
-    }
+    StopPipeline: class extends AppError {
+      constructor (error_message) {
+        super(error_message, 'socket')
+      }
+    },
 
-    process.stdout.write('Internal Server Error\r\n')
-    process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
-
-    if (res.headersSent) { return }
-
-    const error_message = 'Internal Server Error'
-    const result = { error_message }
-    return res.status(500).json(result)
+    DetectError: (socket, err) => {
+      if (err instanceof AppError) { return err.render(socket) }
+      process.stdout.write('Internal Server Error\r\n')
+      process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
+      if (socket.headersSent) { return }
+      const payload = { error_message: 'server.error' }
+      return console.debug('return uncaught error by socket', payload)
+    },
   },
 
 }

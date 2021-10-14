@@ -18,8 +18,9 @@ class EmptyModel extends ModelSuperclass {}
 
 export default class {
 
-  constructor (req, res, twitch) {
-    this.build_ressources(req, res, twitch)
+  constructor (requestType, body = {}) {
+    this.requestType = requestType === 'http' ? 'http' : 'socket'
+    this.build_ressources(body)
   }
 
   async StopPipeline (error_key = 'unknow_error') {
@@ -28,7 +29,7 @@ export default class {
   }
 
   async identify () {
-    const { helpers: h, services: s, renders: r, data: d } = this
+    const { helpers: h, services: s, data: d } = this
 
     const rawToken = _.get(this, `req.headers['x-access-token']`, null)
 
@@ -52,11 +53,12 @@ export default class {
   }
 
   async identifyChatUser () {
-    const { helpers: h, services: s, renders: r, data: d, twitch: t } = this
+    const { helpers: h, services: s, data: d, twitch: t } = this
 
     if (t.userId) {
       d.user = await s.users.getBy('user_id', t.userId)
       d.user_uuid = _.get(d, 'user.uuid', null)
+
     } else {
       delete d.user
       delete d.user_uuid
@@ -67,8 +69,6 @@ export default class {
       d.toon = await s.toons.getBy('toon_id', d.toon_id)
     }
   }
-
-
 
   async authorizeTeazmod () {
     if (!d.user || !d.user.username !== config.tmiOpts.identify.username) {
@@ -85,14 +85,12 @@ export default class {
     if (!d.admin) { await this.StopPipeline('router_admin') }
   }
 
-  build_ressources (req, res, twitch) {
+  build_ressources (body) {
     const ressources = {
-      req,
-      res,
+      body,
       apis: Apis,
       helpers: _.merge({}, Helpers, GameHelpers),
       data: {},
-      twitch,
       db: {},
       payload: {},
       renders: this.init_renders(),
@@ -101,11 +99,9 @@ export default class {
       lang: Languages,
     }
 
-    const modelRessources = { req, res, helpers: Helpers }
-
+    const modelRessources = { helpers: Helpers }
     const models = {}
     _.forEach(Models, (Model, name) => { models[name] = new Model(modelRessources) })
-
     _.forEach(Services, (Service, name) => {
       if (!models[name]) { models[name] = new EmptyModel(modelRessources) }
     })
@@ -131,9 +127,7 @@ export default class {
 
   init_renders () {
     return {
-      ...Helpers.renders,
-
-      Ok: (payload = null) => Helpers.renders.Ok(this.res, payload || this.payload),
+      ...Helpers.renders[this.requestType],
     }
   }
 }

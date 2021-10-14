@@ -30,6 +30,14 @@ module.exports = {
           const twitchData = _.get(req, 'body.twitchData', {})
           const twitch = Data.extractTwitchData(twitchData)
 
+          const requestParam = _.get(req, 'params', {})
+          const requestBody = _.get(req, 'body', {})
+
+          const body = {
+            ...requestParam,
+            ...requestBody,
+          }
+
           try {
 
             const controller = new Controller(req, res, twitch)
@@ -73,7 +81,9 @@ module.exports = {
 
             await controller.handler()
 
-          } catch (err) { Renders.DetectError(res, err) }
+            Renders.http.Ok(res, controller.payload)
+
+          } catch (err) { Renders.http.DetectError(res, err) }
         })
 
       }))
