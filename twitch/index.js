@@ -2,8 +2,7 @@ const tmi = require('tmi.js')
 const { io } = require('socket.io-client')
 
 const { language, twitch: { chatbot }, backend } = require('../config')
-const { importByFilename } = require('../helpers/files/imports.helper')
-const h = importByFilename(`${__dirname}/../helpers/files`, '.helper')
+const h = require('../helpers')
 
 let socket = null
 const socketUrl = `${backend.uri}:${backend.socketPort}`
@@ -13,7 +12,6 @@ const tmiOpts = chatbot.tmiOpts
 tmiOpts.channels = [channel]
 
 const start = async () => {
-
   const twitch = new tmi.client(tmiOpts)
   twitch.backend = () => true
 
@@ -22,15 +20,10 @@ const start = async () => {
   await connect(twitch)
 
   openSocket()
-  listen_socket()
-
 }
 
 const openSocket = () => {
   socket = io(socketUrl)
-}
-
-const listen_socket = () => {
   socket.on("connect", () => {  console.log('connected: ', socket.id) });
   socket.on("disconnect", () => {  console.log('disconnected: ', socket.id) });
   socket.on("connect_error", () => { console.debug('connect error') });

@@ -1,3 +1,5 @@
 module.exports = {
-    level_up: 'bravo',
+    'debug_welcome': 'hello debug',
+    'game_welcome': 'hello game',
+    'stream_welcome': 'hello stream',
 }
