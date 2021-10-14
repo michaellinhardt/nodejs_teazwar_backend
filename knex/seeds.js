@@ -37,7 +37,6 @@ const events_global = [{
     event_data: '{}'
 }]
 
-
 exports.users = users
 exports.admins = admins
 exports.events_global = events_global

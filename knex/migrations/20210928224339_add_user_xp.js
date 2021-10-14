@@ -1,9 +1,9 @@
-const { createTableDefaultSetup } = require('../../../application/helpers/knex.helper').default
+const { createTableDefaultSetup } = require('../../helpers').knex
 
 const tableName = 'user_xp'
 
-const { xp } = require('../../../config')
-const XpHelper = require('../../helpers/xp.helper').default
+const { xp } = require('../../game/config')
+const xpHelper = require('../../game/helpers').xp
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
@@ -13,7 +13,7 @@ exports.up = function (knex) {
 
     table.integer('level').defaultTo(xp.startLevel)
     table.integer('level_xp').defaultTo(0)
-    table.integer('level_xp_max').defaultTo(XpHelper.xpRequired(xp.startLevel))
+    table.integer('level_xp_max').defaultTo(xpHelper.xpRequired(xp.startLevel))
 
     table.integer('total_xp_normal').defaultTo(0)
     table.integer('total_xp_follower').defaultTo(0)

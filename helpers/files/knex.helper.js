@@ -1,7 +1,7 @@
 const { driver, mysql } = require('../../config/files/database.config')
 let knex = null
 
-module.exports.default = {
+module.exports = {
   get: () => {
     if (!knex) { knex = (require('knex'))(driver) }
 

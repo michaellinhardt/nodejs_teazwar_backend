@@ -12,10 +12,10 @@
     "lint": "./node_modules/eslint/bin/eslint.js src",
     "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
     "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",
-    "database:dev": "NODE_ENV=development node ./src/application/scripts/run.js",
-    "database:prod": "NODE_ENV=production node ./src/application/scripts/run.js",
-    "ls": "NODE_ENV=development node ./src/application/scripts/run.js ls",
-    "script": "NODE_ENV=development babel-node ./src/application/scripts/run.js"
+    "database:dev": "NODE_ENV=development node scripts/run.js",
+    "database:prod": "NODE_ENV=production node scripts/run.js",
+    "ls": "NODE_ENV=development node scripts/run.js ls",
+    "script": "NODE_ENV=development babel-node scripts/run.js"
   },
   "author": "Michael Linhardt",
   "repository": "https://github.com/teazyou/teazwar_backend",

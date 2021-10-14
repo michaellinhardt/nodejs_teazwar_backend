@@ -1,4 +1,4 @@
-const { createTableDefaultSetup } = require('../../../application/helpers/knex.helper').default
+const { createTableDefaultSetup } = require('../../helpers').knex
 
 const tableName = 'events_global'
 
