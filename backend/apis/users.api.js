@@ -1,12 +1,11 @@
 import superagent from 'superagent'
 import _ from 'lodash'
 
-const { twitchApi } = require('../../config')
-const users = 'https://api.twitch.tv/helix/users'
+const { twitchApi, apis: { endpoints } } = require('../../config')
 
 export default {
   getByUsernames: async (chatterUsernames) => {
-    const usersUrl = `${users}?login=${chatterUsernames.join('&login=')}`
+    const usersUrl = `${endpoints.twitch.users}?login=${chatterUsernames.join('&login=')}`
     const response = await superagent
       .get(usersUrl)
       .set('Client-ID', twitchApi.clientId)

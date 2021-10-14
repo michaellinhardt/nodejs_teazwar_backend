@@ -1,12 +1,11 @@
 import superagent from 'superagent'
 import _ from 'lodash'
 
-const { twitchApi } = require('../../config')
-const follows = 'https://api.twitch.tv/helix/users/follows'
+const { twitchApi, apis: { endpoints } } = require('../../config')
 
 export default {
   check: async (channel_id, target_id) => {
-    const followsUrl = `${follows}?to_id=${channel_id}&from_id=${target_id}`
+    const followsUrl = `${endpoints.twitch.follows}?to_id=${channel_id}&from_id=${target_id}`
     const response = await superagent
       .get(followsUrl)
       .set('Client-ID', twitchApi.clientId)
