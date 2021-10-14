@@ -16,19 +16,21 @@ module.exports = {
       _.forEach(file.default, ctrl => {
 
         const [method, path] = ctrl.route
-        const {
-          Controller,
-          isPublic = false,
-          isAdmin = false,
-          isMod = false,
-          isSub = false,
-          isFollow = false,
-        } = ctrl
+        const routeParam = {
+          isPublic: ctrl.isPublic || false,
+          isAdmin: ctrl.isAdmin || false,
+          isMod: ctrl.isMod || false,
+          isSub: ctrl.isSub || false,
+          isFollow: ctrl.isFollow || false,
+        }
 
         router[method](path, async (req, res) => {
 
+          routeParam.path = path
+
           const twitchData = _.get(req, 'body.twitchData', {})
-          const twitch = Data.extractTwitchData(twitchData)
+          const twitch = _.isEmpty(twitchData)
+            ? {} : { twitch: { ...Data.extractTwitchData(twitchData) } }
 
           const requestParam = _.get(req, 'params', {})
           const requestBody = _.get(req, 'body', {})
@@ -36,53 +38,13 @@ module.exports = {
           const body = {
             ...requestParam,
             ...requestBody,
+            ...twitch,
           }
 
           try {
-
-            const controller = new Controller(req, res, twitch)
-
-            const { data: d } = controller
-
-            await controller.identify()
-
-            if (path.startsWith('/command/')) {
-              await controller.authorizeTeazmod()
-              await controller.identifyChatUser()
-            }
-
-            if (!isPublic && !d.user) {
-              await controller.StopPipeline('router_isPublic')
-            }
-
-
-            if ((isAdmin || isMod || isSub || isFollow)
-            && !d.user) {
-              await controller.StopPipeline('router_priviliege')
-            }
-
-            if (isAdmin) { await controller.authorizeAdmin() }
-
-            if (isMod && (!d.toon || !d.toon.mod)) {
-              await controller.StopPipeline('priviliegeReq.noMod')
-            }
-            
-            if (isSub && (!d.toon || !d.toon.subscriber)) {
-              await controller.StopPipeline('priviliegeReq.noSub')
-            }
-            
-            if (isFollow && (!d.toon || !d.toon.follower)) {
-              await controller.StopPipeline('priviliegeReq.noFollow')
-            }
-
-            if (controller.validator) {
-              await controller.validator()
-            }
-
-            await controller.handler()
-
+            const controller = new ctrl.Controller('http', routeParam, body)
+            await controller.requestHandler()
             Renders.http.Ok(res, controller.payload)
-
           } catch (err) { Renders.http.DetectError(res, err) }
         })
 

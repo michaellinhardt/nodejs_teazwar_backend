@@ -18,9 +18,58 @@ class EmptyModel extends ModelSuperclass {}
 
 export default class {
 
-  constructor (requestType, body = {}) {
+  constructor (requestType, routeParam, body = {}) {
     this.requestType = requestType === 'http' ? 'http' : 'socket'
+    this.routeParam = routeParam
     this.build_ressources(body)
+  }
+
+  async requestHandler () {
+    const { data: d } = this
+    const {
+      path = '',
+      isPublic = false,
+      isAdmin = false,
+      isMod = false,
+      isSub = false,
+      isFollow = false,
+    } = this.routeParam
+
+    await this.identify()
+
+    if (path.startsWith('/command/')) {
+      await this.authorizeTeazmod()
+      await this.identifyChatUser()
+    }
+
+    if (!isPublic && !d.user) {
+      await this.StopPipeline('router_isPublic')
+    }
+
+    if ((isAdmin || isMod || isSub || isFollow)
+    && !d.user) {
+      await this.StopPipeline('router_priviliege')
+    }
+
+    if (isAdmin) { await this.authorizeAdmin() }
+
+    if (isMod && (!d.toon || !d.toon.mod)) {
+      await this.StopPipeline('priviliegeReq.noMod')
+    }
+
+    if (isSub && (!d.toon || !d.toon.subscriber)) {
+      await this.StopPipeline('priviliegeReq.noSub')
+    }
+    
+    if (isFollow && (!d.toon || !d.toon.follower)) {
+      await this.StopPipeline('priviliegeReq.noFollow')
+    }
+
+    if (this.validator) {
+      await this.validator()
+    }
+
+    await this.handler()
   }
 
   async StopPipeline (error_key = 'unknow_error') {
