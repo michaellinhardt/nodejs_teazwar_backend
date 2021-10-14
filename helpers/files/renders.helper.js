@@ -1,12 +1,12 @@
 class AppError extends Error {
-  constructor (error_message, status = 500) {
+  constructor (error_key, status = 500) {
     super('Server Error')
     this.constructor = AppError
     this.__proto__ = AppError.prototype
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)
     this.status = status
-    this.payload = { error_message }
+    this.payload = { error_key }
   }
   render (resOrSocket) {
     return this.status === 'socket'
@@ -21,8 +21,8 @@ module.exports = {
     Ok: (res, data) => res.status(200).json(data),
   
     StopPipeline: class extends AppError {
-      constructor (error_message) {
-        super(error_message, 400)
+      constructor (error_key) {
+        super(error_key, 400)
       }
     },
   
@@ -31,7 +31,7 @@ module.exports = {
       process.stdout.write('Internal Server Error\r\n')
       process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
       if (res.headersSent) { return }
-      const payload = { error_message: 'server.error' }
+      const payload = { error_key: 'server_error' }
       return res.status(500).json(payload)
     },
   },
@@ -40,8 +40,8 @@ module.exports = {
     Ok: () => console.debug('render ok by socket'),
 
     StopPipeline: class extends AppError {
-      constructor (error_message) {
-        super(error_message, 'socket')
+      constructor (error_key) {
+        super(error_key, 'socket')
       }
     },
 
@@ -50,7 +50,7 @@ module.exports = {
       process.stdout.write('Internal Server Error\r\n')
       process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
       if (socket.headersSent) { return }
-      const payload = { error_message: 'server.error' }
+      const payload = { error_key: 'server_error' }
       return console.debug('return uncaught error by socket', payload)
     },
   },

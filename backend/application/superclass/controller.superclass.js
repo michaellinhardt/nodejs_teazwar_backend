@@ -54,15 +54,15 @@ export default class {
     if (isAdmin) { await this.authorizeAdmin() }
 
     if (isMod && (!d.toon || !d.toon.mod)) {
-      await this.StopPipeline('priviliegeReq.noMod')
+      await this.StopPipeline('priviliegeReq_noMod')
     }
 
     if (isSub && (!d.toon || !d.toon.subscriber)) {
-      await this.StopPipeline('priviliegeReq.noSub')
+      await this.StopPipeline('priviliegeReq_noSub')
     }
     
     if (isFollow && (!d.toon || !d.toon.follower)) {
-      await this.StopPipeline('priviliegeReq.noFollow')
+      await this.StopPipeline('priviliegeReq_noFollow')
     }
 
     if (this.validator) {
@@ -73,26 +73,28 @@ export default class {
   }
 
   async StopPipeline (error_key = 'unknow_error') {
-    const message = this.helpers.language.get(error_key)
-    throw new this.renders.StopPipeline(message)
+    throw new this.renders.StopPipeline(error_key)
   }
 
   async identify () {
-    const { helpers: h, services: s, data: d } = this
+    const { helpers: h, services: s, data: d, body: b } = this
 
-    const rawToken = _.get(this, `req.headers['x-access-token']`, null)
-
-    if (rawToken) {
-      d.jwtoken = h.jwtoken.extract(this.req)
+    if (b.jwtoken) {
+      if (typeof(b.jwtoken) !== 'string' || !b.jwtoken.length) {
+        throw new Renders.StopPipeline('jwtoken_missing')
+      }
 
       const decryptedJwtoken = h.jwtoken.decrypt(d.jwtoken)
   
+      d.jwtoken = decryptedJwtoken.jwtoken
       d.user_uuid = decryptedJwtoken.user_uuid
 
       if (d.user_uuid && d.jwtoken) {
         const isUser = await s.users.getBy('uuid', d.user_uuid)
+
         if (isUser && isUser.jwtoken === d.jwtoken) {
           d.user = isUser
+
         } else {
           delete d.user_uuid
           delete d.jwtoken

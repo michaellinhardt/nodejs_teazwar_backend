@@ -1,11 +1,14 @@
 import fs from 'fs'
 import http from 'http'
 import express from 'express'
+import prettyjson from 'prettyjson'
 const { backend } = require('../../config')
 const { Server } = require("socket.io")
 
 import HttpsRouter from './router/https.router'
 import SocketRouter from './router/socket.router'
+
+const log = message => process.stdout.write(`${message}\n`)
 
 const start = () => {
     const app = express()
@@ -34,7 +37,7 @@ const start = () => {
 const Middlewares = {
     dumpRequest: (req, res, next) => {
         log(`\n ======== Request: ${req.method} ${req.path} ========`)
-        if (req.body) { log(`req.body:\n${render(req.body)}`) }
+        if (req.body) { log(`req.body:\n${prettyjson.render(req.body)}`) }
         return next()
       },
     
@@ -47,7 +50,7 @@ const Middlewares = {
     
         const resJson = res.json.bind(res)
         res.json = (obj, ...args) => {
-          log(`- data:\n${render(obj)}`)
+          log(`- data:\n${prettyjson.render(obj)}`)
           return resJson(obj, ...args)
         }
     

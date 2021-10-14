@@ -6,25 +6,6 @@ const jwt = require('../../config/files/jwt.config')
 
 module.exports = {
 
-  extract: req => {
-    const rawToken = req.headers['x-access-token'] || null
-
-    if (!rawToken) {
-      throw new Renders.StopPipeline('jwtoken.missing')
-
-    } else if (!rawToken.startsWith('Bearer ')) {
-      throw new Renders.StopPipeline('jwtoken.format')
-    }
-
-    const token = rawToken.replace('Bearer ', '')
-
-    if (!token) {
-      throw new Renders.StopPipeline('jwtoken.format')
-    }
-
-    return token
-  },
-
   decrypt: token => {
     try {
       const verifyOptions = {

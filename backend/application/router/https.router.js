@@ -29,16 +29,18 @@ module.exports = {
           routeParam.path = path
 
           const twitchData = _.get(req, 'body.twitchData', {})
-          const twitch = _.isEmpty(twitchData)
-            ? {} : { twitch: { ...Data.extractTwitchData(twitchData) } }
+          const twitch = _.isEmpty(twitchData) ? undefined : Data.extractTwitchData(twitchData)
 
           const requestParam = _.get(req, 'params', {})
           const requestBody = _.get(req, 'body', {})
 
+          const jwtoken = _.get(req, `headers['x-access-token']`, undefined)
+
           const body = {
             ...requestParam,
             ...requestBody,
-            ...twitch,
+            twitch,
+            jwtoken,
           }
 
           try {
