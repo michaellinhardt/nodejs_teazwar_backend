@@ -4,12 +4,12 @@
 node_modules
 
 # Configuration file for production and test env, with all private keys
-production.env.js
-test.env.js
+# production.env.js
+# test.env.js
 
 # Ignore certificates and cryptographic keys
-*.pem
-*.key
-*.cert
-*.p8
-*.p12
+# *.pem
+# *.key
+# *.cert
+# *.p8
+# *.p12
