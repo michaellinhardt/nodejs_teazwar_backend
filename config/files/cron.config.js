@@ -1,7 +1,7 @@
 module.exports = {
     endpoint: '/cron',
 
-    interval: 1000,
+    interval: 3000,
     twitchApiInterval: 2,
     twitchApiNext: 0,
     viewerOnlineUntill: 60 * 2,

@@ -12,9 +12,9 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./",
     "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
     "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",
-    "database:dev": "NODE_ENV=development node scripts/run.js",
-    "database:prod": "NODE_ENV=production node scripts/run.js",
-    "ls": "NODE_ENV=development node scripts/run.js ls",
+    "database:dev": "NODE_ENV=development babel-node scripts/run.js",
+    "database:prod": "NODE_ENV=production babel-node scripts/run.js",
+    "ls": "NODE_ENV=development babel-node scripts/run.js ls",
     "script": "NODE_ENV=development babel-node scripts/run.js"
   },
   "author": "Michael Linhardt",

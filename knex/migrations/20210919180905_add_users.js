@@ -1,4 +1,4 @@
-const { createTableDefaultSetup } = require('../../helpers').knex
+const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'users'
 
@@ -30,7 +30,6 @@ exports.up = function (knex) {
     table.integer('timestampFollowingCheck').defaultTo(0)
 
     table.integer('countFollow').defaultTo(0)
-
 
   }).then(() => {
     const { users } = require('../seeds')

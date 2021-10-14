@@ -1,5 +1,6 @@
 const { v1 } = require('uuid')
 const { createTableDefaultSetup } = require('../../helpers').knex
+const { cron } = require('../../config')
 
 const tableName = 'cron_tasks'
 
@@ -11,7 +12,6 @@ exports.up = function (knex) {
     table.integer('timestampNext').defaultTo(0)
 
   }).then(() => {
-    const { cron } = require('../../config')
     const cronTasks = cron.tasks.map(c => ({
         uuid: v1(),
         path: c.path,

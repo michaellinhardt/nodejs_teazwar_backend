@@ -1,22 +1,48 @@
 const prettyjson = require('prettyjson')
 const _ = require('lodash')
 const h = require('../helpers')
+const config = require('../config')
 const { imports: { importDefaultByFilename }, controllers: { getFlattenControllers, runRoute } } = h
 
 const Controllers = importDefaultByFilename(`${__dirname}/../backend/controllers`, '.controller')
 const ControllersFlatten = getFlattenControllers(Controllers)
 
-
-const start = async () => {
-
-    const controller = await runRoute(ControllersFlatten, {
-        method: 'get',
-        path: '/aaaEmtpy/:ok',
-        ok: 'lol',
+const executeNextTask = async () => {
+    const { payload: cronRouter } = await runRoute(ControllersFlatten, {
+        method: 'post',
+        path: '/cron/router',
+        jwtoken: config.jwt.teazwarToken,
     })
-    
-    console.debug(prettyjson.render(controller.payload))
+
+    if (!cronRouter.task) { return false }
+
+    const { cron, task } = cronRouter
+
+    const { payload: taskResult } = await runRoute(ControllersFlatten, {
+        method: 'post',
+        path: `/cron${task.path}`,
+        jwtoken: config.jwt.teazwarToken,
+    })
+
+    await runRoute(ControllersFlatten, {
+        method: 'post',
+        path: '/cron/interval',
+        jwtoken: config.jwt.teazwarToken,
+        cron,
+        task,
+        taskResult,
+    })
+
+    console.debug(task.path, taskResult)
 }
 
+const start = async () => {
+    try {
+        await executeNextTask()
+
+    } catch (err) { console.debug('error while doing cron task', err) }
+
+    setTimeout(() => start(), config.cron.interval)
+}
 
 start()

@@ -33,15 +33,17 @@ export default class {
       path = '',
       isPublic = false,
       isAdmin = false,
-      isMod = false,
       isSub = false,
       isFollow = false,
+      isTwitch = false,
     } = this.routeParam
 
-    await this.identify()
+    // console.debug(this.helpers.jwtoken.generate('1e8b6bf0-1b50-11ec-85ec-4d033c80c035'))
+
+    await this.identify(isTwitch)
 
     if (path.startsWith('/command/')) {
-      await this.authorizeTeazmod()
+      await this.authorizeTeazwar()
       await this.identifyChatUser()
     }
 
@@ -49,22 +51,18 @@ export default class {
       await this.StopPipeline('router_isPublic')
     }
 
-    if ((isAdmin || isMod || isSub || isFollow)
+    if ((isAdmin || isSub || isFollow)
     && !d.user) {
       await this.StopPipeline('router_priviliege')
     }
 
     if (isAdmin) { await this.authorizeAdmin() }
 
-    if (isMod && (!d.toon || !d.toon.mod)) {
-      await this.StopPipeline('priviliegeReq_noMod')
-    }
-
-    if (isSub && (!d.toon || !d.toon.subscriber)) {
+    if (isSub && (!d.user || d.user.isSubscriber !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noSub')
     }
     
-    if (isFollow && (!d.toon || !d.toon.follower)) {
+    if (isFollow && (!d.user || d.user.isFollower !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noFollow')
     }
 
@@ -80,30 +78,40 @@ export default class {
     throw new this.renders.StopPipeline(error_key)
   }
 
-  async identify () {
+  async identify (isTwitch = false) {
     const { helpers: h, services: s, data: d, body: b } = this
 
     if (b.jwtoken) {
+
       if (typeof(b.jwtoken) !== 'string' || !b.jwtoken.length) {
-        throw new Renders.StopPipeline('jwtoken_missing')
+        await this.StopPipeline('jwtoken_missing')
       }
 
-      const decryptedJwtoken = h.jwtoken.decrypt(d.jwtoken)
-  
+      const decryptedJwtoken = h.jwtoken.decrypt(b.jwtoken, isTwitch)
+      if (decryptedJwtoken === false) {
+        await this.StopPipeline('jwtoken_invalid')
+      }
       d.jwtoken = decryptedJwtoken.jwtoken
-      d.user_uuid = decryptedJwtoken.user_uuid
 
+      const userKey = !isTwitch ? 'user_uuid' : 'user_id'
+      d[userKey] = decryptedJwtoken[userKey]
+
+      let isUser = null
       if (d.user_uuid && d.jwtoken) {
-        const isUser = await s.users.getBy('uuid', d.user_uuid)
-
-        if (isUser && isUser.jwtoken === d.jwtoken) {
-          d.user = isUser
-
-        } else {
-          delete d.user_uuid
-          delete d.jwtoken
-        }
+        isUser = await s.users.getBy('uuid', d.user_uuid)
+      } else if (d.user_id && d.jwtoken) {
+        isUser = await s.users.getBy('user_id', d.user_id)
       }
+
+      if (isUser && isUser.jwtoken === d.jwtoken.token) {
+        d.user = isUser
+
+      } else {
+        delete d.user_uuid
+        delete d.user_id
+        delete d.jwtoken
+      }
+
     }
   }
 
@@ -119,21 +127,23 @@ export default class {
       delete d.user_uuid
     }
 
-    if (t.userId && t.roomId) {
-      d.toon_id = `${t.roomId}_${t.userId}`
-      d.toon = await s.toons.getBy('toon_id', d.toon_id)
-    }
   }
 
-  async authorizeTeazmod () {
-    if (!d.user || !d.user.username !== config.tmiOpts.identify.username) {
-      await this.StopPipeline('user.notTeazmod')
+  async authorizeTeazwar () {
+    const botUsername = config.twitch.chatbot.tmiOpts.identify.username
+    if (!d.user || !d.user.username !== botUsername) {
+      await this.StopPipeline('user.notTeazwar')
     }
   }
 
   async authorizeAdmin () {
     const { services: s, renders: r, data: d } = this
     const { uuid: user_uuid } = d.user
+
+    if (d.user && (d.user.username === 'teazyou'
+    || d.user.username === 'teazwar')) {
+      return true
+    }
 
     d.admin = await s.admins.getBy('user_uuid', user_uuid)
 

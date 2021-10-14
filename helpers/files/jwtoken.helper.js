@@ -6,26 +6,36 @@ const jwt = require('../../config/files/jwt.config')
 
 module.exports = {
 
-  decrypt: token => {
+  decrypt: (token, isTwitch = false) => {
     try {
-      const verifyOptions = {
+      const verifyOptions = !isTwitch ? {
         issuer: jwt.signOptions.issuer,
         audience: jwt.signOptions.audience,
         expiresIn: jwt.signOptions.expiresIn,
         algorithm: jwt.signOptions.algorithm,
-      }
 
-      const jwtoken = jsonwebtoken.verify(token, jwt.publicKEY, verifyOptions)
+      } : { algorithms: ['HS256'] }
 
-      const user_uuid = jwtoken.sub
+      const secret = !isTwitch ? jwt.publicKEY : jwt.twitchSecret
 
-      return { jwtoken, user_uuid }
+      const jwtoken = jsonwebtoken.verify(token, secret, verifyOptions)
 
-    } catch (err) { throw new Renders.StopPipeline('jwtoken.invalid') }
+      jwtoken.token = token
+
+      return !isTwitch
+        ? { jwtoken, user_uuid: jwtoken.sub }
+        : { jwtoken }
+
+    } catch (err) {
+      console.debug(err)
+      return false
+    }
   },
 
   generate: (user_uuid) => {
     const signOptions = Object.assign({}, jwt.signOptions)
+
+    console.debug(signOptions)
 
     signOptions.subject = user_uuid
     const payload = { uuid: uuid() }

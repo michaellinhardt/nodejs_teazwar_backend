@@ -1,4 +1,4 @@
-const { createTableDefaultSetup } = require('../../helpers').knex
+const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'user_chat'
 
