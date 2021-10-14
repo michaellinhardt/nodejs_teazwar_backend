@@ -29,7 +29,7 @@ module.exports = {
         // isEnabled: false,
         },{
 
-        path: '/userxp/levelup',
+        path: '/xp/levelup',
         isTwitchApi: false,
         interval: 0,
         intervalEmpty: 60,
@@ -38,7 +38,7 @@ module.exports = {
         // isEnabled: false,
         },{
 
-        path: '/bots/detect',
+        path: '/chatters/bots',
         isTwitchApi: false,
         interval: 60 * 60 * 1,
         intervalEmpty: 60 * 60 * 2,
