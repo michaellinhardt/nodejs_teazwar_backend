@@ -2,17 +2,15 @@ import fs from 'fs'
 import http from 'http'
 import express from 'express'
 import prettyjson from 'prettyjson'
-const { backend } = require('../../config')
+const { backend } = require('../config')
 const { Server } = require("socket.io")
 
 
 const { createAdapter } = require("@socket.io/redis-adapter")
 const { createClient } = require("redis")
 
-
-
-import HttpsRouter from './router/https.router'
-import SocketRouter from './router/socket.router'
+import HttpsRouter from '../backend/application/router/https.router'
+import SocketRouter from '../backend/application/router/socket.router'
 
 const log = message => process.stdout.write(`${message}\n`)
 
