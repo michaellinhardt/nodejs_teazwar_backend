@@ -12,9 +12,6 @@ export default [
   
           const chatters = await a.chatters.get()
 
-          // const chatters_count = s.chatters.getCountFromTwitch(chatters)
-          // await s.eventsGlobal.addEventForDiscord('chatters_count', { chatters_count })
-
           const chatter_list = s.chatters.getChattersFromTwitch(chatters)
   
           await s.chatters.addOrIncrement(chatter_list)
@@ -81,10 +78,6 @@ export default [
           const botsList = await a.bots.list()
 
           const taggedBots = await s.users.tagBots(botsList)
-
-          if (taggedBots.length) {
-            // await s.eventsGlobal.addEvent('chatters_bots_detected', { chatters_bots_detected: taggedBots })
-          }
 
           this.payload = !taggedBots.length ? p.cron.empty() : p.cron.success()
 

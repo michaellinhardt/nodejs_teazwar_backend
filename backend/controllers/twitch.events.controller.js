@@ -8,8 +8,6 @@ export default [
     isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, renders: r } = this
-        // await s.eventsGlobal.addEventForDiscord('teazwar_connected')
       }
     },
   },
@@ -19,9 +17,6 @@ export default [
     isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, renders: r } = this
-        const { event_name, event_data = {} } = this.req.body
-        // await s.eventsGlobal.addEventFromTwitch(event_name, event_data)
       }
     },
   },
@@ -31,9 +26,6 @@ export default [
     isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, renders: r } = this
-        const { twitchData = {} } = this.req.body
-        // await s.eventsGlobal.addEventForDiscord('teazwar_join', twitchData)
       }
     },
   },
@@ -43,9 +35,6 @@ export default [
     isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, renders: r } = this
-        const { twitchData = {} } = this.req.body
-        // await s.eventsGlobal.addEventForDiscord('teazwar_part', twitchData)
       }
     },
   },
