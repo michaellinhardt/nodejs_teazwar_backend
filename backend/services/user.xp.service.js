@@ -69,13 +69,13 @@ export default class extends ServiceSuperclass {
 
   getUserXpPerMin (user) {
     const { helpers: h } = this
-    let xpPerMin = h.xp.xpPerMin()
+    let xpPerMin = h.xp.xpPerMin
 
     if (user.isFollower === 'yes') {
-      xpPerMin = h.xp.xpPerMinFollower()
+      xpPerMin = h.xp.xpPerMinFollower
     }
     if (user.isSubscriber === 'yes') {
-      xpPerMin = h.xp.xpPerMinSubscriber()
+      xpPerMin = h.xp.xpPerMinSubscriber
     }
 
     return xpPerMin
