@@ -14,7 +14,11 @@ const executeNextTask = async () => {
         jwtoken: config.jwt.teazwarToken,
     })
 
-    if (!cronRouter.task) { return false }
+    if (!cronRouter.task) {
+        // console.debug('NEXT TASK IN ->', cronRouter.sleep)
+        await h.code.sleep(cronRouter.sleep * 1000 - 600)
+        return false
+    }
 
     const { cron, task } = cronRouter
 

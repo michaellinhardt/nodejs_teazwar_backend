@@ -54,10 +54,7 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  getNextTask (cron) {
-    const { helpers: h } = this
-
-    const currTimestamp = h.date.timestamp()
+  getNextTask (currTimestamp, cron) {
     let selectedTaskId = -1
     _.forEach(cron.tasks, (task, taskId) => {
         const isLock = task.isTwitchApi && cron.twitchApiNext > currTimestamp
