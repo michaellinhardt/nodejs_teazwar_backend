@@ -71,6 +71,15 @@ export default class extends ServiceSuperclass {
       .orderBy('count_seen', 'desc')
   }
 
+  flattenChattersObject (chatters) {
+    const chattersFlatten = {}
+    _.forEach(chatters, c => {
+      const username = c.username
+      chattersFlatten[username] = c
+    })
+    return chattersFlatten
+  }
+
   async resetByUsernames (usernames) {
     return this.updAllWhereIn('username', usernames, { count_seen: 0 })
   }

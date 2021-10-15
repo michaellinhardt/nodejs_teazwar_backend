@@ -84,8 +84,7 @@ export default class extends ServiceSuperclass {
   async addXpGain (users, chatters) {
     await Promise.each(users, async user => {
       const xpPerMin = this.getUserXpPerMin(user)
-      const chatter = chatters.find(c => c.username === user.username)
-      const count_seen = _.get(chatter, 'count_seen', 0)
+      const count_seen = _.get(chatters, `${user.username}.count_seen`, 0)
       const xpGain = count_seen * xpPerMin
 
       await this.incrementAllWhere({ user_uuid: user.uuid }, {

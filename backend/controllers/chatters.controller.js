@@ -49,8 +49,6 @@ export default [
 
           const chatterUsernames = chatters.map(c => c.username)
 
-          console.debug(chatterUsernames)
-
           const twitchUsers = await a.users.getByUsernames(chatterUsernames)
 
           const users = await s.users.addOrUpdate(twitchUsers)
@@ -81,6 +79,7 @@ export default [
         try {
   
           const chatters = await s.chatters.getNextXpGain()
+          const chattersFlatten = s.chatters.flattenChattersObject(chatters)
 
           if (chatters.length === 0) {
             this.payload = p.cron.empty()
@@ -90,7 +89,8 @@ export default [
           const chatterUsernames = chatters.map(c => c.username)
           const users = await s.users.getByUsernames(chatterUsernames)
 
-          await s.userXp.addXpGain(users, chatters)
+          await s.userXp.addXpGain(users, chattersFlatten)
+          await s.userStats.incrementSeenStats(users, chattersFlatten)
 
           await s.chatters.resetByUsernames(chatterUsernames)
 
