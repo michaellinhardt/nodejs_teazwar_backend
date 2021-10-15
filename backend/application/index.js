@@ -5,6 +5,12 @@ import prettyjson from 'prettyjson'
 const { backend } = require('../../config')
 const { Server } = require("socket.io")
 
+
+const { createAdapter } = require("@socket.io/redis-adapter")
+const { createClient } = require("redis")
+
+
+
 import HttpsRouter from './router/https.router'
 import SocketRouter from './router/socket.router'
 
@@ -23,15 +29,29 @@ const start = () => {
     HttpsRouter.init(app)
     
     const httpServer = http.createServer(app)
-    const io = new Server(httpServer, {})
+    // const io = new Server(httpServer, {})
+    // SocketRouter.init(io)
     
+    
+    
+    const io = new Server()
     SocketRouter.init(io)
+    const pubClient = createClient({
+      host: "localhost",
+      port: 6379,
+    })
+    const subClient = pubClient.duplicate()
+    io.adapter(createAdapter(pubClient, subClient))
+    io.listen(backend.socketPort)
+
+
+    
     
     httpServer.listen(
       app.get('port'),
       () => process.stdout.write(`Server HTTP is running on port ${app.get('port')}\r\n`))
     
-    io.listen(backend.socketPort)
+    // io.listen(backend.socketPort)
 }
 
 const Middlewares = {

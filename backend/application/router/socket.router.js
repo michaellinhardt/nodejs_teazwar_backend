@@ -1,10 +1,18 @@
 const _ = require('lodash')
 
+
+
+const { Emitter } = require("@socket.io/redis-emitter")
+const { createClient } = require("redis")
+const redisClient = createClient({ host: "localhost", port: 6379 })
+const emitter = new Emitter(redisClient)
+
+
 const sockIds = {}
 
 const areYouThere = (io) => {
   _.forEach(sockIds, (id, name) => {
-    io.to(id).emit('areyouthere', { name });
+    emitter.to(id).emit('areyouthere', { name })
   })
 }
 
@@ -35,6 +43,7 @@ module.exports = {
           const name = data.name
           sockIds[name] = socket.id
           console.debug(`Loggin from: ${socket.id} [${data.name}]`)
+          emitter.to(socket.id).emit('hello', {name})
         }
 
       });
