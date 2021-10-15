@@ -11,23 +11,38 @@ const socketUrl = `${backend.uri}:${backend.socketPort}`
 const lang = language.default
 
 const start = async () => {
-    const intents = [Discord.Intents.FLAGS.GUILDS]
-    const discord = new Discord.Client({ intents });
+    // const intents = [Discord.Intents.FLAGS.GUILDS]
+    // const discord = new Discord.Client({ intents });
 
-    await connect(discord)
-    await build_say(discord)
-    await h.code.sleep(3000)
+    // await connect(discord)
+    // await build_say(discord)
+    // await h.code.sleep(3000)
 
-    await discord.say('debug_welcome')
-    await discord.say('game_welcome')
-    await discord.say('stream_welcome')
+    // await discord.say('debug_welcome')
+    // await discord.say('game_welcome')
+    // await discord.say('stream_welcome')
 
     openSocket()
 }
 
+const testSocket = () => {
+    console.debug('emiit!', socket.id)
+    socket.emit('iam', {
+        name: 'discord',
+    })
+}
+
 const openSocket = () => {
     socket = io(socketUrl)
-    socket.on("connect", () => {  console.log('connected: ', socket.id) });
+    socket.on("connect", () => { 
+        console.log('connected: ', socket.id)
+
+        socket.onAny((eventName, ...args) => {
+            console.debug(`Received from: ${socket.id} [${eventName}]\n`, args[0])
+        });
+    
+        setTimeout(testSocket, 1000)
+    });
     socket.on("disconnect", () => {  console.log('disconnected: ', socket.id) });
     socket.on("connect_error", () => { console.debug('connect error') });
   }

@@ -12,19 +12,35 @@ const tmiOpts = chatbot.tmiOpts
 tmiOpts.channels = [channel]
 
 const start = async () => {
-  const twitch = new tmi.client(tmiOpts)
-  twitch.backend = () => true
+  // const twitch = new tmi.client(tmiOpts)
+  // twitch.backend = () => true
 
-  build_say(twitch)
-  listen_events(twitch)
-  await connect(twitch)
+  // build_say(twitch)
+  // listen_events(twitch)
+  // await connect(twitch)
 
   openSocket()
+
+}
+
+const testSocket = () => {
+  console.debug('emiit!', socket.id)
+  socket.emit('iam', {
+      name: 'twitch',
+  })
 }
 
 const openSocket = () => {
   socket = io(socketUrl)
-  socket.on("connect", () => {  console.log('connected: ', socket.id) });
+  socket.on("connect", () => { 
+    console.log('connected: ', socket.id)
+
+    socket.onAny((eventName, ...args) => {
+      console.debug(`Received from: ${socket.id} [${eventName}]\n`, args[0])
+    });
+
+    setTimeout(testSocket, 1000)
+  });
   socket.on("disconnect", () => {  console.log('disconnected: ', socket.id) });
   socket.on("connect_error", () => { console.debug('connect error') });
 }
