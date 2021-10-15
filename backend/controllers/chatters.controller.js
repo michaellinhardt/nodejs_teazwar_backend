@@ -49,21 +49,50 @@ export default [
 
           const chatterUsernames = chatters.map(c => c.username)
 
+          console.debug(chatterUsernames)
+
           const twitchUsers = await a.users.getByUsernames(chatterUsernames)
 
           const users = await s.users.addOrUpdate(twitchUsers)
           const allUsers = users.added.concat(users.updated)
 
           await s.userXp.addMissingEntry(allUsers)
-          await s.userChat.addMissingEntry(allUsers)
+          await s.userStats.addMissingEntry(allUsers)
           await s.userAttributes.addMissingEntry(allUsers)
 
-          const chatters_xp_gains = await s.userXp.addXpGain(allUsers, chatters)
-          // await s.eventsGlobal.addEventForDiscord('chatters_xp_gains', { chatters_xp_gains })
+          await s.chatters.setUsersAsValidated(allUsers)
 
-          const allUserUsernames = allUsers.map(u => u.username)
+          this.payload = p.cron.success()
 
-          await s.chatters.resetByUsernames(allUserUsernames)
+        } catch (err) {
+          console.error(err)
+          this.payload = p.cron.error()
+        }
+        return true
+      }
+    },
+  },
+  {
+    route: ['post', '/cron/chatters/xpgain'],
+    isPublic: false,
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s, payloads: p, apis: a } = this
+        try {
+  
+          const chatters = await s.chatters.getNextXpGain()
+
+          if (chatters.length === 0) {
+            this.payload = p.cron.empty()
+            return true
+          }
+
+          const chatterUsernames = chatters.map(c => c.username)
+          const users = await s.users.getByUsernames(chatterUsernames)
+
+          await s.userXp.addXpGain(users, chatters)
+
+          await s.chatters.resetByUsernames(chatterUsernames)
 
           this.payload = p.cron.success()
 

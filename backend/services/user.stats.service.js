@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
-const table = 'user_chat'
+const table = 'user_stats'
 
 export default class extends ServiceSuperclass {
 
@@ -23,7 +23,7 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  async incrementStats(user, msg) {
+  async incrementChatStats(user, msg) {
     const total_lines = user.total_lines + 1
     const total_chars = user.total_chars + msg.length
     const chars_per_line = Math.floor(total_chars / total_lines)
@@ -32,7 +32,7 @@ export default class extends ServiceSuperclass {
       total_lines,
       total_chars,
       chars_per_line,
-      timestampLastLine: this.helpers.date.timestamp(),
+      timestampLastChatLine: this.helpers.date.timestamp(),
     }
 
     return this.updAllWhere({ user_uuid: user.uuid }, updateStats)

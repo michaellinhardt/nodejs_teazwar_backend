@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
-const { twitch } = require('../../config')
+const { twitch, cron } = require('../../config')
 
 const table = 'chatters'
 
@@ -22,6 +22,13 @@ export default class extends ServiceSuperclass {
       .concat(_.get(chatters, 'chatters.admins', []))
       .concat(_.get(chatters, 'chatters.global_mods', []))
       .concat(_.get(chatters, 'chatters.viewers', []))
+  }
+
+  async setUsersAsValidated (users) {
+    const currTimestamp = this.helpers.date.timestamp()
+    const timestampValidatedUntil = currTimestamp + cron.chatterValidatedUntill
+    const usernames = users.map(u => u.username)
+    return this.updAllWhereIn('username', usernames, { timestampValidatedUntil })
   }
 
   async addOrIncrement(chatter_list) {
@@ -46,11 +53,22 @@ export default class extends ServiceSuperclass {
   }
 
   async getNextValidateList () {
+    const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .where({ isDeleted: false })
       .andWhere('count_seen', '>', 0)
+      .andWhere('timestampValidatedUntil', '<', currTimestamp)
       .orderBy('count_seen', 'desc')
       .limit(twitch.usersPerPage)
+  }
+
+  async getNextXpGain () {
+    const currTimestamp = this.helpers.date.timestamp()
+    return this.knex()
+      .where({ isDeleted: false })
+      .andWhere('count_seen', '>', 0)
+      .andWhere('timestampValidatedUntil', '>=', currTimestamp)
+      .orderBy('count_seen', 'desc')
   }
 
   async resetByUsernames (usernames) {

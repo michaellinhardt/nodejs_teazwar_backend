@@ -4,18 +4,22 @@ module.exports = {
     interval: 3000,
     twitchApiInterval: 2,
     twitchApiNext: 0,
+
     viewerOnlineUntill: 60 * 2,
+    chatterValidatedUntill: 60 * 3, // after validating a chatters nickname with twitch api, we dont make it again until..
+
     chattersUnFollowerControlEvery: 60 * 60 * 24,
     chattersNewFollowerControlEvery: 60 * 5,
     globalFollowingControlEvery: 60 * 60 * 24 * 7,
+
     followingBotsMultiplier: 5, // each timer for bot user is multiplied by this value, so bot are verified less often
 
     tasks: [{
         path: '/chatters/listing',
         isTwitchApi: true,
-        interval: 60,
-        intervalEmpty: 60,
-        intervalRetry: 60,
+        interval: 20,
+        intervalEmpty: 20,
+        intervalRetry: 20,
         timestampNext: 0,
         // isEnabled: false,
         },{
@@ -23,8 +27,17 @@ module.exports = {
         path: '/chatters/validate',
         isTwitchApi: true,
         interval: 0,
-        intervalEmpty: 60,
-        intervalRetry: 60,
+        intervalEmpty: 20,
+        intervalRetry: 20,
+        timestampNext: 0,
+        // isEnabled: false,
+        },{
+
+        path: '/chatters/xpgain',
+        isTwitchApi: false,
+        interval: 0,
+        intervalEmpty: 20,
+        intervalRetry: 20,
         timestampNext: 0,
         // isEnabled: false,
         },{

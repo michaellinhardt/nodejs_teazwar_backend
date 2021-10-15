@@ -15,10 +15,6 @@ exports.up = function (knex) {
     table.integer('level_xp').defaultTo(0)
     table.integer('level_xp_max').defaultTo(xpHelper.xpRequired(xp.startLevel))
 
-    table.integer('total_xp_normal').defaultTo(0)
-    table.integer('total_xp_follower').defaultTo(0)
-    table.integer('total_xp_subscriber').defaultTo(0)
-
   }).then(() => {
     return true
   })

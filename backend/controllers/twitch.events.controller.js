@@ -64,7 +64,7 @@ export default [
         const user = await s.users.getByUserId(user_id)
         if (!user) { return true }
 
-        await s.userChat.incrementStats(user, twitchData.msg)
+        await s.userStats.incrementChatStats(user, twitchData.msg)
       }
     },
   },

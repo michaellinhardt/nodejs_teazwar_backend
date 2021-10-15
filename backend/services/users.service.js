@@ -14,6 +14,10 @@ export default class extends ServiceSuperclass {
     return this.getFirstWhere({ username: twitch.chatbot.channel })
   }
 
+  async getByUsernames (usernames) {
+    return this.getAllFirstWhereIn('username', usernames)
+  }
+
   async setOnline (chatter_list) {
     const { helpers: h } = this
     const timestampOnlineUntill = h.date.timestamp() + cron.viewerOnlineUntill

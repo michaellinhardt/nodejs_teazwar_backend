@@ -67,36 +67,32 @@ export default class extends ServiceSuperclass {
       .andWhereRaw('?? >= ??', ['user_xp.level_xp', 'user_xp.level_xp_max'])
   }
 
-  async addXpGain (users, chatters) {
+  getUserXpPerMin (user) {
     const { helpers: h } = this
+    let xpPerMin = h.xp.xpPerMin()
 
-    const xpGains = []
+    if (user.isFollower === 'yes') {
+      xpPerMin = h.xp.xpPerMinFollower()
+    }
+    if (user.isSubscriber === 'yes') {
+      xpPerMin = h.xp.xpPerMinSubscriber()
+    }
+
+    return xpPerMin
+  }
+
+  async addXpGain (users, chatters) {
     await Promise.each(users, async user => {
-      let xpPerMin = h.xp.xpPerMin()
-      let xpLabel = 'total_xp_normal'
-
-      if (user.isFollower === 'yes') {
-        xpPerMin = h.xp.xpPerMinFollower()
-        xpLabel = 'total_xp_follower'
-      }
-      if (user.isSubscriber === 'yes') {
-        xpPerMin = h.xp.xpPerMinSubscriber()
-        xpLabel = 'total_xp_subscriber'
-      }
-
+      const xpPerMin = this.getUserXpPerMin(user)
       const chatter = chatters.find(c => c.username === user.username)
       const count_seen = _.get(chatter, 'count_seen', 0)
       const xpGain = count_seen * xpPerMin
 
       await this.incrementAllWhere({ user_uuid: user.uuid }, {
         level_xp: xpGain,
-        [xpLabel]: count_seen,
       })
-
-      xpGains.push([user.username, xpGain])
 
     }, { concurrency: 3 })
 
-    return xpGains
   }
 }
