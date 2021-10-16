@@ -26,22 +26,21 @@ const users = [{
 const addAdmin = (uuid, user_uuid) => ({
     uuid,
     user_uuid,
-    pause: true,
-    resume: true,
-    xppermin: true,
 })
 
 const admins = [
-        addAdmin('7e8cc9e0-1c9a-11ec-be7c-2159a9e73249', users[0].uuid),
-        addAdmin('7e8cc9e1-1c9a-11ec-be7c-2159a9e73249', users[1].uuid),
+        addAdmin(v1(), users[0].uuid),
+        addAdmin(v1(), users[1].uuid),
 ]
 
-const events_global = [{
-    uuid: v1(),
-    event_name: 'database_reseted',
-    event_data: '{}'
-}]
+const sockets_infra = [
+    { uuid: v1(), infra_name: 'twitch' },
+    { uuid: v1(), infra_name: 'discord' },
+]
 
-exports.users = users
-exports.admins = admins
-exports.events_global = events_global
+module.exports = {
+    users,
+    admins,
+    sockets_infra,    
+}
+

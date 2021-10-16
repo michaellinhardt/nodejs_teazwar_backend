@@ -32,9 +32,10 @@ export default class {
     const {
       path = '',
       isPublic = false,
+      isTeazwar = false,
       isAdmin = false,
-      isSub = false,
-      isFollow = false,
+      isSubscriber = false,
+      isFollower = false,
       isTwitch = false,
     } = this.routeParam
 
@@ -47,22 +48,27 @@ export default class {
       await this.identifyChatUser()
     }
 
-    if (!isPublic && !d.user) {
+    if (!d.user && (!isPublic || isTeazwar || isAdmin || isSubscriber || isFollower)) {
       await this.StopPipeline('router_isPublic')
     }
 
-    if ((isAdmin || isSub || isFollow)
+    const teazwarUsername = config.twitch.chatbot.tmiOpts.identity.username.toLowerCase()
+    if (isTeazwar && d.user.username.toLowerCase() !== teazwarUsername.toLowerCase()) {
+      await this.StopPipeline('router_onlyTeazwar')
+    }
+
+    if ((isAdmin || isSubscriber || isFollower)
     && !d.user) {
       await this.StopPipeline('router_priviliege')
     }
 
     if (isAdmin) { await this.authorizeAdmin() }
 
-    if (isSub && (!d.user || d.user.isSubscriber !== 'yes')) {
+    if (isSubscriber && (!d.user || d.user.isSubscriber !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noSub')
     }
     
-    if (isFollow && (!d.user || d.user.isFollower !== 'yes')) {
+    if (isFollower && (!d.user || d.user.isFollower !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noFollow')
     }
 

@@ -3,45 +3,40 @@ import ControllerSuperclass from '../application/superclass/controller.superclas
 
 export default [
   {
+    isTeazwar: true,
     route: ['post', '/twitch/connected'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
       }
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/twitch/event'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
       }
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/twitch/join'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
       }
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/twitch/part'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
       }
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/twitch/chat'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, renders: r } = this

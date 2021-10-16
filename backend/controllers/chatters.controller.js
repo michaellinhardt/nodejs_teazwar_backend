@@ -3,8 +3,8 @@ import ControllerSuperclass from '../application/superclass/controller.superclas
 
 export default [
   {
+    isTeazwar: true,
     route: ['post', '/cron/chatters/listing'],
-    isPublic: false,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this
@@ -30,8 +30,8 @@ export default [
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/cron/chatters/validate'],
-    isPublic: false,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this
@@ -68,8 +68,8 @@ export default [
     },
   },
   {
+    isTeazwar: true,
     route: ['post', '/cron/chatters/bots'],
-    isPublic: false,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this

@@ -3,7 +3,7 @@ const Discord = require('discord.js')
 const _ = require('lodash')
 const { io } = require('socket.io-client')
 
-const { language, discord: { token, chatbot }, backend } = require('../config')
+const { language, discord: { token, chatbot }, backend, jwt: { teazwarToken } } = require('../config')
 const h = require('../helpers')
 
 let socket = null
@@ -25,11 +25,17 @@ const start = async () => {
     openSocket()
 }
 
-const testSocket = () => {
-    console.debug('emiit!', socket.id)
-    socket.emit('iam', {
-        name: 'discord',
+const emit = {
+    post: (path, data = {}) => socket.emit({
+        ...data,
+        jwtoken: teazwarToken,
+        method: 'post',
+        path,
     })
+}
+
+const logginSocket = () => {
+    emit.post('/socket/infra/connected', { infra_name: 'discord' })
 }
 
 const openSocket = () => {
@@ -41,7 +47,7 @@ const openSocket = () => {
             console.debug(`Received from: ${socket.id} [${eventName}]\n`, args[0])
         });
     
-        setTimeout(testSocket, 1000)
+        setTimeout(logginSocket, 100)
     });
     socket.on("disconnect", () => {  console.log('disconnected: ', socket.id) });
     socket.on("connect_error", () => { console.debug('connect error') });

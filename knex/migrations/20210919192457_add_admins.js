@@ -8,9 +8,7 @@ exports.up = function (knex) {
 
     table.string('user_uuid', 36).notNullable()
 
-    table.boolean('pause').defaultTo(false)
-    table.boolean('resume').defaultTo(false)
-    table.boolean('xppermin').defaultTo(false)
+    // table.boolean('pause').defaultTo(false)
 
   }).then(() => {
     const { admins } = require('../seeds')

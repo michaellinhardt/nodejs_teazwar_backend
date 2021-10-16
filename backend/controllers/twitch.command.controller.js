@@ -5,9 +5,8 @@ const { xp, vvs } = require('../../config')
 
 export default [
   {
+    isTeazwar: true,
     route: ['post', '/twitch/command/xp'],
-    isPublic: false,
-    isChannelAdmin: true,
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { renders: r, services: s } = this

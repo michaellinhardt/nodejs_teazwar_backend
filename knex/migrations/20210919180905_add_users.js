@@ -31,6 +31,8 @@ exports.up = function (knex) {
 
     table.integer('countFollow').defaultTo(0)
 
+    table.string('socket_id').defaultTo(null)
+
   }).then(() => {
     const { users } = require('../seeds')
     return knex(tableName).insert(users)

@@ -55,7 +55,7 @@ module.exports = {
   },
 
   runRoute: async (ControllersFlatten, body, requestType = 'script') => {
-    const { method, path } = body
+    const { method = '', path = '' } = body
 
     const flattenKey = `${method}${path}`
     const ctrl = ControllersFlatten[flattenKey]

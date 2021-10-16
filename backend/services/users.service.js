@@ -24,6 +24,10 @@ export default class extends ServiceSuperclass {
     return this.updAllWhereIn('username', chatter_list, { timestampOnlineUntill })
   }
 
+  async socketDisconnected (socket_id) {
+    return this.updAllWhere({ socket_id }, { socket_id: null })
+  }
+
   async getOneChatterNewFollower () {
     const { helpers: h } = this
 
