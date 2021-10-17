@@ -21,10 +21,13 @@ const onSocketMessage = (socket, payload) => {
 const listen_events = twitch => {
   twitch.on('chat', (channel, userstate, msg, self) =>
     backend('post', '/twitch/chat', { channel, userstate, msg, self }))
+
   twitch.on('connected', (address, port) =>
     backend('post', '/twitch/connected', { address, port }))
+
   twitch.on('join', (channel, username, self) =>
     backend('post', '/twitch/join', { channel, username, self }))
+
   twitch.on('part', (channel, username, self) =>
     backend('post', '/twitch/part', { channel, username, self }))
 }

@@ -9,7 +9,7 @@
     "cron": "NODE_ENV=development nodemon servers/cron.server.js --exec babel-node",
     "twitch": "NODE_ENV=development nodemon servers/twitch.server.js --exec babel-node",
     "discord": "NODE_ENV=development nodemon servers/discord.server.js --exec babel-node",
-    "lint": "./node_modules/eslint/bin/eslint.js ./",
+    "lint": "eslint ./",
     "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
     "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",
     "database:dev": "NODE_ENV=development babel-node scripts/run.js",
@@ -52,6 +52,8 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/register": "^7.15.3",
     "babel-eslint": "^10.1.0",
+    "escope": "^3.6.0",
+    "eslint-config-zavatta": "^6.0.3",
     "nodemon": "^2.0.13"
   },
   "optionalDependencies": {
