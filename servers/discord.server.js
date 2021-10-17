@@ -1,77 +1,39 @@
-import * as Promise from 'bluebird'
-const Discord = require('discord.js')
-const _ = require('lodash')
-const { io } = require('socket.io-client')
-
-const { language, discord: { token, chatbot }, backend, jwt: { teazwarToken } } = require('../config')
+const { render } = require('prettyjson')
 const h = require('../helpers')
+const emitter = h.sockets.getServerEmitter()
 
+let discord = null
+let say = null
 let socket = null
-const socketUrl = `${backend.uri}:${backend.socketPort}`
-const lang = language.default
+
+const backend = async (method, path, body = {}) => {
+    const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path, })
+    if (payload.emit) { emitter(...payload.emit) }
+    if (payload.say) { say(...payload.say) }
+}
+
+const onSocketMessage = (socket, payload = {}) => {
+    if (payload.emit) { emitter(...payload.emit) }
+    if (payload.say) { say(...payload.say) }
+    console.debug(`Received from: ${socket.id}\n`, render(payload))
+}
 
 const start = async () => {
-    // const intents = [Discord.Intents.FLAGS.GUILDS]
-    // const discord = new Discord.Client({ intents });
+    discord = h.discord.getDiscord()
+    await h.discord.connect(discord)
+    say = await h.discord.buildSay(discord)
 
-    // await connect(discord)
-    // await build_say(discord)
-    // await h.code.sleep(3000)
+    await say('server_welcome')
+    await say('game_welcome')
+    await say('stream_welcome')
+    await say('stats_welcome')
 
-    // await discord.say('debug_welcome')
-    // await discord.say('game_welcome')
-    // await discord.say('stream_welcome')
-
-    openSocket()
-}
-
-const emit = {
-    post: (path, data = {}) => socket.emit({
-        ...data,
-        jwtoken: teazwarToken,
-        method: 'post',
-        path,
+    socket = h.sockets.openInfraSocket('discord', {
+        onSocketConnect: (socket) => socket,
+        onSocketDisconnect: (socket) => socket,
+        onSocketError: (socket) => socket,
+        onSocketMessage,
+        backend,
     })
 }
-
-const logginSocket = () => {
-    emit.post('/socket/infra/connected', { infra_name: 'discord' })
-}
-
-const openSocket = () => {
-    socket = io(socketUrl)
-    socket.on("connect", () => { 
-        console.log('connected: ', socket.id)
-
-        socket.onAny((eventName, ...args) => {
-            console.debug(`Received from: ${socket.id} [${eventName}]\n`, args[0])
-        });
-    
-        setTimeout(logginSocket, 100)
-    });
-    socket.on("disconnect", () => {  console.log('disconnected: ', socket.id) });
-    socket.on("connect_error", () => { console.debug('connect error') });
-  }
-
-const connect = async discord => {
-    await h.code.sleep(100)
-    await discord.login(token)
-    await h.code.sleep(chatbot.sleepAfterConnect)
-}
-
-const build_say = async discord => {
-    await Promise.each(chatbot.channels, async channelArr => {
-        const [ name, id ] = channelArr
-        const channel = await discord.channels.cache.get(id)
-        discord[`_${name}`] = channel
-        discord[`_${name}`].say = (msg) => channel.send(msg)
-    }, { concurrency: 3 })
-
-    discord.say = (message_key, ...args) => {
-        const channel = (message_key.split('_'))[0]
-        const message = h.language.get(lang, 'discord', message_key, ...args)
-        discord[`_${channel}`].say(message)
-    }
-}
-
 start()

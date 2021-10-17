@@ -4,7 +4,7 @@ module.exports = {
     guildId: '879871370383724576',
 
     chatbot: {
-        sleepAfterConnect: 3000,
+        sleepAfterConnect: 1000,
         bearer: `Bearer ${require('../../knex/seeds').users[0].jwtoken}`,
 
         endpoint: '/discord',
@@ -14,9 +14,10 @@ module.exports = {
   
         pollingEvery: 1000,
         channels: [
-          [ 'debug', '890800617298206731' ],
+          [ 'server', '898775699312242728' ],
           [ 'game', '890397933663567932' ],
           [ 'stream', '893054188358074378' ],
+          [ 'stats', '898797507566534716' ],
         ],
       
     },

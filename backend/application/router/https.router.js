@@ -3,7 +3,7 @@ import requireDirectory from 'require-directory'
 import _ from 'lodash'
 
 import RendersHelper from '../../../helpers/files/renders.helper'
-import ControllersHelper from '../../../helpers/files/controllers.helper'
+import BackendHelper from '../../../helpers/files/backend.helper'
 
 module.exports = {
 
@@ -16,16 +16,13 @@ module.exports = {
       _.forEach(file.default, ctrl => {
 
         const [method, path] = ctrl.route
-        const routeParam = _.clone(ctrl)
-        delete routeParam.Controller
-
         router[method](path, async (req, res) => {
 
-          const body = ControllersHelper.prepareBodyFromHttp(req, path)
+            const body = BackendHelper.prepareBodyFromHttp(req, path)
 
-          try {
-            const controller = new ctrl.Controller('http', routeParam, body)
-            await controller.requestHandler()
+            try {
+
+            const controller = await BackendHelper.runRoute(body, 'http')
             RendersHelper.http.Ok(res, controller.payload)
 
           } catch (err) { RendersHelper.http.DetectError(res, err) }

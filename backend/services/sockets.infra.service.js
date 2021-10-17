@@ -17,4 +17,12 @@ export default class extends ServiceSuperclass {
   async disconnected (socket_id) {
     return this.updAllWhere({ socket_id }, { socket_id: null })
   }
+
+  async disconnectedByName (infra_name) {
+    return this.updAllWhere({ infra_name }, { socket_id: null })
+  }
+
+  async getByName (infra_name) {
+    return this.getFirstWhere({ infra_name })
+  }
 }
