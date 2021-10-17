@@ -1,7 +1,7 @@
 import superagent from 'superagent'
 import _ from 'lodash'
 
-const { twitch: { chatbot }, apis: { endpoints }  } = require('../../config')
+const { twitch: { chatbot }, apis: { endpoints } } = require('../../config')
 const endpoint = endpoints.twitch.chatters.replace('[channel]', chatbot.channel)
 
 export default {

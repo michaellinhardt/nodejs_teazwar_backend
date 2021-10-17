@@ -18,9 +18,9 @@ module.exports = {
         const [method, path] = ctrl.route
         router[method](path, async (req, res) => {
 
-            const body = BackendHelper.prepareBodyFromHttp(req, path)
+          const body = BackendHelper.prepareBodyFromHttp(req, path)
 
-            try {
+          try {
 
             const controller = await BackendHelper.runRoute(body, 'http')
             RendersHelper.http.Ok(res, controller.payload)

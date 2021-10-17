@@ -67,7 +67,7 @@ export default class {
     if (isSubscriber && (!d.user || d.user.isSubscriber !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noSub')
     }
-    
+
     if (isFollower && (!d.user || d.user.isFollower !== 'yes')) {
       await this.StopPipeline('priviliegeReq_noFollow')
     }
@@ -89,7 +89,7 @@ export default class {
 
     if (b.jwtoken) {
 
-      if (typeof(b.jwtoken) !== 'string' || !b.jwtoken.length) {
+      if (typeof (b.jwtoken) !== 'string' || !b.jwtoken.length) {
         await this.StopPipeline('jwtoken_missing')
       }
 

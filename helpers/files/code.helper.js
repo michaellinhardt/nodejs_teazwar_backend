@@ -29,7 +29,7 @@ module.exports = {
     && objectVar !== null
     && !(objectVar instanceof Date)),
 
-   sleep: ms => new Promise(resolve => { setTimeout(resolve, ms) }),
+  sleep: ms => new Promise(resolve => { setTimeout(resolve, ms) }),
 
 }
 

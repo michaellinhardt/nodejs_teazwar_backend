@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { runRoute, runRouteTeazwar } = require('../../../helpers/files/backend.helper')
 
 const onAny = async (socket, data = {}) => {
-  if (typeof(data) !== 'object' || Array.isArray(data)) {
+  if (typeof (data) !== 'object' || Array.isArray(data)) {
     return { error_key: 'socketRouter_dataFormat' }
   }
 
@@ -27,9 +27,9 @@ const onDisconnect = async (socket, reason) => {
 }
 
 module.exports = {
-  init: io => io.on("connection", (socket) => {
-    socket.on("disconnect", reason => onDisconnect(socket, reason))
+  init: io => io.on('connection', (socket) => {
+    socket.on('disconnect', reason => onDisconnect(socket, reason))
     socket.onAny((data = {}) => onAny(socket, data))
     console.debug('socket connection: ', socket.id)
-  } ),
+  }),
 }

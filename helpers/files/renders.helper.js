@@ -15,9 +15,9 @@ class AppError extends Error {
     } else if (this.status === 'http') {
       return renderObject.status(this.status).json(this.payload)
 
-    } else {
-      return console.debug('return error by script', this.payload)
     }
+    return console.debug('return error by script', this.payload)
+
   }
 }
 
@@ -25,13 +25,13 @@ module.exports = {
 
   http: {
     Ok: (res, data) => res.status(200).json(data),
-  
+
     StopPipeline: class extends AppError {
       constructor (error_key) {
         super(error_key, 400)
       }
     },
-  
+
     DetectError: (res, err) => {
       if (err instanceof AppError) { return err.render(res) }
       process.stdout.write('Internal Server Error\r\n')

@@ -3,7 +3,6 @@ const { language, twitch: { chatbot } } = require('../../config')
 
 chatbot.tmiOpts.channels = [chatbot.channel]
 
-
 module.exports = {
   getTwitch: () => {
     return new tmi.client(chatbot.tmiOpts)

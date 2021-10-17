@@ -11,7 +11,7 @@ const replacer = (message, ...args) => {
 
 const extractMessage = (lang, language_file, language_key) => {
   const message = _.get(language, `${lang}.${language_file}.${language_key}`, language_key)
-  return typeof(message) === 'object' && Array.isArray(message)
+  return typeof (message) === 'object' && Array.isArray(message)
     ? _.sample(message) : message
 }
 

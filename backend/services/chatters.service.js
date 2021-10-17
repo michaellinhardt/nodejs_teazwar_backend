@@ -31,7 +31,7 @@ export default class extends ServiceSuperclass {
     return this.updAllWhereIn('username', usernames, { timestampValidatedUntil })
   }
 
-  async addOrIncrement(chatter_list) {
+  async addOrIncrement (chatter_list) {
     const databaseChatters = await this.getAll()
 
     const chattersIncrement = []

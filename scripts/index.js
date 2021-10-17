@@ -107,7 +107,7 @@ const scripts = {
   jwtoken: async () => {
     const { generate } = require('../helpers/jwtoken.helper').default
     const jwtoken = await generate(process.argv[3])
-  }
+  },
 
 }
 

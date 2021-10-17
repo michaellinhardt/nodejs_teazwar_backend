@@ -13,12 +13,12 @@ exports.up = function (knex) {
 
   }).then(() => {
     const cronTasks = cron.tasks.map(c => ({
-        uuid: v1(),
-        path: c.path,
+      uuid: v1(),
+      path: c.path,
     }))
     cronTasks.unshift({
-        uuid: v1(),
-        path: 'twitch',
+      uuid: v1(),
+      path: 'twitch',
     })
     return knex(tableName).insert(cronTasks)
   })

@@ -7,7 +7,7 @@ let say = null
 let socket = null
 
 const backend = async (method, path, body = {}) => {
-  const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path, })
+  const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
   if (payload.emit) { emitter(...payload.emit) }
   if (payload.say) { say(...payload.say) }
 }

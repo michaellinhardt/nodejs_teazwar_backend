@@ -19,17 +19,17 @@ module.exports = {
   buildSay: async discord => {
     const getLanguage = require('../files/language.helper').get
     await Promise.each(chatbot.channels, async channelArr => {
-        const [ name, id ] = channelArr
-        const channel = await discord.channels.cache.get(id)
-        discord[`_${name}`] = channel
-        discord[`_${name}`].say = (msg) => channel.send(msg)
+      const [name, id] = channelArr
+      const channel = await discord.channels.cache.get(id)
+      discord[`_${name}`] = channel
+      discord[`_${name}`].say = (msg) => channel.send(msg)
     }, { concurrency: 3 })
 
     return (message_key, ...args) => {
-        const channel = (message_key.split('_'))[0]
-        const message = getLanguage(language.default, 'discord', message_key, ...args)
-        discord[`_${channel}`].say(message)
+      const channel = (message_key.split('_'))[0]
+      const message = getLanguage(language.default, 'discord', message_key, ...args)
+      discord[`_${channel}`].say(message)
     }
-},
+  },
 
 }

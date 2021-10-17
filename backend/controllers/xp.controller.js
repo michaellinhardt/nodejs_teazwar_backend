@@ -9,7 +9,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         try {
-  
+
           const requireLevelUp = await s.userXp.getRequireLevelUp()
 
           if (requireLevelUp.length === 0) {
@@ -38,7 +38,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         try {
-  
+
           const chatters = await s.chatters.getNextXpGain()
           const chattersFlatten = s.chatters.flattenChattersObject(chatters)
 

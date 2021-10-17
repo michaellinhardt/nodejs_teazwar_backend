@@ -1,3 +1,3 @@
 module.exports = {
-    bg: 'bg en',
+  bg: 'bg en',
 }

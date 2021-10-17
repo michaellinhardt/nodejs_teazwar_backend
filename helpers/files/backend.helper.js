@@ -31,7 +31,6 @@ const runRoute = async (body, requestType = 'script') => {
   const routeParam = _.clone(ctrl)
   delete routeParam.Controller
 
-
   const controller = new ctrl.Controller(requestType, routeParam, body)
 
   try {
@@ -39,7 +38,6 @@ const runRoute = async (body, requestType = 'script') => {
   } catch (err) { console.debug(err) }
 
   const payload = _.get(controller || {}, 'payload', { error_key: 'server_error' })
-
 
   console.debug(`\n=======[ ${body.method.toUpperCase()} ${body.path} ]=======`)
   delete body.jwtoken
@@ -84,7 +82,7 @@ module.exports = {
     const requestParam = _.get(req, 'params', {})
     const requestBody = _.get(req, 'body', {})
 
-    const jwtoken = _.get(req, `headers['x-access-token']`, undefined)
+    const jwtoken = _.get(req, 'headers[\'x-access-token\']', undefined)
 
     const body = {
       ...requestParam,

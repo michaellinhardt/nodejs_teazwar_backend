@@ -3,10 +3,10 @@ const { io } = require('socket.io-client')
 const { backend, jwt: { teazwarToken } } = require('../../config')
 const socketUrl = `${backend.uri}:${backend.socketPort}`
 
-const { Server } = require("socket.io")
-const { createAdapter } = require("@socket.io/redis-adapter")
-const { Emitter } = require("@socket.io/redis-emitter")
-const { createClient } = require("redis")
+const { Server } = require('socket.io')
+const { createAdapter } = require('@socket.io/redis-adapter')
+const { Emitter } = require('@socket.io/redis-emitter')
+const { createClient } = require('redis')
 
 module.exports = {
   getSocket: () => io(socketUrl),
@@ -17,9 +17,9 @@ module.exports = {
   },
 
   getServerEmitter: () => {
-    const redisClient = createClient({ host: "localhost", port: 6379 })
+    const redisClient = createClient({ host: 'localhost', port: 6379 })
     const emitter = new Emitter(redisClient)
-    
+
     return (socket_id, ...args) => emitter.to(socket_id).emit(...args)
   },
 
@@ -27,7 +27,7 @@ module.exports = {
 
   startSocketServer: io => {
     const pubClient = createClient({
-      host: "localhost",
+      host: 'localhost',
       port: 6379,
     })
     const subClient = pubClient.duplicate()
@@ -52,6 +52,6 @@ module.exports = {
       methods.onSocketError(socket)
     })
     return socket
-  }
+  },
 
 }

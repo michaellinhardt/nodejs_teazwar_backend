@@ -34,7 +34,7 @@ export default class extends ServiceSuperclass {
       .orderBy('id', 'ask')
 
     const twitchTask = tasks.shift()
-    
+
     const mergedTasks = []
     _.forEach(cron.tasks, c => {
       const isTask = tasks.find(t => t.path === c.path)
@@ -42,7 +42,7 @@ export default class extends ServiceSuperclass {
       if (isTask) {
         mergedTasks.push({
           ...c,
-          timestampNext: isTask.timestampNext
+          timestampNext: isTask.timestampNext,
         })
       }
     })
@@ -57,16 +57,16 @@ export default class extends ServiceSuperclass {
   getNextTask (currTimestamp, cron) {
     let selectedTaskId = -1
     _.forEach(cron.tasks, (task, taskId) => {
-        const isLock = task.isTwitchApi && cron.twitchApiNext > currTimestamp
-        const isEnabled = _.get(task, 'isEnabled', true)
-        if (isEnabled && !isLock
+      const isLock = task.isTwitchApi && cron.twitchApiNext > currTimestamp
+      const isEnabled = _.get(task, 'isEnabled', true)
+      if (isEnabled && !isLock
             && task.timestampNext <= currTimestamp
             && selectedTaskId === -1) {
-              selectedTaskId = taskId
-              return false
-        }
+        selectedTaskId = taskId
+        return false
+      }
     })
     return selectedTaskId === -1 ? false : cron.tasks[selectedTaskId]
-}
+  }
 
 }

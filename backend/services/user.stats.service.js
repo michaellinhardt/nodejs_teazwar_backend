@@ -24,7 +24,7 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  async incrementChatStats(user, msg) {
+  async incrementChatStats (user, msg) {
     const total_lines = user.total_lines + 1
     const total_chars = user.total_chars + msg.length
     const chars_per_line = Math.floor(total_chars / total_lines)
@@ -39,7 +39,7 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ user_uuid: user.uuid }, updateStats)
   }
 
-  async incrementSeenStats(users, chatters) {
+  async incrementSeenStats (users, chatters) {
 
     await Promise.each(users, async user => {
       const count_seen = _.get(chatters, `${user.username}.count_seen`, 0)

@@ -10,7 +10,7 @@ exports.up = function (knex) {
 
     table.string('user_id').notNullable()
     table.boolean('turbo').defaultTo(false)
-    
+
     table.string('username').defaultTo('')
     table.string('display_name').defaultTo('')
     table.text('type')

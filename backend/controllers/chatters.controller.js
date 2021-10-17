@@ -9,15 +9,15 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         try {
-  
+
           const chatters = await a.chatters.get()
 
           const chatter_list = s.chatters.getChattersFromTwitch(chatters)
-  
+
           await s.chatters.addOrIncrement(chatter_list)
 
           await s.users.setOnline(chatter_list)
-          
+
           this.payload = p.cron.success()
           return true
 
@@ -36,7 +36,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         try {
-  
+
           const chatters = await s.chatters.getNextValidateList()
 
           if (chatters.length === 0) {
@@ -74,7 +74,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         try {
-  
+
           const botsList = await a.bots.list()
 
           const taggedBots = await s.users.tagBots(botsList)

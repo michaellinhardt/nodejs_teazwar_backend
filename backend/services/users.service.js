@@ -165,10 +165,10 @@ export default class extends ServiceSuperclass {
     if (adds.length) {
       added = await this.addArray(adds)
     }
-    
+
     if (updates.length) {
       await Promise.each(updates, async user => {
-        await this.updAllWhere({user_id: user.user_id}, user)
+        await this.updAllWhere({ user_id: user.user_id }, user)
       }, { concurrency: 3 })
     }
 
