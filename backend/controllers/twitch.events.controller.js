@@ -6,17 +6,12 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/connected'],
     Controller: class extends ControllerSuperclass {
-      handler () {
-        this.payload = {}
-      }
-    },
-  },
-  {
-    isTeazwar: true,
-    route: ['post', '/twitch/event'],
-    Controller: class extends ControllerSuperclass {
-      handler () {
-        this.payload = {}
+      async handler () {
+        const { services: s } = this
+        const { address, port } = this.body
+        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+        this.payload.emit = [discord_socket_id,
+          { say: ['server_twitchbot_twitchConnected', address, port] }]
       }
     },
   },
@@ -24,8 +19,13 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/join'],
     Controller: class extends ControllerSuperclass {
-      handler () {
-        this.payload = {}
+      async handler () {
+        const { services: s } = this
+        const { channel, username, self } = this.body
+        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+        const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
+        this.payload.emit = [discord_socket_id,
+          { say: [event, channel, username] }]
       }
     },
   },
@@ -33,8 +33,13 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/part'],
     Controller: class extends ControllerSuperclass {
-      handler () {
-        this.payload = {}
+      async handler () {
+        const { services: s } = this
+        const { channel, username, self } = this.body
+        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+        const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
+        this.payload.emit = [discord_socket_id,
+          { say: [event, channel, username] }]
       }
     },
   },

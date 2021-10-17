@@ -1,4 +1,5 @@
 module.exports = {
+  code: 'ZPSZd4UJHby64JaSS4nhqqw9Sqfq7s', // ??
   token: 'ODkwMzk4NTA4NTI2NDg5Njcw.YUvOOw.6fwHa3FYSqoReOwBDpHZxN9Me3g',
   clientId: '890398508526489670',
   guildId: '879871370383724576',
@@ -18,6 +19,7 @@ module.exports = {
       ['game', '890397933663567932'],
       ['stream', '893054188358074378'],
       ['stats', '898797507566534716'],
+      ['bienvenue', '899154241292214313'],
     ],
 
   },

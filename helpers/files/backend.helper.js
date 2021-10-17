@@ -44,10 +44,22 @@ const runRoute = async (body, requestType = 'script') => {
   delete body.jwtoken
   delete body.method
   delete body.path
-  console.debug(prettyjson.render(body))
 
+  const interaction = _.get(body, 'interaction', undefined)
+  delete body.interaction
+  delete payload.interaction
+  if (interaction) {
+    body.interaction = '{object}'
+    payload.interaction = '{object}'
+  }
+  console.debug(prettyjson.render(body))
   if (_.isEmpty(payload)) { payload.payload = 'NO PAYLOAD' }
   console.debug('->\n', prettyjson.render(payload || { payload: 'none' }))
+
+  if (interaction) {
+    body.interaction = interaction
+    payload.interaction = interaction
+  }
 
   return controller
 

@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const uuid = require('uuid').v1
 
 const firstCharUpper = string => {
@@ -31,5 +32,14 @@ module.exports = {
       result += characters.charAt(Math.floor(Math.random() * characters.length))
     }
     return result
+  },
+
+  generateOtp: arrayArrays => {
+    let otp = ''
+    _.forEach(arrayArrays, arrayWords => {
+      const word = arrayWords[Math.floor(Math.random() * arrayWords.length)]
+      otp = `${otp}${word}`
+    })
+    return otp.trim()
   },
 }

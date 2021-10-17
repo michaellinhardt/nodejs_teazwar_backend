@@ -46,8 +46,8 @@ module.exports = {
       methods.backend('post', '/socket/disconnected', { infra_name, socket_id: socket.id, reason })
       methods.onSocketDisconnect(socket)
     })
-    socket.on('connect_error', reason => {
-      console.log('Infra Socket Error: ', reason)
+    socket.on('connect_error', () => {
+      console.log('Infra Socket Connection Error')
       methods.onSocketError(socket)
     })
     return socket
