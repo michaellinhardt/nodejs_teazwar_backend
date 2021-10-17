@@ -6,7 +6,8 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/connected'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
+        this.payload = {}
       }
     },
   },
@@ -14,7 +15,8 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/event'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
+        this.payload = {}
       }
     },
   },
@@ -22,7 +24,8 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/join'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
+        this.payload = {}
       }
     },
   },
@@ -30,7 +33,8 @@ export default [
     isTeazwar: true,
     route: ['post', '/twitch/part'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
+        this.payload = {}
       }
     },
   },
@@ -39,7 +43,7 @@ export default [
     route: ['post', '/twitch/chat'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, renders: r } = this
+        const { services: s } = this
         const { twitchData = {} } = this.req.body
 
         const user_id = _.get(twitchData, 'userstate[\'user-id\']', null)

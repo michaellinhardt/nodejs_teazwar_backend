@@ -60,7 +60,7 @@ export default class extends ServiceSuperclass {
     }, { concurrency: 3 })
   }
 
-  async getRequireLevelUp () {
+  getRequireLevelUp () {
     const where = { isDeleted: false }
     return this.knex()
       .where(where)

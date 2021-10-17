@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import PayloadSuperclass from '../application/superclass/payload.superclass'
 
 const payloadHeader = 'cron'

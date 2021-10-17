@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import ControllerSuperclass from '../application/superclass/controller.superclass'
 
 export default [
@@ -7,7 +6,7 @@ export default [
     route: ['post', '/cron/xp/levelup'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p, apis: a } = this
+        const { services: s, payloads: p } = this
         try {
 
           const requireLevelUp = await s.userXp.getRequireLevelUp()
@@ -19,7 +18,8 @@ export default [
 
           await s.userXp.increaseLevel(requireLevelUp)
 
-          // await s.eventsGlobal.addEventForDiscord('chatters_level_up', { chatters_level_up: requireLevelUp.length })
+          // await s.eventsGlobal.addEventForDiscord(
+          // 'chatters_level_up', { chatters_level_up: requireLevelUp.length })
 
           this.payload = p.cron.success()
 
@@ -36,7 +36,7 @@ export default [
     route: ['post', '/cron/chatters/xpgain'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p, apis: a } = this
+        const { services: s, payloads: p } = this
         try {
 
           const chatters = await s.chatters.getNextXpGain()

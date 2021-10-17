@@ -15,7 +15,7 @@ const backend = async (method, path, body = {}) => {
 const onSocketMessage = (socket, payload) => {
   if (payload.emit) { emitter(...payload.emit) }
   if (payload.say) { say(...payload.say) }
-  console.debug(`Received from: ${socket.id}\n`, render(payload))
+  console.log(`Received from: ${socket.id}\n`, render(payload))
 }
 
 const listen_events = twitch => {
@@ -47,6 +47,8 @@ const start = async () => {
     onSocketMessage,
     backend,
   })
+
+  return socket
 }
 
 start()

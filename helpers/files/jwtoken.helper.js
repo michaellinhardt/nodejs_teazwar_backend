@@ -1,6 +1,5 @@
 const jsonwebtoken = require('jsonwebtoken')
 const uuid = require('uuid').v1
-const Renders = require('./renders.helper')
 
 const jwt = require('../../config/files/jwt.config')
 

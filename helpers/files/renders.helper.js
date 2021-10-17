@@ -2,6 +2,7 @@ class AppError extends Error {
   constructor (error_key, status = 500) {
     super('Server Error')
     this.constructor = AppError
+    // eslint-disable-next-line no-proto
     this.__proto__ = AppError.prototype
     this.name = this.constructor.name
     Error.captureStackTrace(this, this.constructor)

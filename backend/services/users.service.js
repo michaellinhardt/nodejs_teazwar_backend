@@ -14,17 +14,17 @@ export default class extends ServiceSuperclass {
     return this.getFirstWhere({ username: twitch.chatbot.channel })
   }
 
-  async getByUsernames (usernames) {
+  getByUsernames (usernames) {
     return this.getAllFirstWhereIn('username', usernames)
   }
 
-  async setOnline (chatter_list) {
+  setOnline (chatter_list) {
     const { helpers: h } = this
     const timestampOnlineUntill = h.date.timestamp() + cron.viewerOnlineUntill
     return this.updAllWhereIn('username', chatter_list, { timestampOnlineUntill })
   }
 
-  async socketDisconnected (socket_id) {
+  socketDisconnected (socket_id) {
     return this.updAllWhere({ socket_id }, { socket_id: null })
   }
 
@@ -80,7 +80,7 @@ export default class extends ServiceSuperclass {
     return nextUnFollowCheck
   }
 
-  async updateFollowing (user, isFollowing) {
+  updateFollowing (user, isFollowing) {
     const { helpers: h } = this
     const currTimestamp = h.date.timestamp()
 
@@ -90,9 +90,12 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ uuid: user.uuid }, {
       isFollower,
       countFollow,
-      timestampUnFollowerCheck: currTimestamp + (cron.chattersUnFollowerControlEvery * isBotMultiplier),
-      timestampNewFollowerCheck: currTimestamp + (cron.chattersNewFollowerControlEvery * isBotMultiplier),
-      timestampFollowingCheck: currTimestamp + (cron.globalFollowingControlEvery * isBotMultiplier),
+      timestampUnFollowerCheck: currTimestamp
+        + (cron.chattersUnFollowerControlEvery * isBotMultiplier),
+      timestampNewFollowerCheck: currTimestamp
+        + (cron.chattersNewFollowerControlEvery * isBotMultiplier),
+      timestampFollowingCheck: currTimestamp
+        + (cron.globalFollowingControlEvery * isBotMultiplier),
     })
   }
 

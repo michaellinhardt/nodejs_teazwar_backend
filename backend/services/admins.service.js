@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'admins'

@@ -24,6 +24,7 @@ const onDisconnect = async (socket, reason) => {
   }
 
   const { payload } = await runRouteTeazwar(data)
+  return payload
 }
 
 module.exports = {

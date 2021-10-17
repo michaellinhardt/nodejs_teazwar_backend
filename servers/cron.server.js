@@ -8,7 +8,7 @@ const executeNextTask = async () => {
 
   if (!cronRouter.task) {
     // console.debug('NEXT TASK IN ->', cronRouter.sleep)
-    await h.code.sleep(cronRouter.sleep * 1000 - 600)
+    await h.code.sleep((cronRouter.sleep * 1000) - 600)
     return false
   }
 

@@ -6,13 +6,13 @@ export default [
     isTeazwar: true,
     route: ['post', '/socket/infra/connected'],
     Controller: class extends ControllerSuperclass {
-      async validator () {
-        const { body: { infra_name, socket_id }, services: s } = this
+      validator () {
+        const { body: { infra_name, socket_id } } = this
         if (!infra_name || (infra_name !== 'discord' && infra_name !== 'twitch')) {
-          await this.StopPipeline('socketConnected_invalidInfraName')
+          this.StopPipeline('socketConnected_invalidInfraName')
         }
         if (!socket_id || _.isEmpty(socket_id)) {
-          await this.StopPipeline('socketConnected_missingId')
+          this.StopPipeline('socketConnected_missingId')
         }
       }
 
@@ -21,9 +21,12 @@ export default [
         await s.socketsInfra.connected(infra_name, socket_id)
         this.payload = { success: true }
 
+        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+
         if (infra_name === 'twitch') {
-          const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
           this.payload.emit = [discord_socket_id, { say: ['server_twitchbot_socketConnected'] }]
+        } else if (infra_name === 'discord') {
+          this.payload.say = ['server_discordbot_socketConnected']
         }
       }
     },
@@ -32,14 +35,14 @@ export default [
     isTeazwar: true,
     route: ['post', '/socket/disconnected'],
     Controller: class extends ControllerSuperclass {
-      async validator () {
-        const { body: { socket_id, infra_name }, services: s } = this
+      validator () {
+        const { body: { socket_id, infra_name } } = this
         if ((!socket_id || _.isEmpty(socket_id))
         && (!infra_name || _.isEmpty(infra_name))) {
-          await this.StopPipeline('socketDisconnected_missingData')
+          this.StopPipeline('socketDisconnected_missingData')
         }
         if (infra_name && infra_name !== 'discord' && infra_name !== 'twitch') {
-          await this.StopPipeline('socketDisconnected_invalidInfraName')
+          this.StopPipeline('socketDisconnected_invalidInfraName')
         }
       }
 

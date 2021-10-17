@@ -24,7 +24,7 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  async incrementChatStats (user, msg) {
+  incrementChatStats (user, msg) {
     const total_lines = user.total_lines + 1
     const total_chars = user.total_chars + msg.length
     const chars_per_line = Math.floor(total_chars / total_lines)

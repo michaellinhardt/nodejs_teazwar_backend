@@ -5,7 +5,7 @@ export default [
     route: ['get', '/aaaEmtpy'],
     isPublic: true,
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
         const { data: d, body: b } = this
         // const { user } = d
 
@@ -17,7 +17,7 @@ export default [
     route: ['get', '/aaaEmtpy/:ok'],
     isPublic: true,
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
         const { data: d, body: b } = this
         // const { user } = d
 

@@ -5,4 +5,6 @@ module.exports = {
   stats_welcome: '[discord.bot] hello stats',
 
   server_twitchbot_socketConnected: '[twitch.bot] socket connected to backend',
+
+  server_discordbot_socketConnected: '[discord.bot] socket connected to backend',
 }

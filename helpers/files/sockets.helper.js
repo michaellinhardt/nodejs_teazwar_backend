@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { io } = require('socket.io-client')
 const { backend, jwt: { teazwarToken } } = require('../../config')
 const socketUrl = `${backend.uri}:${backend.socketPort}`

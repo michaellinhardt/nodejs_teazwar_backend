@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import ControllerSuperclass from '../application/superclass/controller.superclass'
 
 export default [

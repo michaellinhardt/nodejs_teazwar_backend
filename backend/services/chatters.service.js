@@ -24,7 +24,7 @@ export default class extends ServiceSuperclass {
       .concat(_.get(chatters, 'chatters.viewers', []))
   }
 
-  async setUsersAsValidated (users) {
+  setUsersAsValidated (users) {
     const currTimestamp = this.helpers.date.timestamp()
     const timestampValidatedUntil = currTimestamp + cron.chatterValidatedUntill
     const usernames = users.map(u => u.username)
@@ -40,7 +40,9 @@ export default class extends ServiceSuperclass {
     _.forEach(chatter_list, username => {
       const formatedUsername = username.toLowerCase()
       const isChatters = databaseChatters.find(c => c.username === formatedUsername)
-      return isChatters ? chattersIncrement.push(formatedUsername) : chattersAdd.push({ username: formatedUsername })
+      return isChatters
+        ? chattersIncrement.push(formatedUsername)
+        : chattersAdd.push({ username: formatedUsername })
     })
 
     if (chattersAdd.length > 0) {
@@ -52,7 +54,7 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  async getNextValidateList () {
+  getNextValidateList () {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .where({ isDeleted: false })
@@ -62,7 +64,7 @@ export default class extends ServiceSuperclass {
       .limit(twitch.usersPerPage)
   }
 
-  async getNextXpGain () {
+  getNextXpGain () {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .where({ isDeleted: false })
@@ -80,7 +82,7 @@ export default class extends ServiceSuperclass {
     return chattersFlatten
   }
 
-  async resetByUsernames (usernames) {
+  resetByUsernames (usernames) {
     return this.updAllWhereIn('username', usernames, { count_seen: 0 })
   }
 

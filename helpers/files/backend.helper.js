@@ -6,7 +6,8 @@ let ControllersFlatten = null
 const getFlattenControllers = () => {
   if (!ControllersFlatten) {
     const { importDefaultByFilename } = require('./imports.helper')
-    const Controllers = importDefaultByFilename(`${__dirname}/../../backend/controllers`, '.controller')
+    const Controllers = importDefaultByFilename(
+      `${__dirname}/../../backend/controllers`, '.controller')
     ControllersFlatten = {}
     _.forEach(Controllers, ctrlArray => {
       _.forEach(ctrlArray, route => {

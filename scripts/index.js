@@ -104,9 +104,9 @@ const scripts = {
 
   ls: () => exec_shell('ls -la'),
 
-  jwtoken: async () => {
+  jwtoken: () => {
     const { generate } = require('../helpers/jwtoken.helper').default
-    const jwtoken = await generate(process.argv[3])
+    return generate(process.argv[3])
   },
 
 }

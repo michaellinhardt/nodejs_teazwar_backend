@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import ControllerSuperclass from '../application/superclass/controller.superclass'
 
 export default [
@@ -23,7 +22,7 @@ export default [
           if (user.isFollower === 'maybe'
             || (user.isFollower === 'no' && isFollowing.length)
             || (user.isFollower === 'yes' && !isFollowing.length)) {
-            const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+            // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
             // await s.eventsGlobal.addEvent('global_following_change', {
             //   countFollow,
             //   username: user.username,
@@ -64,7 +63,7 @@ export default [
           if (user.isFollower === 'maybe'
             || (user.isFollower === 'no' && isFollowing.length)
             || (user.isFollower === 'yes' && !isFollowing.length)) {
-            const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+            // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
             // await s.eventsGlobal.addEvent('chatters_un_follower', {
             //   countFollow,
             //   username: user.username,
@@ -105,7 +104,7 @@ export default [
           if (user.isFollower === 'maybe'
             || (user.isFollower === 'no' && isFollowing.length)
             || (user.isFollower === 'yes' && !isFollowing.length)) {
-            const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+            // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
             // await s.eventsGlobal.addEvent('chatters_new_follower', {
             //   countFollow,
             //   username: user.username,

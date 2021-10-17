@@ -35,5 +35,7 @@ const start = async () => {
     onSocketMessage,
     backend,
   })
+
+  return socket
 }
 start()

@@ -6,13 +6,13 @@ module.exports = {
   twitchApiNext: 0,
 
   viewerOnlineUntill: 60 * 2,
-  chatterValidatedUntill: 60 * 3, // after validating a chatters nickname with twitch api, we dont make it again until..
+  chatterValidatedUntill: 60 * 3, // validate chatters once every..
 
   chattersUnFollowerControlEvery: 60 * 60 * 24,
   chattersNewFollowerControlEvery: 60 * 5,
   globalFollowingControlEvery: 60 * 60 * 24 * 7,
 
-  followingBotsMultiplier: 5, // each timer for bot user is multiplied by this value, so bot are verified less often
+  followingBotsMultiplier: 5, // follow verification timers for bots is increase by xTimes
 
   tasks: [{
     path: '/chatters/listing',

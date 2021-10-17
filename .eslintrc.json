@@ -1,8 +1,16 @@
 {
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
     "extends": [
       "zavatta"
     ],
     "rules": {
+      "no-inline-comments": "off",
+      "no-console": "off",
+      "id-length": "off",
       "indent": [
         "error",
         2
