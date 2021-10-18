@@ -8,12 +8,22 @@ const { Routes: { applicationGuildCommands } } = require('discord-api-types/v9')
 const { language, discord: { token, guildId, clientId, chatbot } } = require('../../config')
 const getLanguage = require('../files/language.helper').get
 
+const getLang = (message_key, ...args) =>
+  getLanguage(language.default, 'discord', message_key, ...args)
+
+const getChannelByName = (discord, name) => {
+  const channelId = (chatbot.channels.find(c => c[0] === name))[1]
+  return discord.channels.cache.get(channelId)
+}
+
 module.exports = {
 
   getDiscord: () => {
     const intents = [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES]
     return new Discord.Client({ intents })
   },
+
+  getGuild: (discord) => discord.guilds.cache.get(guildId),
 
   connect: async discord => {
     const sleep = require('../files/code.helper').sleep
@@ -32,13 +42,13 @@ module.exports = {
 
     return (message_key, ...args) => {
       const channel = (message_key.split('_'))[0]
-      const message = getLanguage(language.default, 'discord', message_key, ...args)
+      const message = getLang(message_key, ...args)
       discord[`_${channel}`].say(message)
     }
   },
 
   replyInteraction: (index = 0, interaction, ephemeral, message_key, ...args) => {
-    const content = getLanguage(language.default, 'discord', message_key, ...args)
+    const content = getLang(message_key, ...args)
     const method = index === 0 ? 'reply' : 'followUp'
     interaction[method]({ content, ephemeral })
   },
@@ -65,12 +75,27 @@ module.exports = {
       const command_name = commandName.toLowerCase()
       if (!commands[command_name]) { return }
 
-      const body = { interaction }
+      const body = { big_data: { interaction } }
 
       return backend('post', `/discord/command/${command_name}`, body)
     })
   },
 
-  onDiscordMessage: (discord, callback) => discord.on('messageCreate', callback),
+  getLang,
+
+  addToCommandsObject: (commands, name) => {
+    commands[name] = getLang(`command_description_${name}`)
+  },
+
+  onDiscordMessage: (discord, backend) => discord.on('messageCreate', message => {
+    backend('post', '/discord/message', { big_data: { message } })
+  }),
+
+  getChannelByName,
+
+  getChannelLastMessagesByName: (discord, name, limit) => {
+    const channel = getChannelByName(discord, name)
+    return channel.messages.fetch({ limit })
+  },
 
 }

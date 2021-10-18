@@ -6,5 +6,6 @@ module.exports = {
       chatters: 'https://tmi.twitch.tv/group/user/[channel]/chatters',
     },
     twitchinsights: 'https://api.twitchinsights.net/v1/bots/all',
+    discord: 'https://discord.com/api/v9',
   },
 }

@@ -6,16 +6,19 @@ export default [
     route: ['post', '/discord/command/verifier'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, helpers: h, body: { interaction } } = this
+        const { services: s, helpers: h, body: { big_data } } = this
+        const { interaction } = big_data
+
         const default_lang = this.config.language.default
         const discordVerifyArrays = this.lang[default_lang].discord.verify_otp
         const otp = h.string.generateOtp(discordVerifyArrays)
+
         await s.discords.updateOrCreateOtp(interaction.user, otp)
+
         this.payload = {
-          say: ['server_discordbot_verifying', interaction.user.id],
+          say: ['server_discordbot_verifying', interaction.member.id],
           reply: [
-            ['command_verify_otp_1'],
-            ['command_verify_otp_2', otp],
+            ['command_verify_otp', otp],
           ],
           ephemeral: true,
         }

@@ -7,16 +7,20 @@ exports.up = function (knex) {
     createTableDefaultSetup(knex, table)
 
     table.string('discord_id').notNullable()
-    table.string('username').notNullable()
-    table.string('discriminator').notNullable()
+
+    table.string('discord_username').notNullable()
+    table.string('discord_discriminator').notNullable()
 
     table.string('language')
 
     table.boolean('isBot')
     table.boolean('isSystem')
 
-    table.text('verify_otp')
-    table.integer('verify_timestamp').defaultTo(0)
+    table.string('verify_otp').defaultTo(null)
+    table.biginteger('verify_expire_timestamp').defaultTo(0)
+    table.biginteger('verify_timestamp').defaultTo(0)
+
+    table.biginteger('joinedTimestamp').defaultTo(0)
 
   })
 }

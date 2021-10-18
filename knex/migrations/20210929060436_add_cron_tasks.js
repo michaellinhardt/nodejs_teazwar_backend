@@ -9,7 +9,7 @@ exports.up = function (knex) {
     createTableDefaultSetup(knex, table)
 
     table.string('path').notNullable()
-    table.integer('timestampNext').defaultTo(0)
+    table.biginteger('timestampNext').defaultTo(0)
 
   }).then(() => {
     const cronTasks = cron.tasks.map(c => ({

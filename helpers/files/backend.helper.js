@@ -45,20 +45,19 @@ const runRoute = async (body, requestType = 'script') => {
   delete body.method
   delete body.path
 
-  const interaction = _.get(body, 'interaction', undefined)
-  delete body.interaction
-  delete payload.interaction
-  if (interaction) {
-    body.interaction = '{object}'
-    payload.interaction = '{object}'
+  const big_data = _.get(body, 'big_data', undefined)
+  delete body.big_data
+  delete payload.big_data
+  if (big_data && big_data.message) {
+    _.set(body, 'big_data.msg', big_data.message.content)
+    _.set(body, 'big_data.author', big_data.message.author.username)
   }
   console.debug(prettyjson.render(body))
-  if (_.isEmpty(payload)) { payload.payload = 'NO PAYLOAD' }
-  console.debug('->\n', prettyjson.render(payload || { payload: 'none' }))
+  console.debug('->\n', prettyjson.render(payload))
 
-  if (interaction) {
-    body.interaction = interaction
-    payload.interaction = interaction
+  if (big_data) {
+    body.big_data = big_data
+    payload.big_data = big_data
   }
 
   return controller

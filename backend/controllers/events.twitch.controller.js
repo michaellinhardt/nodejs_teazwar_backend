@@ -48,16 +48,15 @@ export default [
     route: ['post', '/twitch/chat'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s } = this
-        const { twitchData = {} } = this.req.body
+        const { services: s, body: b } = this
 
-        const user_id = _.get(twitchData, 'userstate[\'user-id\']', null)
+        const user_id = _.get(b.twitchData, 'userstate[\'user-id\']', null)
         if (!user_id) { return true }
 
         const user = await s.users.getByUserId(user_id)
         if (!user) { return true }
 
-        await s.userStats.incrementChatStats(user, twitchData.msg)
+        await s.userStats.incrementChatStats(user, b.twitchData.msg)
       }
     },
   },

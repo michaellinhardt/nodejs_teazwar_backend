@@ -24,14 +24,15 @@ exports.up = function (knex) {
     table.enu('isSubscriber', ['maybe', 'no', 'yes']).notNullable().defaultTo('maybe')
     table.enu('isBot', ['maybe', 'no', 'yes']).notNullable().defaultTo('maybe')
 
-    table.integer('timestampOnlineUntill').defaultTo(0)
-    table.integer('timestampUnFollowerCheck').defaultTo(0)
-    table.integer('timestampNewFollowerCheck').defaultTo(0)
-    table.integer('timestampFollowingCheck').defaultTo(0)
+    table.biginteger('timestampOnlineUntill').defaultTo(0)
+    table.biginteger('timestampUnFollowerCheck').defaultTo(0)
+    table.biginteger('timestampNewFollowerCheck').defaultTo(0)
+    table.biginteger('timestampFollowingCheck').defaultTo(0)
 
     table.integer('countFollow').defaultTo(0)
 
     table.string('socket_id').defaultTo(null)
+    table.string('discord_id').defaultTo(null)
 
   }).then(() => {
     const { users } = require('../seeds')

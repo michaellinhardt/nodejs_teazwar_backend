@@ -9,7 +9,7 @@ exports.up = function (knex) {
     table.string('username').defaultTo('')
     table.integer('count_seen').defaultTo(1)
 
-    table.integer('timestampValidatedUntil').defaultTo(0)
+    table.biginteger('timestampValidatedUntil').defaultTo(0)
 
   }).then(() => {
     // const { chatters } = require('../seeds')

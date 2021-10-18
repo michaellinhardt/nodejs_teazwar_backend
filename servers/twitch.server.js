@@ -1,4 +1,3 @@
-const { render } = require('prettyjson')
 const h = require('../helpers')
 const emitter = h.sockets.getServerEmitter()
 
@@ -6,21 +5,27 @@ let twitch = null
 let say = null
 let socket = null
 
+const executePayload = payload => {
+  if (!payload || typeof (payload) !== 'object') { return true }
+  if (payload.emit) { emitter(...payload.emit) }
+  if (payload.say) { say(...payload.say) }
+}
+
 const backend = async (method, path, body = {}) => {
   const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
-  if (payload.emit) { emitter(...payload.emit) }
-  if (payload.say) { say(...payload.say) }
+  executePayload(payload)
 }
 
-const onSocketMessage = (socket, payload) => {
-  if (payload.emit) { emitter(...payload.emit) }
-  if (payload.say) { say(...payload.say) }
-  console.log(`Received from: ${socket.id}\n`, render(payload))
-}
+const onSocketMessage = (socket, payload) => executePayload(payload)
 
 const listen_events = twitch => {
-  twitch.on('chat', (channel, userstate, msg, self) =>
-    backend('post', '/twitch/chat', { channel, userstate, msg, self }))
+  twitch.on('chat', (channel, userstate, msg, self) => {
+    const isCommand = msg.startsWith('!')
+    const body = { channel, userstate, msg, self }
+    if (isCommand) { body.command = ((msg.split(' '))[0]).replace('!', '').toLowerCase() }
+    const link = isCommand ? `/twitch/command/${body.command}` : '/twitch/chat'
+    backend('post', link, body)
+  })
 
   twitch.on('connected', (address, port) =>
     backend('post', '/twitch/connected', { address, port }))

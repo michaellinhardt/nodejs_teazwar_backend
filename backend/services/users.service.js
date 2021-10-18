@@ -117,13 +117,19 @@ export default class extends ServiceSuperclass {
     return botUsers
   }
 
+  setDiscordIds (user, discord) {
+    return this.updAllWhere({ uuid: user.uuid },
+      { discord_id: discord.discord_id, guild_id: discord.guild_id })
+  }
+
   async getByUserId (user_id) {
     const user = await this.knex()
       .select('*')
       .where('users.isDeleted', false)
       .andWhere('users.user_id', user_id)
-      .join('user_chat', 'users.uuid', '=', 'user_chat.user_uuid')
       .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
+      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
+      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
       .first()
     if (user) { user.uuid = user.user_uuid }
     return user

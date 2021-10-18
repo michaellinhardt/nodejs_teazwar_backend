@@ -16,7 +16,7 @@ exports.up = function (knex) {
     table.integer('total_seen_follower').defaultTo(0)
     table.integer('total_seen_subscriber').defaultTo(0)
 
-    table.integer('timestampLastChatLine').defaultTo(0)
+    table.biginteger('timestampLastChatLine').defaultTo(0)
 
   }).then(() => {
     return true

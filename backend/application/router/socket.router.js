@@ -31,6 +31,6 @@ module.exports = {
   init: io => io.on('connection', (socket) => {
     socket.on('disconnect', reason => onDisconnect(socket, reason))
     socket.onAny((data = {}) => onAny(socket, data))
-    console.debug('socket connection: ', socket.id)
+    console.info('socket connection: ', socket.id)
   }),
 }

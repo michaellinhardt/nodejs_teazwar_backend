@@ -40,6 +40,6 @@ module.exports = {
       const word = arrayWords[Math.floor(Math.random() * arrayWords.length)]
       otp = `${otp}${word}`
     })
-    return otp.trim()
+    return otp.trim().toUpperCase()
   },
 }
