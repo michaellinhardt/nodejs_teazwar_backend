@@ -25,7 +25,19 @@ module.exports = {
             const controller = await BackendHelper.runRoute(body, 'http')
             RendersHelper.http.Ok(res, controller.payload)
 
-          } catch (err) { RendersHelper.http.DetectError(res, err) }
+          } catch (err) {
+            RendersHelper.http.DetectError(res, err)
+
+            const error_location = `http${path.split('/').join('..').replace(':', '*')}`
+            const { payload = {} } = await BackendHelper
+              .discordReportError(error_location, err.message)
+
+            if (payload.emit) {
+              const SocketHelper = require('../../../helpers/files/sockets.helper')
+              const emitter = SocketHelper.getServerEmitter()
+              emitter(...payload.emit)
+            }
+          }
         })
 
       }))

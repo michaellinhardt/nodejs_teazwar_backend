@@ -18,8 +18,12 @@ module.exports = {
 
   connect: async twitch => {
     const sleep = require('../files/code.helper').sleep
-    await sleep(100)
-    await twitch.connect()
-    await sleep(chatbot.sleepAfterConnect)
+    try {
+      await sleep(100)
+      await twitch.connect()
+      await sleep(chatbot.sleepAfterConnect)
+      return true
+
+    } catch (err) { return false }
   },
 }

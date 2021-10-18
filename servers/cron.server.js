@@ -1,10 +1,29 @@
 const h = require('../helpers')
 const config = require('../config')
+const emitter = h.sockets.getServerEmitter()
 
-const backend = (method, path, body = {}) => h.backend.runRouteTeazwar({ ...body, method, path })
+const backend = async (method, path, body = {}) => {
+  const { payload = {} } = await h.backend.runRouteTeazwar({ ...body, method, path })
+  executePayload(payload)
+  return payload
+}
+
+const executePayload = payload => {
+  if (!payload || typeof (payload) !== 'object') { return true }
+  if (payload.emit) { emitter(...payload.emit) }
+}
 
 const executeNextTask = async () => {
-  const { payload: cronRouter } = await backend('post', '/cron/router')
+  let cronRouter = {}
+  try {
+    cronRouter = await backend('post', '/cron/router')
+
+  } catch (err) {
+    console.debug(err)
+    const { payload = {} } = await h.backend.discordReportError('cron_router', err.message)
+    executePayload(payload)
+    await h.code.sleep(config.cron.sleepWhenCronRouterError)
+  }
 
   if (!cronRouter.task) {
     // console.debug('NEXT TASK IN ->', cronRouter.sleep)
@@ -14,9 +33,29 @@ const executeNextTask = async () => {
 
   const { cron, task } = cronRouter
 
-  const { payload: taskResult } = await backend('post', `/cron${task.path}`)
+  let taskResult = {}
+  try {
+    taskResult = await backend('post', `/cron${task.path}`)
 
-  await backend('post', '/cron/interval', { cron, task, taskResult })
+  } catch (err) {
+    console.debug(err)
+    taskResult.success = false
+    taskResult.empty = false
+    const taskPathKey = task.path.split('/').join('..')
+    const { payload = {} } = await h.backend.discordReportError(`cron${taskPathKey}`, err.message)
+    executePayload(payload)
+    await h.code.sleep(config.cron.sleepWhenCronTaskError)
+  }
+
+  try {
+    await backend('post', '/cron/interval', { cron, task, taskResult })
+
+  } catch (err) {
+    console.debug(err)
+    const { payload = {} } = await h.backend.discordReportError('cron_interval', err.message)
+    executePayload(payload)
+    await h.code.sleep(config.cron.sleepWhenCronTaskError)
+  }
 
   console.debug(task.path, taskResult)
 }
@@ -25,7 +64,12 @@ const start = async () => {
   try {
     await executeNextTask()
 
-  } catch (err) { console.debug('error while doing cron task', err) }
+  } catch (err) {
+    console.debug(err)
+    const { payload = {} } = await h.backend.discordReportError('cron_server_start', err.message)
+    executePayload(payload)
+    await h.code.sleep(config.cron.sleepWhenCronTaskError)
+  }
 
   setTimeout(() => start(), config.cron.interval)
 }

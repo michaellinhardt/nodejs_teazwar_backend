@@ -18,13 +18,13 @@ export default [
 
       async handler () {
         const { body: { infra_name, socket_id }, services: s } = this
-        await s.socketsInfra.connected(infra_name, socket_id)
-        this.payload = { success: true }
 
-        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+        await s.socketsInfra.connected(infra_name, socket_id)
 
         if (infra_name === 'twitch') {
-          this.payload.emit = [discord_socket_id, { say: ['server_twitchbot_socketConnected'] }]
+          await s.socketsInfra.buildEmitSayArray('discord')
+          s.socketsInfra.pushToEmitSay(['server_twitchbot_socketConnected'])
+
         } else if (infra_name === 'discord') {
           this.payload.say = ['server_discordbot_socketConnected']
         }
@@ -57,7 +57,6 @@ export default [
           await s.socketsInfra.disconnectedByName(infra_name)
 
         }
-        this.payload = { success: true }
       }
     },
   },

@@ -12,11 +12,31 @@ const executePayload = payload => {
 }
 
 const backend = async (method, path, body = {}) => {
-  const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
-  executePayload(payload)
+  try {
+    const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
+    executePayload(payload)
+
+  } catch (err) {
+    console.debug(err)
+    const error_location = `discord${path.split('/').join('..')}`
+    const { payload = {} } = await h.backend
+      .discordReportError(error_location, err.message)
+    executePayload(payload)
+  }
+
 }
 
-const onSocketMessage = (socket, payload) => executePayload(payload)
+const onSocketMessage = async (socket, payload) => {
+  try {
+    executePayload(payload)
+
+  } catch (err) {
+    console.debug(err)
+    const { payload = {} } = await h.backend
+      .discordReportError('twitch_socket_message', err.message)
+    executePayload(payload)
+  }
+}
 
 const listen_events = twitch => {
   twitch.on('chat', (channel, userstate, msg, self) => {

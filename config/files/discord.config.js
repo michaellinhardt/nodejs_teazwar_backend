@@ -4,9 +4,15 @@ module.exports = {
   clientId: '890398508526489670',
   guildId: '879871370383724576',
 
+  sleepWhenBackendError: 3000,
+
   bot_discord_user_id: '890398508526489670',
   teazyou_discord_user_id: '338391027532431370',
-  bienvenue_message_id: '899154577977401352',
+
+  protected_message_ids: [
+    '899558709057957889', // bienvenue image maid
+    '899558715060027442', // bienvenue text verification
+  ],
 
   verify_valid_until: 60 * 10,
 
@@ -31,7 +37,9 @@ module.exports = {
       ['game', '890397933663567932'],
       ['stream', '893054188358074378'],
       ['stats', '898797507566534716'],
+      ['twitch', '899120424632340512'],
       ['bienvenue', '899154241292214313'],
+      ['debug', '899731724219596821'],
     ],
 
   },

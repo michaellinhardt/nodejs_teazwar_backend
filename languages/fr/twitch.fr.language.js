@@ -14,4 +14,7 @@ module.exports = {
 
   discord_verified_first: 'Félicition @[0] ! Tu as terminé la quête de vérification discord et des récompense t\'attende en jeu dans ta boite mail',
   discord_verified_notFirst: 'Merci, @[0] tu as bien mis à jours t\'es informations discord',
+
+  new_bot_detected: '🚨  @TeazYou il y a [1] nouveaux bots détecté: [2]',
+
 }

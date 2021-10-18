@@ -8,7 +8,7 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { body: { big_data: { message } }, config } = this
-        const { discord: { chatbot, bot_discord_user_id, bienvenue_message_id } } = config
+        const { discord: { chatbot, bot_discord_user_id, teazyou_discord_user_id } } = config
 
         const {
           channelId,
@@ -24,7 +24,8 @@ export default [
         if (bot_discord_user_id === author.id) { return true }
         const bievenueChannelId = (chatbot.channels.find(c => c[0] === 'bienvenue'))[1]
 
-        if (channelId === bievenueChannelId && !deleted && message.id !== bienvenue_message_id) {
+        if (channelId === bievenueChannelId && !deleted
+          && author.id !== teazyou_discord_user_id) {
           await message.delete()
         }
       }

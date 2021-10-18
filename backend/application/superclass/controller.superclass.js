@@ -80,7 +80,7 @@ export default class {
   }
 
   StopPipeline (error_key = 'unknow_error') {
-    this.payload = { error_key }
+    this.payload.error_key = error_key
     throw new this.renders.StopPipeline(error_key)
   }
 

@@ -5,7 +5,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders')
 const { REST } = require('@discordjs/rest')
 const { Routes: { applicationGuildCommands } } = require('discord-api-types/v9')
 
-const { language, discord: { token, guildId, clientId, chatbot } } = require('../../config')
+const {
+  language,
+  discord: { bot_discord_user_id, token, guildId, clientId, chatbot },
+} = require('../../config')
 const getLanguage = require('../files/language.helper').get
 
 const getLang = (message_key, ...args) =>
@@ -88,7 +91,10 @@ module.exports = {
   },
 
   onDiscordMessage: (discord, backend) => discord.on('messageCreate', message => {
-    backend('post', '/discord/message', { big_data: { message } })
+    const author_id = _.get(message, 'author.id', null)
+    return author_id && author_id !== bot_discord_user_id
+      ? backend('post', '/discord/message', { big_data: { message } })
+      : null
   }),
 
   getChannelByName,

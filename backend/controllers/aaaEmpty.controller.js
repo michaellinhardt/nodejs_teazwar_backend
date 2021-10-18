@@ -8,6 +8,8 @@ export default [
       handler () {
         const { data: d, body: b } = this
         // const { user } = d
+        // eslint-disable-next-line no-undef
+        generateError()
 
         this.payload = { yolo: 'swag', body: b, data: d }
       }
@@ -20,6 +22,8 @@ export default [
       handler () {
         const { data: d, body: b } = this
         // const { user } = d
+        // eslint-disable-next-line no-undef
+        generateError()
 
         this.payload = { yolo: 'swagos', body: b, data: d }
       }

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'sockets_infra'
@@ -21,4 +22,32 @@ export default class extends ServiceSuperclass {
   getByName (infra_name) {
     return this.getFirstWhere({ infra_name })
   }
+
+  async buildEmitSayArray (infra_name) {
+    const { socket_id = null } = await this.getByName(infra_name)
+    const isEmit = _.get(this, 'payload.emit[1]', undefined)
+    if (!isEmit) {
+      this.payload.emit = [socket_id, {
+        say: [],
+      }]
+
+    } else {
+      this.payload.emit[0] = socket_id
+      const isSay = _.get(this, 'payload.emit[1].say', undefined)
+      if (!isSay) { this.payload.emit[1].say = [] }
+    }
+  }
+
+  pushToEmitSay (sayArray = null, isCondition = true) {
+    if (!isCondition) { return false }
+    const isEmitSay = _.get(this, 'payload.emit[1].say', undefined)
+    if (!isEmitSay || !Array.isArray(isEmitSay) || !sayArray) { return false }
+    this.payload.emit[1].say.push(sayArray)
+  }
+
+  async emitError (errorArray) {
+    await this.buildEmitSayArray('discord')
+    this.pushToEmitSay(errorArray)
+  }
+
 }

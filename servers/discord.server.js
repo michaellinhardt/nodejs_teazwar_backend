@@ -2,12 +2,15 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { render } = require('prettyjson')
 const h = require('../helpers')
-const { discord: { bienvenue_message_id } } = require('../config')
+const { discord: { teazyou_discord_user_id, sleepWhenBackendError } } = require('../config')
 const emitter = h.sockets.getServerEmitter()
 
 let discord = null
 let say = null
 let socket = null
+
+const reportError = (error_location, error_message) =>
+  say('debug_discord_report', error_location, error_message)
 
 const commands = {}
 h.discord.addToCommandsObject(commands, 'verifier')
@@ -15,14 +18,20 @@ h.discord.addToCommandsObject(commands, 'verifier')
 // h.discord.addToCommandsObject(commands, 'commandes')
 
 const clearBienvenueChannel = async () => {
-  const messages = await h.discord.getChannelLastMessagesByName(discord, 'bienvenue', 100)
-  if (messages.size <= 1) { return true }
-  await Promise.each(messages, async messageArr => {
-    const message_id = messageArr[0]
-    const message = messageArr[1]
-    if (message_id !== bienvenue_message_id) { await message.delete() }
-  }, { concurrency: 5 })
-  return clearBienvenueChannel()
+  try {
+    const messages = await h.discord.getChannelLastMessagesByName(discord, 'bienvenue', 100)
+    if (messages.size <= 1) { return true }
+    await Promise.each(messages, async messageArr => {
+      const message = messageArr[1]
+      const author_id = message.author.id
+      if (author_id !== teazyou_discord_user_id) { await message.delete() }
+    }, { concurrency: 5 })
+    return clearBienvenueChannel()
+
+  } catch (err) {
+    console.debug(err)
+    reportError('discord_clear_bienvenue', err.message)
+  }
 }
 
 const payloadReply = async (payload) => {
@@ -59,13 +68,27 @@ const payloadReply = async (payload) => {
 }
 
 const backend = async (method, path, body = {}) => {
-  const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
-  executePayloadOrder(payload)
+  try {
+    const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
+    executePayloadOrder(payload)
+
+  } catch (err) {
+    console.debug(err)
+    const error_location = `discord${path.split('/').join('..')}`
+    reportError(error_location, err.message)
+    await h.code.sleep(sleepWhenBackendError)
+  }
 }
 
 const onSocketMessage = (socket, payload) => {
-  executePayloadOrder(payload)
-  console.debug(`Received from: ${socket.id}\n`, render(payload))
+  try {
+    console.debug(`Received from: ${socket.id}\n`, render(payload))
+    executePayloadOrder(payload)
+
+  } catch (err) {
+    console.debug(err)
+    reportError('discord_socket_message', err.message)
+  }
 }
 
 const executePayloadOrder = payload => {
@@ -74,8 +97,10 @@ const executePayloadOrder = payload => {
   const executeSequence = async (method, contents) => {
     const contentArray = Array.isArray(contents[0]) ? contents : [contents]
     await Promise.each(contentArray, async content => {
-      await method(...content)
-      await h.code.sleep(100)
+      if (content.length) {
+        await method(...content)
+        await h.code.sleep(100)
+      }
     }, { concurrency: 1 })
   }
 
@@ -111,4 +136,5 @@ const start = async () => {
 
   return socket
 }
+
 start()

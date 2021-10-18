@@ -13,6 +13,21 @@ const onAny = async (socket, data = {}) => {
   data.socket_id = socket.id
 
   await runRoute(data)
+
+  try {
+    await runRoute(data)
+
+  } catch (err) {
+    console.debug(err)
+    const BackendHelper = require('../../../helpers/files/backend.helper')
+    const error_location = `socket_router${data.path.split('/').join('..')}`
+    const { payload = {} } = await BackendHelper.discordReportError(error_location, err.message)
+    if (payload.emit) {
+      const SocketHelper = require('../../../helpers/files/sockets.helper')
+      const emitter = SocketHelper.getServerEmitter()
+      emitter(...payload.emit)
+    }
+  }
 }
 
 const onDisconnect = async (socket, reason) => {

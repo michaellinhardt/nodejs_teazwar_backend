@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PayloadSuperclass from '../application/superclass/payload.superclass'
 
 const payloadHeader = 'cron'
@@ -9,15 +10,17 @@ export default class extends PayloadSuperclass {
   blacklistProperties () { return [] }
 
   empty (payload = {}) {
-    return { ...payload, success: true, empty: true }
+    _.merge(this.payload, payload, { success: true, empty: true })
   }
 
   success (payload = {}) {
-    return { ...payload, success: true, empty: false }
+    _.merge(this.payload, payload, { success: true, empty: false })
+    this.payload.success = true
+    this.payload.empty = false
   }
 
   error (payload = {}) {
-    return { ...payload, success: false, empty: false }
+    _.merge(this.payload, payload, { success: false, empty: false })
   }
 
 }

@@ -9,9 +9,10 @@ export default [
       async handler () {
         const { services: s } = this
         const { address, port } = this.body
-        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
-        this.payload.emit = [discord_socket_id,
-          { say: ['server_twitchbot_twitchConnected', address, port] }]
+
+        await s.socketsInfra.buildEmitSayArray('discord')
+        s.socketsInfra.pushToEmitSay(['server_twitchbot_twitchConnected', address, port])
+
       }
     },
   },
@@ -22,10 +23,11 @@ export default [
       async handler () {
         const { services: s } = this
         const { channel, username, self } = this.body
-        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+
+        await s.socketsInfra.buildEmitSayArray('discord')
         const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
-        this.payload.emit = [discord_socket_id,
-          { say: [event, channel, username] }]
+        s.socketsInfra.pushToEmitSay([event, channel, username])
+
       }
     },
   },
@@ -36,10 +38,11 @@ export default [
       async handler () {
         const { services: s } = this
         const { channel, username, self } = this.body
-        const { socket_id: discord_socket_id } = await s.socketsInfra.getByName('discord')
+
+        await s.socketsInfra.buildEmitSayArray('discord')
         const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
-        this.payload.emit = [discord_socket_id,
-          { say: [event, channel, username] }]
+        s.socketsInfra.pushToEmitSay([event, channel, username])
+
       }
     },
   },

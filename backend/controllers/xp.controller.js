@@ -7,27 +7,15 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p } = this
-        try {
+        const requireLevelUp = await s.userXp.getRequireLevelUp()
 
-          const requireLevelUp = await s.userXp.getRequireLevelUp()
-
-          if (requireLevelUp.length === 0) {
-            this.payload = p.cron.empty()
-            return true
-          }
-
-          await s.userXp.increaseLevel(requireLevelUp)
-
-          // await s.eventsGlobal.addEventForDiscord(
-          // 'chatters_level_up', { chatters_level_up: requireLevelUp.length })
-
-          this.payload = p.cron.success()
-
-        } catch (err) {
-          console.error(err)
-          this.payload = p.cron.error()
+        if (requireLevelUp.length === 0) {
+          return p.cron.empty()
         }
-        return true
+
+        await s.userXp.increaseLevel(requireLevelUp)
+
+        p.cron.success()
       }
     },
   },
@@ -37,31 +25,22 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p } = this
-        try {
+        const chatters = await s.chatters.getNextXpGain()
+        const chattersFlatten = s.chatters.flattenChattersObject(chatters)
 
-          const chatters = await s.chatters.getNextXpGain()
-          const chattersFlatten = s.chatters.flattenChattersObject(chatters)
-
-          if (chatters.length === 0) {
-            this.payload = p.cron.empty()
-            return true
-          }
-
-          const chatterUsernames = chatters.map(c => c.username)
-          const users = await s.users.getByUsernames(chatterUsernames)
-
-          await s.userXp.addXpGain(users, chattersFlatten)
-          await s.userStats.incrementSeenStats(users, chattersFlatten)
-
-          await s.chatters.resetByUsernames(chatterUsernames)
-
-          this.payload = p.cron.success()
-
-        } catch (err) {
-          console.error(err)
-          this.payload = p.cron.error()
+        if (chatters.length === 0) {
+          return p.cron.empty()
         }
-        return true
+
+        const chatterUsernames = chatters.map(c => c.username)
+        const users = await s.users.getByUsernames(chatterUsernames)
+
+        await s.userXp.addXpGain(users, chattersFlatten)
+        await s.userStats.incrementSeenStats(users, chattersFlatten)
+
+        await s.chatters.resetByUsernames(chatterUsernames)
+
+        p.cron.success()
       }
     },
   },

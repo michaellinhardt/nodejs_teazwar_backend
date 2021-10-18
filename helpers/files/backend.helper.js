@@ -19,7 +19,7 @@ const getFlattenControllers = () => {
   return ControllersFlatten
 }
 
-const runRoute = async (body, requestType = 'script') => {
+const runRoute = async (body = {}, requestType = 'script') => {
   const { method = '', path = '' } = body
 
   if (!ControllersFlatten) { getFlattenControllers() }
@@ -34,9 +34,7 @@ const runRoute = async (body, requestType = 'script') => {
 
   const controller = new ctrl.Controller(requestType, routeParam, body)
 
-  try {
-    await controller.requestHandler()
-  } catch (err) { console.debug(err) }
+  await controller.requestHandler()
 
   const payload = _.get(controller || {}, 'payload', { error_key: 'server_error' })
 
@@ -52,8 +50,14 @@ const runRoute = async (body, requestType = 'script') => {
     _.set(body, 'big_data.msg', big_data.message.content)
     _.set(body, 'big_data.author', big_data.message.author.username)
   }
-  console.debug(prettyjson.render(body))
-  console.debug('->\n', prettyjson.render(payload))
+
+  try {
+    console.debug(prettyjson.render(body))
+  } catch (err) { console.log(JSON.stringify(body, null, 2)) }
+
+  try {
+    console.debug('->\n', prettyjson.render(payload))
+  } catch (err) { console.log(JSON.stringify(payload, null, 2)) }
 
   if (big_data) {
     body.big_data = big_data
@@ -62,6 +66,11 @@ const runRoute = async (body, requestType = 'script') => {
 
   return controller
 
+}
+
+const runRouteTeazwar = (body, requestType = 'script') => {
+  body.jwtoken = teazwarToken
+  return runRoute(body, requestType)
 }
 
 module.exports = {
@@ -109,9 +118,18 @@ module.exports = {
   },
 
   runRoute,
-  runRouteTeazwar: (body, requestType = 'script') => {
-    body.jwtoken = teazwarToken
-    return runRoute(body, requestType)
+  runRouteTeazwar,
+
+  discordReportError: (error_location, error_message) => {
+    return runRouteTeazwar({
+      method: 'post',
+      path: '/debug/discord/report',
+      errorArray: [
+        'debug_discord_report',
+        error_location,
+        error_message,
+      ],
+    })
   },
 
 }

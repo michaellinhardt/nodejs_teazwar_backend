@@ -1,6 +1,9 @@
 module.exports = {
   endpoint: '/cron',
 
+  sleepWhenCronRouterError: 3000,
+  sleepWhenCronTaskError: 1000,
+
   interval: 100,
   twitchApiInterval: 2,
   twitchApiNext: 0,

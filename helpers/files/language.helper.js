@@ -1,10 +1,14 @@
 const _ = require('lodash')
 const language = require('../../languages')
 
-const replacer = (message, ...args) => {
+const replacer = (language_file, message, ...args) => {
   let msg = message
   _.forEach(args, (value, index) => {
-    msg = msg.replace(`[${index}]`, value)
+    const replaceWith = language_file === 'discord'
+      ? `**${value}**`
+      : value
+    msg = msg.replace(`[${index}]`, replaceWith)
+    msg = msg.replace(`[.${index}]`, value)
   })
   return msg
 }
@@ -19,7 +23,7 @@ module.exports = {
 
   get: (lang, language_file, language_key, ...language_args) => {
     const message = extractMessage(lang, language_file, language_key)
-    return replacer(message, ...language_args)
+    return replacer(language_file, message, ...language_args)
   },
 
 }

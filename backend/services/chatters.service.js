@@ -14,7 +14,7 @@ export default class extends ServiceSuperclass {
     return _.get(chatters, 'chatter_count', 0)
   }
 
-  getChattersFromTwitch (chatters) {
+  extractChattersDataFromTwitchApi (chatters) {
     return _.get(chatters, 'chatters.broadcaster', [])
       .concat(_.get(chatters, 'chatters.vips', []))
       .concat(_.get(chatters, 'chatters.moderators', []))

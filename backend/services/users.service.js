@@ -100,11 +100,11 @@ export default class extends ServiceSuperclass {
   }
 
   async tagBots (botsList) {
-    const botUsernames = botsList.map(b => b[0])
+    const botUsernames = botsList.map(b => b[0].toLowerCase())
 
     const botUsers = await this.knex()
       .select('*')
-      .whereIn('username', botUsernames)
+      .whereIn('users.username', botUsernames)
       .andWhere({
         isDeleted: false,
         isBot: 'maybe',
