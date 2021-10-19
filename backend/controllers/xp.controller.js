@@ -7,13 +7,13 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p } = this
-        const requireLevelUp = await s.userXp.getRequireLevelUp()
+        const requireLevelUp = await s.userXp.getUsersRequiringLvlUp()
 
         if (requireLevelUp.length === 0) {
           return p.cron.empty()
         }
 
-        await s.userXp.increaseLevel(requireLevelUp)
+        await s.userXp.increaseOneLevelForUsers(requireLevelUp)
 
         p.cron.success()
       }

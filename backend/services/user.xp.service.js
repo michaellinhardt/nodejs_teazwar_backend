@@ -46,7 +46,7 @@ export default class extends ServiceSuperclass {
     return Math.round((hourToLevelUp + Number.EPSILON) * 100) / 100
   }
 
-  async increaseLevel (usersXp) {
+  async increaseOneLevelForUsers (usersXp) {
     const { helpers: h } = this
 
     await Promise.each(usersXp, async userXp => {
@@ -60,7 +60,7 @@ export default class extends ServiceSuperclass {
     }, { concurrency: 3 })
   }
 
-  getRequireLevelUp () {
+  getUsersRequiringLvlUp () {
     const where = { isDeleted: false }
     return this.knex()
       .where(where)
