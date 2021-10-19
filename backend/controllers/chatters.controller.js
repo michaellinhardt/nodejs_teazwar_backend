@@ -30,8 +30,7 @@ export default [
         const chatters = await s.chatters.getNextValidateList()
 
         if (chatters.length === 0) {
-          p.cron.empty()
-          return true
+          return p.cron.empty()
         }
 
         const chatterUsernames = chatters.map(c => c.username)
@@ -40,10 +39,6 @@ export default [
 
         const users = await s.users.addOrUpdate(twitchUsers)
         const allUsers = users.added.concat(users.updated)
-
-        await s.userXp.addMissingEntry(allUsers)
-        await s.userStats.addMissingEntry(allUsers)
-        await s.userAttributes.addMissingEntry(allUsers)
 
         await s.chatters.setUsersAsValidated(allUsers)
 
@@ -61,7 +56,7 @@ export default [
   },
   {
     isTeazwar: true,
-    route: ['post', '/cron/chatters/bots'],
+    route: ['post', '/cron/chatters/bots/update'],
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this
@@ -74,8 +69,6 @@ export default [
         const addedBots = await s.bots.addMissing(apiUsernames, dbUsernames)
         const deletedBots = await s.bots.deleteMissing(apiUsernames, dbUsernames)
 
-        const taggedBots = await s.users.tagBots(apiBots)
-
         await s.socketsInfra.emitSayDiscord(
           ['stream_chatters_bot_added', addedBots.length],
           addedBots.length > 0)
@@ -84,12 +77,31 @@ export default [
           ['stream_chatters_bot_deleted', deletedBots.length],
           deletedBots.length > 0)
 
+        return p.cron.empty()
+
+      }
+    },
+  },
+  {
+    isTeazwar: true,
+    route: ['post', '/cron/chatters/bots/detect'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s, payloads: p } = this
+
+        const dbBots = await s.bots.getAll()
+        const taggedBots = await s.users.tagBots(dbBots)
+
         if (taggedBots.length) {
-          const detectedBot = taggedBots.map(b => b.username).join(' , ')
+          let detectedBot = taggedBots.map(b => b.username).join(' , ')
           const { teazyou_discord_user_id } = this.config.discord
 
           await s.socketsInfra.emitSayDiscord(['stream_chatters_bot_detected',
             teazyou_discord_user_id, taggedBots.length, detectedBot])
+
+          detectedBot = taggedBots.map(b => `@${b.username}`).join(' , ')
+          await s.socketsInfra.emitSayTwitch(['new_bot_detected',
+            taggedBots.length, detectedBot])
         }
 
         return !taggedBots.length ? p.cron.empty() : p.cron.success()

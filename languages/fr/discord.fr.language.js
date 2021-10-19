@@ -14,10 +14,14 @@ module.exports = {
   twitch_chatters_validate_add: '👨‍💻 [0] nouveaux utilisateurs créer avec les données twitch',
   twitch_chatters_validate_update: '👨‍💻 [0] utilisateurs mis à jours avec les données twitch',
 
-  // stream_viewer_joined: '🚪 [[1]] à rejoins le stream [0]',
-  // stream_viewer_leaved: '🚪 [[1]] à quitté le stream [0]',
-  stream_viewer_joined: '➡️ [.2][[1]] à rejoins le stream [0]',
-  stream_viewer_leaved: '⬅️ [.2][[1]] à quitté le stream [0]',
+  // stream_viewer_joined: '🚪 [[1]] à rejoins le tchat twitch',
+  // stream_viewer_leaved: '🚪 [[1]] à quitté le tchat twitch',
+  stream_viewer_joined: '➡️ [.1][[0]] à rejoins le tchat twitch',
+  stream_viewer_leaved: '⬅️ [.1][[0]] à quitté le tchat twitch',
+
+  stream_bot_joined: '🤖 <@[.1]> un bot à rejoins le tchat twitch: [0]',
+  stream_bot_leaved: '🤖 <@[.1]> un bot à quitté le tchat twitch: [0]',
+
   stream_chatters_bot_added: '🤖 [0] nouveaux bots référencé',
   stream_chatters_bot_deleted: '🤖 [0] bots supprimé de la liste',
   stream_chatters_bot_detected: '🚨  <@[.0]> il y a [1] nouveaux bots détecté: [2]',

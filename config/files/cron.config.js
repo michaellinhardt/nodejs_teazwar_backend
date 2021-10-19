@@ -8,7 +8,7 @@ module.exports = {
   twitchApiInterval: 2,
   twitchApiNext: 0,
 
-  viewerOnlineUntill: 60 * 2,
+  viewerOnlineUntill: 60 * 3,
   chatterValidatedUntill: 60 * 3, // validate chatters once every..
 
   chattersUnFollowerControlEvery: 60 * 60 * 24,
@@ -54,11 +54,20 @@ module.exports = {
     // isEnabled: false,
   }, {
 
-    path: '/chatters/bots',
+    path: '/chatters/bots/update',
     isTwitchApi: false,
     interval: 60 * 60 * 1,
-    intervalEmpty: 60 * 60 * 2,
+    intervalEmpty: 60 * 60 * 1,
     intervalRetry: 60 * 60 * 1,
+    timestampNext: 0,
+    // isEnabled: false,
+  }, {
+
+    path: '/chatters/bots/detect',
+    isTwitchApi: false,
+    interval: 0,
+    intervalEmpty: 10,
+    intervalRetry: 60 * 5,
     timestampNext: 0,
     // isEnabled: false,
   }, {

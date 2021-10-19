@@ -9,6 +9,7 @@ export default {
       .get(endpoints.twitchinsights)
       .set('Accept', 'application/json')
       .catch(console.error)
-    return _.get(response, 'body.bots', [])
+    const botList = _.get(response, 'body.bots', []).filter(b => b[0].toLowerCase() !== 'teazyou')
+    return botList
   },
 }

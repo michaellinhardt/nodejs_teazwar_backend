@@ -182,6 +182,7 @@ export default class {
     _.forEach(Services, (Service, name) => {
       this.services[name] = new Service({
         ...ressources,
+        services: this.services,
         models,
       })
     })

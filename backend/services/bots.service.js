@@ -23,4 +23,8 @@ export default class extends ServiceSuperclass {
       ? this.delAllWhereIn('username', deleteBotUsernames) : []
   }
 
+  getByUsername (username) {
+    return this.getFirstWhere({ username })
+  }
+
 }

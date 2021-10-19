@@ -69,7 +69,7 @@ const start = async () => {
   listen_events(twitch)
   await h.twitch.connect(twitch)
 
-  say('welcome')
+  // say('welcome')
 
   socket = h.sockets.openInfraSocket('twitch', {
     onSocketConnect: (socket) => socket,

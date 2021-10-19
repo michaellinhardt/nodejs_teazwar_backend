@@ -10,6 +10,15 @@ export default class extends ServiceSuperclass {
 
   constructor (ressources) { super(table, __filename, ressources) }
 
+  getOnlineBots () {
+    const currTimestamp = this.helpers.date.timestamp()
+    return this.knex()
+      .select('*')
+      .where({ isDeleted: false })
+      .andWhere('isBot', 'yes')
+      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
+  }
+
   getChannel () {
     return this.getFirstWhere({ username: twitch.chatbot.channel })
   }
@@ -99,8 +108,8 @@ export default class extends ServiceSuperclass {
     })
   }
 
-  async tagBots (botsList) {
-    const botUsernames = botsList.map(b => b[0].toLowerCase())
+  async tagBots (dbBots) {
+    const botUsernames = dbBots.map(b => b.username)
 
     const botUsers = await this.knex()
       .select('*')
@@ -193,6 +202,12 @@ export default class extends ServiceSuperclass {
         await this.updAllWhere({ user_id: user.user_id }, user)
       }, { concurrency: 3 })
     }
+
+    // TESt
+    const allUsers = added.concat(updates)
+    await this.services.userXp.addMissingEntry(allUsers)
+    await this.services.userStats.addMissingEntry(allUsers)
+    await this.services.userAttributes.addMissingEntry(allUsers)
 
     return { added, updated: updates }
 

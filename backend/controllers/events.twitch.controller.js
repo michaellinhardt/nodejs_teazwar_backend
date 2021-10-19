@@ -22,14 +22,22 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s } = this
-        const { channel, username, self } = this.body
+        const { username, self } = this.body
 
-        const isUser = await s.users.getByUsername(username)
-        const isDiscordId = _.get(isUser, 'discord_id', null)
-        const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+        const isBot = await s.bots.getByUsername(username)
+        if (!self && isBot) {
+          await s.socketsInfra.emitSayTwitch(['bot_joined', username])
+          await s.socketsInfra.emitSayDiscord(
+            ['stream_bot_joined', username, this.config.discord.teazyou_discord_user_id])
 
-        const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
-        await s.socketsInfra.emitSayDiscord([event, channel, username, discordKey])
+        } else {
+          const isUser = await s.users.getByUsername(username)
+          const isDiscordId = _.get(isUser, 'discord_id', null)
+          const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+
+          const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
+          await s.socketsInfra.emitSayDiscord([event, username, discordKey])
+        }
 
       }
     },
@@ -40,14 +48,22 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s } = this
-        const { channel, username, self } = this.body
+        const { username, self } = this.body
 
-        const isUser = await s.users.getByUsername(username)
-        const isDiscordId = _.get(isUser, 'discord_id', null)
-        const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+        const isBot = await s.bots.getByUsername(username)
+        if (!self && isBot) {
+          await s.socketsInfra.emitSayTwitch(['bot_leaved', username])
+          await s.socketsInfra.emitSayDiscord(
+            ['stream_bot_leaved', username, this.config.discord.teazyou_discord_user_id])
 
-        const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
-        await s.socketsInfra.emitSayDiscord([event, channel, username, discordKey])
+        } else {
+          const isUser = await s.users.getByUsername(username)
+          const isDiscordId = _.get(isUser, 'discord_id', null)
+          const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+
+          const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
+          await s.socketsInfra.emitSayDiscord([event, username, discordKey])
+        }
 
       }
     },
