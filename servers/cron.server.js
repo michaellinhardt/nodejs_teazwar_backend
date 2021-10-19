@@ -1,30 +1,11 @@
-const Promise = require('bluebird')
-const _ = require('lodash')
 const h = require('../helpers')
 const config = require('../config')
 const emitter = h.sockets.getServerEmitter()
 
 const backend = async (method, path, body = {}) => {
   const { payload = {} } = await h.backend.runRouteTeazwar({ ...body, method, path })
-  executePayloadOrder(payload)
+  await h.sockets.dispatchSayOrder(payload, emitter)
   return payload
-}
-
-const executePayloadOrder = async payload => {
-  if (!payload || typeof (payload) !== 'object') { return true }
-
-  const executeSequence = (method, contents) => !contents.length ? true
-    : Promise.each(contents, content => content.length ? method(...content) : true,
-      { concurrency: 1 })
-
-  await executeSequence(emitter, [[
-    _.get(payload, 'socketIds.twitch', null),
-    { say: { discord: _.get(payload, 'say.twitch', []) } },
-  ]])
-  await executeSequence(emitter, [[
-    _.get(payload, 'socketIds.discord', null),
-    { say: { discord: _.get(payload, 'say.discord', []) } },
-  ]])
 }
 
 const executeNextTask = async () => {
@@ -35,7 +16,7 @@ const executeNextTask = async () => {
   } catch (err) {
     console.debug(err)
     const { payload = {} } = await h.backend.discordReportError('cron_router', err.message)
-    executePayloadOrder(payload)
+    await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronRouterError)
   }
 
@@ -57,7 +38,7 @@ const executeNextTask = async () => {
     taskResult.empty = false
     const taskPathKey = task.path.split('/').join('..')
     const { payload = {} } = await h.backend.discordReportError(`cron${taskPathKey}`, err.message)
-    executePayloadOrder(payload)
+    await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
   }
 
@@ -67,7 +48,7 @@ const executeNextTask = async () => {
   } catch (err) {
     console.debug(err)
     const { payload = {} } = await h.backend.discordReportError('cron_interval', err.message)
-    executePayloadOrder(payload)
+    await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
   }
 
@@ -81,7 +62,7 @@ const start = async () => {
   } catch (err) {
     console.debug(err)
     const { payload = {} } = await h.backend.discordReportError('cron_server_start', err.message)
-    executePayloadOrder(payload)
+    await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
   }
 

@@ -21,11 +21,12 @@ const onAny = async (socket, data = {}) => {
     console.debug(err)
     const BackendHelper = require('../../../helpers/files/backend.helper')
     const error_location = `socket_router${data.path.split('/').join('..')}`
-    const { payload = {} } = await BackendHelper.discordReportError(error_location, err.message)
-    if (payload.emit) {
+    const { payload = {} } = await BackendHelper
+      .discordReportError(error_location, err.message)
+
+    if (payload.say && payload.socketIds) {
       const SocketHelper = require('../../../helpers/files/sockets.helper')
-      const emitter = SocketHelper.getServerEmitter()
-      emitter(...payload.emit)
+      await SocketHelper.dispatchSayOrder(payload)
     }
   }
 }

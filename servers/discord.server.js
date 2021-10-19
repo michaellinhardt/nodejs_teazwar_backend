@@ -92,19 +92,14 @@ const onSocketMessage = (socket, payload) => {
 }
 
 const executePayloadOrder = async payload => {
-  if (!payload || typeof (payload) !== 'object') { return true }
-
-  const executeSequence = (method, contents) => !contents.length ? true
-    : Promise.each(contents, content => content.length ? method(...content) : true,
+  const isSayArrays = _.get(payload, 'say.discord', undefined)
+  if (isSayArrays !== undefined) {
+    await Promise.each(isSayArrays, sayArray => sayArray.length ? say(...sayArray) : true,
       { concurrency: 1 })
-
-  await executeSequence(say, _.get(payload, 'say.discord', []))
-  await executeSequence(emitter, [[
-    _.get(payload, 'socketIds.twitch', null),
-    { say: { discord: _.get(payload, 'say.twitch', []) } },
-  ]])
-
-  payloadReply(payload)
+    delete payload.say.discord
+  }
+  await payloadReply(payload)
+  await h.sockets.dispatchSayOrder(payload, emitter)
 }
 
 const start = async () => {

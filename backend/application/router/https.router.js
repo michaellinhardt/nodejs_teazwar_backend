@@ -32,10 +32,9 @@ module.exports = {
             const { payload = {} } = await BackendHelper
               .discordReportError(error_location, err.message)
 
-            if (payload.emit) {
+            if (payload.say && payload.socketIds) {
               const SocketHelper = require('../../../helpers/files/sockets.helper')
-              const emitter = SocketHelper.getServerEmitter()
-              emitter(...payload.emit)
+              await SocketHelper.dispatchSayOrder(payload)
             }
           }
         })

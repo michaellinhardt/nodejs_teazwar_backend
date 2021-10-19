@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const { io } = require('socket.io-client')
 const { backend, jwt: { teazwarToken } } = require('../../config')
@@ -8,7 +9,40 @@ const { createAdapter } = require('@socket.io/redis-adapter')
 const { Emitter } = require('@socket.io/redis-emitter')
 const { createClient } = require('redis')
 
+const getServerEmitter = () => {
+  const redisClient = createClient({ host: 'localhost', port: 6379 })
+  const emitter = new Emitter(redisClient)
+
+  return (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
+    : emitter.to(socket_id).emit(...args)
+}
+
 module.exports = {
+
+  dispatchSayOrder: async (payload, emitterAddr = null) => {
+    if (!payload
+      || typeof (payload) !== 'object'
+      || !payload.say
+      || !payload.socketIds) {
+      return true
+    }
+
+    const emitter = emitterAddr ? emitterAddr : getServerEmitter()
+
+    const executeSequence = contents => !contents.length ? true
+      : Promise.each(contents, content => content.length ? emitter(...content) : true,
+        { concurrency: 1 })
+
+    await executeSequence([[
+      _.get(payload, 'socketIds.twitch', null),
+      { say: { discord: _.get(payload, 'say.twitch', []) } },
+    ]])
+    await executeSequence([[
+      _.get(payload, 'socketIds.discord', null),
+      { say: { discord: _.get(payload, 'say.discord', []) } },
+    ]])
+  },
+
   getSocket: () => io(socketUrl),
 
   getSocketEmitter: socket => {
@@ -16,13 +50,7 @@ module.exports = {
       ...data, jwtoken: teazwarToken, method: 'post', path })
   },
 
-  getServerEmitter: () => {
-    const redisClient = createClient({ host: 'localhost', port: 6379 })
-    const emitter = new Emitter(redisClient)
-
-    return (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
-      : emitter.to(socket_id).emit(...args)
-  },
+  getServerEmitter,
 
   createSocketServer: () => new Server(),
 
