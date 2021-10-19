@@ -9,6 +9,7 @@ module.exports = {
   twitchApiNext: 0,
 
   viewerOnlineUntill: 60 * 3,
+  viewerExtensionUntill: 60 * 3,
   chatterValidatedUntill: 60 * 3, // validate chatters once every..
 
   chattersUnFollowerControlEvery: 60 * 60 * 24,

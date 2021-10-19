@@ -12,9 +12,13 @@ exports.up = function (knex) {
     table.integer('total_chars').defaultTo(0)
     table.integer('chars_per_line').defaultTo(0)
 
-    table.integer('total_seen_normal').defaultTo(0)
-    table.integer('total_seen_follower').defaultTo(0)
-    table.integer('total_seen_subscriber').defaultTo(0)
+    table.integer('chat_seen_normal').defaultTo(0)
+    table.integer('chat_seen_follower').defaultTo(0)
+    table.integer('chat_seen_subscriber').defaultTo(0)
+
+    table.integer('extension_seen_normal').defaultTo(0)
+    table.integer('extension_seen_follower').defaultTo(0)
+    table.integer('extension_seen_subscriber').defaultTo(0)
 
     table.biginteger('timestampLastChatLine').defaultTo(0)
 

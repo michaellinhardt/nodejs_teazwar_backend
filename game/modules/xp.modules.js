@@ -15,4 +15,10 @@ export default class extends ModuleSuperclass {
 
   }
 
+  async addXpGainFromChatters (users, chattersFlatten) {
+    const { services: s } = this
+
+    await s.userXp.addXpGain(users, chattersFlatten)
+  }
+
 }

@@ -40,12 +40,18 @@ export default class extends ServiceSuperclass {
   }
 
   async incrementSeenStats (users, chatters) {
+    const { helpers: h } = this
+    const currTimestamp = h.date.timestamp()
 
     await Promise.each(users, async user => {
       const count_seen = _.get(chatters, `${user.username}.count_seen`, 0)
-      let label = 'total_seen_normal'
-      if (user.isFollower === 'yes') { label = 'total_seen_follower' }
-      if (user.isSubscriber === 'yes') { label = 'total_seen_subscriber' }
+      let label = 'chat_seen_normal'
+      if (user.isFollower === 'yes') { label = 'chat_seen_follower' }
+      if (user.isSubscriber === 'yes') { label = 'chat_seen_subscriber' }
+
+      if (user.timestampExtensionUntill >= currTimestamp) {
+        label.replace('chat', 'extension')
+      }
 
       await this.incrementAllWhere({ user_uuid: user.uuid }, {
         [label]: count_seen,

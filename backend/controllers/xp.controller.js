@@ -43,18 +43,16 @@ export default [
     route: ['post', '/cron/chatters/xpgain'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p } = this
+        const { services: s, modules: m, payloads: p } = this
         const chatters = await s.chatters.getNextXpGain()
         const chattersFlatten = s.chatters.flattenChattersObject(chatters)
 
-        if (chatters.length === 0) {
-          return p.cron.empty()
-        }
+        if (chatters.length === 0) { return p.cron.empty() }
 
         const chatterUsernames = chatters.map(c => c.username)
         const users = await s.users.getByUsernames(chatterUsernames)
 
-        await s.userXp.addXpGain(users, chattersFlatten)
+        await m.xp.addXpGainFromChatters(users, chattersFlatten)
         await s.userStats.incrementSeenStats(users, chattersFlatten)
 
         await s.chatters.resetByUsernames(chatterUsernames)

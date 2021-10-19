@@ -24,6 +24,7 @@ exports.up = function (knex) {
     table.enu('isSubscriber', ['maybe', 'no', 'yes']).notNullable().defaultTo('maybe')
     table.enu('isBot', ['maybe', 'no', 'yes']).notNullable().defaultTo('maybe')
 
+    table.biginteger('timestampExtensionUntill').defaultTo(0)
     table.biginteger('timestampOnlineUntill').defaultTo(0)
     table.biginteger('timestampUnFollowerCheck').defaultTo(0)
     table.biginteger('timestampNewFollowerCheck').defaultTo(0)
