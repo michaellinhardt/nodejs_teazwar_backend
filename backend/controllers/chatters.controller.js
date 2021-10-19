@@ -15,7 +15,8 @@ export default [
 
         await s.users.setOnline(chatter_list)
 
-        await s.socketsInfra.emitSayDiscord(['twitch_chatters_listing', chatter_list.length])
+        await s.socketsInfra.emitSayDiscord(
+          ['spam_chatters_listing', chatter_list.length, chatter_list.join(', ')])
 
         p.cron.success()
       }
@@ -42,12 +43,15 @@ export default [
 
         await s.chatters.setUsersAsValidated(allUsers)
 
+        const updatedUsernames = users.updated.map(u => u.display_name).join(', ')
+        const addedUsernames = users.added.map(u => u.display_name).join(', ')
+
         await s.socketsInfra.emitSayDiscord(
-          ['twitch_chatters_validate_update', users.updated.length],
+          ['stream_chatters_validate_update', users.updated.length, updatedUsernames],
           users.updated.length > 0)
 
         await s.socketsInfra.emitSayDiscord(
-          ['twitch_chatters_validate_add', users.added.length],
+          ['stream_chatters_validate_add', users.added.length, addedUsernames],
           users.added.length > 0)
 
         p.cron.success()

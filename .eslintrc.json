@@ -8,6 +8,8 @@
       "zavatta"
     ],
     "rules": {
+      "no-undef": "warn",
+      "no-unused-vars": "warn",
       "no-inline-comments": "off",
       "no-console": "off",
       "id-length": "off",

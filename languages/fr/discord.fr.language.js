@@ -4,46 +4,50 @@ module.exports = {
   game_welcome: '🙋 bonjour game',
   stream_welcome: '🙋 bonjour stream',
   stats_welcome: '🙋 bonjour stats',
+  spam_welcome: '🙋 bonjour spam',
+  debug_welcome: '🙋 bonjour debug',
 
   server_twitchbot_socketConnected: '🟪 [twitch.bot] connection socket établi',
-  server_twitchbot_socketDisconnected: '🟪 [twitch.bot] socket déconnecté: [0]',
-  server_twitchbot_twitchConnected: '🟪 [twitch.bot] connecté au server irc [0]:[1]',
-  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le tchat avec le nickname [0]',
-  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le tchat avec le nickname [0]',
+  server_twitchbot_socketDisconnected: '🟪 [twitch.bot] socket déconnecté: [?]',
+  server_twitchbot_twitchConnected: '🟪 [twitch.bot] connecté au server irc [?]:[?]',
+  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le tchat avec le nickname [?]',
+  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le tchat avec le nickname [?]',
 
-  twitch_chatters_listing: '👨‍💻 [0] utilisateurs connecté dans le tchat',
-  twitch_chatters_validate_add: '👨‍💻 [0] nouveaux utilisateurs créer avec les données twitch',
-  twitch_chatters_validate_update: '👨‍💻 [0] utilisateurs mis à jours avec les données twitch',
+  spam_chatters_listing: '👨‍💻 [?] utilisateurs sur le tchat: [?]',
 
-  // stream_viewer_joined: '🚪 [[1]] à rejoins le tchat twitch',
-  // stream_viewer_leaved: '🚪 [[1]] à quitté le tchat twitch',
-  stream_viewer_joined: '➡️ [.1][[0]] à rejoins le tchat twitch',
-  stream_viewer_leaved: '⬅️ [.1][[0]] à quitté le tchat twitch',
-  stream_bot_joined: '🤖 <@[.1]> un bot à rejoins le tchat twitch: [0]',
-  stream_bot_leaved: '🤖 <@[.1]> un bot à quitté le tchat twitch: [0]',
+  stream_chatters_validate_add: '👨‍💻 [?] nouveaux utilisateurs: [?]',
+  stream_chatters_validate_update: '👨‍💻 [?] utilisateurs mis à jours: [?]',
 
-  stream_new_follower: '❤ [.0][[1]] est un nouveau follower du stream',
-  stream_un_follower: '💔 [.0][[1]] ne follow plus le stream pour la [2] fois',
-  stream_re_follower: '❤️‍🩹 [.0][[1]] re-follow le stream pour la [2] fois',
+  stream_viewer_joined: '➡️ [.?][[?]] à rejoins le tchat twitch',
+  stream_viewer_leaved: '⬅️ [.?][[?]] à quitté le tchat twitch',
+  stream_bot_joined: '🤖 <@[.?]> un bot à rejoins le tchat twitch: [?]',
+  stream_bot_leaved: '🤖 <@[.?]> un bot à quitté le tchat twitch: [?]',
 
-  stream_chatters_bot_added: '🤖 [0] nouveaux bots référencé',
-  stream_chatters_bot_deleted: '🤖 [0] bots supprimé de la liste',
-  stream_chatters_bot_detected: '🚨  <@[.0]> il y a [1] nouveaux bots détecté: [2]',
+  stream_new_follower: '❤ [.?][[?]] est un nouveau follower du stream',
+  stream_un_follower: '💔 [.?][[?]] ne follow plus le stream pour la [?] fois',
+  stream_re_follower: '❤️‍🩹 [.?][[?]] re-follow le stream pour la [?] fois',
+
+  stream_chatters_bot_added: '🤖 [?] nouveaux bots référencé',
+  stream_chatters_bot_deleted: '🤖 [?] bots supprimé de la liste',
+  stream_chatters_bot_detected: '🚨  <@[.?]> il y a [?] nouveaux bots détecté: [?]',
+
+  game_level_up_one: '✨ LVL UP =[ [.?] [.?] [.?] ]=',
+  game_level_up_multi: '✨ LVL UP [.?]',
 
   server_discordbot_socketConnected: '🟦 [discord.bot] connection socket établi',
-  server_discordbot_socketDisconnected: '🟦 [discord.bot] socket déconnecté: [0]',
+  server_discordbot_socketDisconnected: '🟦 [discord.bot] socket déconnecté: [?]',
   server_discordbot_slashcommandRegisteredStart: '🟦 [discord.bot] envoie des slash /commandes au server discord',
   server_discordbot_slashcommandRegisteredEnd: '🟦 [discord.bot] les slash /commandes sont bien enregistré',
 
-  server_discordbot_verifying: '🟦 [discord.bot] code de vérification généré pour <@[.0]>',
+  server_discordbot_verifying: '🟦 [discord.bot] code de vérification généré pour <@[.?]>',
 
-  debug_discord_report: '[.0] :: [.1]',
+  debug_discord_report: '[.?] :: [.?]',
 
   command_description_verifier: 'Génére un code de vérification à copier sur le tchat de twitch pour devenir membre',
   command_description_quete: 'Obtiens des bonus d\'xp et de loot en réalisant cette quête journaliére',
   command_description_commandes: 'Affiche la liste des commandes du server',
 
-  command_verify_otp: '```Pour completer ta vérification, tape cette commande sur le tchat du stream:```\n!discord [.0]\n\n',
+  command_verify_otp: '```Pour completer ta vérification, tape cette commande sur le tchat du stream:```\n!discord [.?]\n\n',
 
   verify_otp: [
     ['33', '32', '33', '34', '95', '96', '97', '98', '99', '39', '43', '32', '33', '34', '35', '36', '37', '38', '39', '29', '23', '22', '23', '96'],

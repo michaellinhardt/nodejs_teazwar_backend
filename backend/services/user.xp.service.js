@@ -50,21 +50,31 @@ export default class extends ServiceSuperclass {
     const { helpers: h } = this
 
     await Promise.each(usersXp, async userXp => {
+      userXp.level += 1
+      userXp.level_xp -= userXp.level_xp_max
+      userXp.level_xp_max = h.xp.xpRequired(userXp.level + 1)
+
       const update = {
-        level: userXp.level + 1,
-        level_xp: userXp.level_xp - userXp.level_xp_max,
-        level_xp_max: h.xp.xpRequired(userXp.level + 1),
+        level: userXp.level,
+        level_xp: userXp.level_xp,
+        level_xp_max: userXp.level_xp_max,
       }
       await this.updAllWhere({ user_uuid: userXp.user_uuid }, update)
 
     }, { concurrency: 3 })
+
+    return usersXp
   }
 
   getUsersRequiringLvlUp () {
-    const where = { isDeleted: false }
+    const where = {
+      'users.isDeleted': false,
+      'user_xp.isDeleted': false,
+    }
     return this.knex()
       .where(where)
       .andWhereRaw('?? >= ??', ['user_xp.level_xp', 'user_xp.level_xp_max'])
+      .join('users', 'users.uuid', '=', 'user_xp.user_uuid')
   }
 
   getUserXpPerMin (user) {

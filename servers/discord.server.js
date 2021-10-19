@@ -111,6 +111,8 @@ const start = async () => {
   await say('game_welcome')
   await say('stream_welcome')
   await say('stats_welcome')
+  await say('spam_welcome')
+  await say('debug_welcome')
 
   socket = h.sockets.openInfraSocket('discord', {
     onSocketConnect: (socket) => socket,

@@ -34,12 +34,14 @@ export default [
           event = 'un_follower'
         }
 
-        await s.socketsInfra.emitSayDiscord(
-          [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
+        if (event) {
+          await s.socketsInfra.emitSayDiscord(
+            [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
 
-        if (isOnline) {
-          await s.socketsInfra.emitSayTwitch(
-            [event, user.display_name, countFollowTimes])
+          if (isOnline) {
+            await s.socketsInfra.emitSayTwitch(
+              [event, user.display_name, countFollowTimes])
+          }
         }
 
         p.cron.success()
