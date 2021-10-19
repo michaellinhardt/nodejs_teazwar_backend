@@ -91,22 +91,20 @@ const onSocketMessage = (socket, payload) => {
   }
 }
 
-const executePayloadOrder = payload => {
+const executePayloadOrder = async payload => {
   if (!payload || typeof (payload) !== 'object') { return true }
 
-  const executeSequence = async (method, contents) => {
-    const contentArray = Array.isArray(contents[0]) ? contents : [contents]
-    await Promise.each(contentArray, async content => {
-      if (content.length) {
-        await method(...content)
-        await h.code.sleep(100)
-      }
-    }, { concurrency: 1 })
-  }
+  const executeSequence = (method, contents) => !contents.length ? true
+    : Promise.each(contents, content => content.length ? method(...content) : true,
+      { concurrency: 1 })
 
-  if (payload.emit) { executeSequence(emitter, payload.emit) }
-  if (payload.say) { executeSequence(say, payload.say) }
-  if (payload.reply) { payloadReply(payload) }
+  await executeSequence(say, _.get(payload, 'say.discord', []))
+  await executeSequence(emitter, [[
+    _.get(payload, 'socketIds.twitch', null),
+    { say: { discord: _.get(payload, 'say.twitch', []) } },
+  ]])
+
+  payloadReply(payload)
 }
 
 const start = async () => {

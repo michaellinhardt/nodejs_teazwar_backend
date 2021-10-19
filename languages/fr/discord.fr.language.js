@@ -16,8 +16,8 @@ module.exports = {
 
   // stream_viewer_joined: '🚪 [[1]] à rejoins le stream [0]',
   // stream_viewer_leaved: '🚪 [[1]] à quitté le stream [0]',
-  stream_viewer_joined: '➡️ [[1]] à rejoins le stream [0]',
-  stream_viewer_leaved: '⬅️ [[1]] à quitté le stream [0]',
+  stream_viewer_joined: '➡️ [.2][[1]] à rejoins le stream [0]',
+  stream_viewer_leaved: '⬅️ [.2][[1]] à quitté le stream [0]',
   stream_chatters_bot_added: '🤖 [0] nouveaux bots référencé',
   stream_chatters_bot_deleted: '🤖 [0] bots supprimé de la liste',
   stream_chatters_bot_detected: '🚨  <@[.0]> il y a [1] nouveaux bots détecté: [2]',

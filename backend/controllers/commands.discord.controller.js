@@ -15,7 +15,7 @@ export default [
 
         await s.discords.updateOrCreateOtp(interaction.user, otp)
 
-        this.payload.say = ['server_discordbot_verifying', interaction.member.id]
+        await s.socketsInfra.emitSayTwitch(['server_discordbot_verifying', interaction.member.id])
         this.payload.reply = [['command_verify_otp', otp]]
         this.payload.ephemeral = true
       }

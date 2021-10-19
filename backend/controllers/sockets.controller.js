@@ -21,13 +21,10 @@ export default [
 
         await s.socketsInfra.connected(infra_name, socket_id)
 
-        if (infra_name === 'twitch') {
-          await s.socketsInfra.buildEmitSayArray('discord')
-          s.socketsInfra.pushToEmitSay(['server_twitchbot_socketConnected'])
+        const sayKey = infra_name === 'twitch'
+          ? 'server_twitchbot_socketConnected' : 'server_discordbot_socketConnected'
 
-        } else if (infra_name === 'discord') {
-          this.payload.say = ['server_discordbot_socketConnected']
-        }
+        await s.socketsInfra.emitSayDiscord([sayKey])
       }
     },
   },

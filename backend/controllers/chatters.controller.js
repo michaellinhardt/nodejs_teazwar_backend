@@ -15,8 +15,7 @@ export default [
 
         await s.users.setOnline(chatter_list)
 
-        await s.socketsInfra.buildEmitSayArray('discord')
-        s.socketsInfra.pushToEmitSay(['twitch_chatters_listing', chatter_list.length])
+        await s.socketsInfra.emitSayDiscord(['twitch_chatters_listing', chatter_list.length])
 
         p.cron.success()
       }
@@ -48,13 +47,11 @@ export default [
 
         await s.chatters.setUsersAsValidated(allUsers)
 
-        await s.socketsInfra.buildEmitSayArray('discord')
-
-        s.socketsInfra.pushToEmitSay(
+        await s.socketsInfra.emitSayDiscord(
           ['twitch_chatters_validate_update', users.updated.length],
           users.updated.length > 0)
 
-        s.socketsInfra.pushToEmitSay(
+        await s.socketsInfra.emitSayDiscord(
           ['twitch_chatters_validate_add', users.added.length],
           users.added.length > 0)
 
@@ -79,13 +76,11 @@ export default [
 
         const taggedBots = await s.users.tagBots(apiBots)
 
-        await s.socketsInfra.buildEmitSayArray('discord')
-
-        s.socketsInfra.pushToEmitSay(
+        await s.socketsInfra.emitSayDiscord(
           ['stream_chatters_bot_added', addedBots.length],
           addedBots.length > 0)
 
-        s.socketsInfra.pushToEmitSay(
+        await s.socketsInfra.emitSayDiscord(
           ['stream_chatters_bot_deleted', deletedBots.length],
           deletedBots.length > 0)
 
@@ -93,7 +88,7 @@ export default [
           const detectedBot = taggedBots.map(b => b.username).join(' , ')
           const { teazyou_discord_user_id } = this.config.discord
 
-          s.socketsInfra.pushToEmitSay(['stream_chatters_bot_detected',
+          await s.socketsInfra.emitSayDiscord(['stream_chatters_bot_detected',
             teazyou_discord_user_id, taggedBots.length, detectedBot])
         }
 

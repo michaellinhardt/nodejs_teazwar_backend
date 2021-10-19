@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { io } = require('socket.io-client')
 const { backend, jwt: { teazwarToken } } = require('../../config')
 const socketUrl = `${backend.uri}:${backend.socketPort}`
@@ -19,7 +20,8 @@ module.exports = {
     const redisClient = createClient({ host: 'localhost', port: 6379 })
     const emitter = new Emitter(redisClient)
 
-    return (socket_id, ...args) => emitter.to(socket_id).emit(...args)
+    return (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
+      : emitter.to(socket_id).emit(...args)
   },
 
   createSocketServer: () => new Server(),

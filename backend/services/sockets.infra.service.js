@@ -19,35 +19,36 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ infra_name }, { socket_id: null })
   }
 
-  getByName (infra_name) {
-    return this.getFirstWhere({ infra_name })
+  async getByName (infra_name) {
+    const socket = await this.getFirstWhere({ infra_name })
+    _.set(this, `payload.socketIds.${infra_name}`, socket.socket_id)
+    return socket
   }
 
-  async buildEmitSayArray (infra_name) {
-    const { socket_id = null } = await this.getByName(infra_name)
-    const isEmit = _.get(this, 'payload.emit[1]', undefined)
-    if (!isEmit) {
-      this.payload.emit = [socket_id, {
-        say: [],
-      }]
+  async buildSayArray (infra_name) {
+    const isSay = _.get(this, `payload.say.${infra_name}`, undefined)
+    if (isSay && Array.isArray(isSay)) { return true }
 
-    } else {
-      this.payload.emit[0] = socket_id
-      const isSay = _.get(this, 'payload.emit[1].say', undefined)
-      if (!isSay) { this.payload.emit[1].say = [] }
-    }
+    _.set(this, `payload.say.${infra_name}`, [])
+    await this.getByName(infra_name)
   }
 
-  pushToEmitSay (sayArray = null, isCondition = true) {
+  async emitSay (infra_name, sayArray = null, isCondition = true) {
     if (!isCondition) { return false }
-    const isEmitSay = _.get(this, 'payload.emit[1].say', undefined)
-    if (!isEmitSay || !Array.isArray(isEmitSay) || !sayArray) { return false }
-    this.payload.emit[1].say.push(sayArray)
+    await this.buildSayArray(infra_name)
+    this.payload.say[infra_name].push(sayArray)
+  }
+
+  emitSayDiscord (sayArray = null, isCondition = true) {
+    return this.emitSay('discord', sayArray, isCondition)
+  }
+
+  emitSayTwitch (sayArray = null, isCondition = true) {
+    return this.emitSay('twitch', sayArray, isCondition)
   }
 
   async emitError (errorArray) {
-    await this.buildEmitSayArray('discord')
-    this.pushToEmitSay(errorArray)
+    await this.emitSayDiscord(errorArray)
   }
 
 }

@@ -135,6 +135,19 @@ export default class extends ServiceSuperclass {
     return user
   }
 
+  async getByUsername (username) {
+    const user = await this.knex()
+      .select('*')
+      .where('users.isDeleted', false)
+      .andWhere('users.username', username.toLowerCase())
+      .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
+      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
+      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
+      .first()
+    if (user) { user.uuid = user.user_uuid }
+    return user
+  }
+
   async addOrUpdate (twitchUsers) {
     const userIds = twitchUsers.map(t => t.id)
     const existingUsers = await this.getAllFirstWhereIn('user_id', userIds)

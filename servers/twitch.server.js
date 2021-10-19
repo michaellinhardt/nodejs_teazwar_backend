@@ -1,3 +1,5 @@
+const Promise = require('bluebird')
+const _ = require('lodash')
 const h = require('../helpers')
 const emitter = h.sockets.getServerEmitter()
 
@@ -5,36 +7,45 @@ let twitch = null
 let say = null
 let socket = null
 
-const executePayload = payload => {
+const executePayloadOrder = async payload => {
   if (!payload || typeof (payload) !== 'object') { return true }
-  if (payload.emit) { emitter(...payload.emit) }
-  if (payload.say) { say(...payload.say) }
+
+  const executeSequence = (method, contents) => !contents.length ? true
+    : Promise.each(contents, content => content.length ? method(...content) : true,
+      { concurrency: 1 })
+
+  await executeSequence(say, _.get(payload, 'say.twitch', []))
+  await executeSequence(emitter, [[
+    _.get(payload, 'socketIds.discord', null),
+    { say: { discord: _.get(payload, 'say.discord', []) } },
+  ]])
+
 }
 
 const backend = async (method, path, body = {}) => {
   try {
     const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
-    executePayload(payload)
+    executePayloadOrder(payload)
 
   } catch (err) {
     console.debug(err)
     const error_location = `discord${path.split('/').join('..')}`
     const { payload = {} } = await h.backend
       .discordReportError(error_location, err.message)
-    executePayload(payload)
+    executePayloadOrder(payload)
   }
 
 }
 
 const onSocketMessage = async (socket, payload) => {
   try {
-    executePayload(payload)
+    executePayloadOrder(payload)
 
   } catch (err) {
     console.debug(err)
     const { payload = {} } = await h.backend
       .discordReportError('twitch_socket_message', err.message)
-    executePayload(payload)
+    executePayloadOrder(payload)
   }
 }
 

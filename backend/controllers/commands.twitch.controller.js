@@ -32,18 +32,21 @@ export default [
         const user = await s.users.getByUserId(d.twitch_id)
         if (!user) {
           await s.discords.deleteOtpByOtp(d.otp)
-          return (this.payload.say = ['discord_verfy_noUser', d.displayName])
+          return s.socketsInfra
+            .emitSayTwitch(['discord_verfy_noUser', d.displayName])
         }
 
         const discord = await s.discords.getByOtp(d.otp)
         if (!discord) {
-          return (this.payload.say = ['discord_verfy_noOtp', d.displayName])
+          return s.socketsInfra
+            .emitSayTwitch(['discord_verfy_noOtp', d.displayName])
         }
 
         const currTimestamp = h.date.timestamp()
         if (discord.verify_expire_timestamp < currTimestamp) {
           const validity_minutes = this.config.discord.verify_valid_until / 60
-          return (this.payload.say = ['discord_verfy_expired', d.displayName, validity_minutes])
+          return s.socketsInfra
+            .emitSayTwitch(['discord_verfy_expired', d.displayName, validity_minutes])
         }
 
         await a.discord.addMembresRole(discord.discord_id)
@@ -57,7 +60,7 @@ export default [
 
         const sayKey = discord.verify_timestamp === 0
           ? 'discord_verified_first' : 'discord_verified_notFirst'
-        this.payload.say = [sayKey, d.displayName]
+        await s.socketsInfra.emitSayTwitch([sayKey, d.displayName])
       }
 
     },

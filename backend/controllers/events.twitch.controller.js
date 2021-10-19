@@ -10,8 +10,8 @@ export default [
         const { services: s } = this
         const { address, port } = this.body
 
-        await s.socketsInfra.buildEmitSayArray('discord')
-        s.socketsInfra.pushToEmitSay(['server_twitchbot_twitchConnected', address, port])
+        await s.socketsInfra
+          .emitSayDiscord(['server_twitchbot_twitchConnected', address, port])
 
       }
     },
@@ -24,9 +24,12 @@ export default [
         const { services: s } = this
         const { channel, username, self } = this.body
 
-        await s.socketsInfra.buildEmitSayArray('discord')
+        const isUser = await s.users.getByUsername(username)
+        const isDiscordId = _.get(isUser, 'discord_id', null)
+        const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+
         const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
-        s.socketsInfra.pushToEmitSay([event, channel, username])
+        await s.socketsInfra.emitSayDiscord([event, channel, username, discordKey])
 
       }
     },
@@ -39,9 +42,12 @@ export default [
         const { services: s } = this
         const { channel, username, self } = this.body
 
-        await s.socketsInfra.buildEmitSayArray('discord')
+        const isUser = await s.users.getByUsername(username)
+        const isDiscordId = _.get(isUser, 'discord_id', null)
+        const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+
         const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
-        s.socketsInfra.pushToEmitSay([event, channel, username])
+        await s.socketsInfra.emitSayDiscord([event, channel, username, discordKey])
 
       }
     },
