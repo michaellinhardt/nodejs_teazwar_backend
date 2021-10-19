@@ -47,7 +47,7 @@ export default [
     route: ['post', '/twitch/part'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s } = this
+        const { services: s, helpers: h } = this
         const { username, self } = this.body
 
         const isBot = await s.bots.getByUsername(username)
@@ -58,11 +58,10 @@ export default [
 
         } else {
           const isUser = await s.users.getByUsername(username)
-          const isDiscordId = _.get(isUser, 'discord_id', null)
-          const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+          const discordPing = h.language.userDiscordPing(isUser)
 
           const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
-          await s.socketsInfra.emitSayDiscord([event, discordKey, username])
+          await s.socketsInfra.emitSayDiscord([event, discordPing, username])
         }
 
       }

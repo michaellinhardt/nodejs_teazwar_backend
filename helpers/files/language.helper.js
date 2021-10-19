@@ -32,6 +32,11 @@ const extractMessage = (lang, language_file, language_key) => {
 
 module.exports = {
 
+  userTwitchLevlUp: ({ display_name, level }) => `=[ @${display_name} ${level} ]=`,
+  userDiscordLevlUp: ({ discord_id, display_name, level }) =>
+    `=[ ${(discord_id ? `<@${discord_id}> ` : '')}${display_name} ${level} ]=`,
+  userDiscordPing: (user = {}) => user && user.discord_id ? ` <@${user.discord_id}> ` : '',
+
   get: (lang, language_file, language_key, ...language_args) => {
     const message = extractMessage(lang, language_file, language_key)
     return replacer(language_file, message, ...language_args)

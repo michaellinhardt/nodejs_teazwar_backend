@@ -7,18 +7,14 @@ export default [
     route: ['post', '/cron/xp/levelup'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p } = this
-        const requireLevelUp = await s.userXp.getUsersRequiringLvlUp()
+        const { services: s, payloads: p, modules: m, helpers: h } = this
 
-        if (requireLevelUp.length === 0) {
-          return p.cron.empty()
-        }
-
-        const updated = await s.userXp.increaseOneLevelForUsers(requireLevelUp)
+        const updated = await m.xp.increaseOneLevelForUsers()
+        if (updated.length === 0) { return p.cron.empty() }
 
         if (updated.length === 1) {
           const user = updated[0]
-          const discordPing = user.discord_id ? ` <@${user.discord_id}> ` : ''
+          const discordPing = h.language.userDiscordPing(user)
           await s.socketsInfra.emitSayDiscord(
             ['game_level_up_one', discordPing, user.display_name, user.level])
           await s.socketsInfra.emitSayTwitch(
@@ -28,13 +24,8 @@ export default [
           const levelUpArrayTwitch = []
           const levelUpArrayDiscord = []
           _.forEach(updated, user => {
-            levelUpArrayTwitch.push(`=[ @${user.display_name} ${user.level} ]=`)
-
-            const discordUser = user.discord_id
-              ? `[ <@${user.discord_id}> ${user.display_name} ${user.level} ]`
-              : `[ ${user.display_name} ${user.level} ]`
-
-            levelUpArrayDiscord.push(discordUser)
+            levelUpArrayTwitch.push(h.language.userTwitchLevlUp(user))
+            levelUpArrayDiscord.push(h.language.userDiscordLevlUp(user))
           })
 
           await s.socketsInfra
