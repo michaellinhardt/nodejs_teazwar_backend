@@ -44,16 +44,24 @@ export default [
       }
 
       async handler () {
-        const { body: { socket_id, infra_name }, services: s } = this
+        const { body: { socket_id, infra_name, reason }, services: s } = this
+
+        let socket = {}
 
         if (socket_id) {
+          socket = await s.socketsInfra.getById(socket_id)
           await s.socketsInfra.disconnected(socket_id)
           await s.users.socketDisconnected(socket_id)
 
         } else if (infra_name) {
+          socket = await s.socketsInfra.getByName(infra_name)
           await s.socketsInfra.disconnectedByName(infra_name)
-
         }
+
+        const sayKey = socket.infra_name === 'twitch'
+          ? 'server_twitchbot_socketDisconnected' : 'server_discordbot_socketDisconnected'
+
+        await s.socketsInfra.emitSayDiscord([sayKey, reason])
       }
     },
   },

@@ -6,7 +6,7 @@ export default [
     route: ['post', '/cron/global/following'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p, apis: a } = this
+        const { services: s, payloads: p, apis: a, helpers: h } = this
         const channel = await s.users.getChannel()
         const user = await s.users.getOneGlobalFollowing()
 
@@ -15,19 +15,32 @@ export default [
         }
 
         const isFollowing = await a.follows.check(channel.user_id, user.user_id)
+        await s.users.updateFollowing(user, isFollowing)
 
-        if (user.isFollower === 'maybe'
-            || (user.isFollower === 'no' && isFollowing.length)
-            || (user.isFollower === 'yes' && !isFollowing.length)) {
-          // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
-          // await s.eventsGlobal.addEvent('global_following_change', {
-          //   countFollow,
-          //   username: user.username,
-          //   previous: user.isFollower,
-          //   current: (isFollowing.length > 0) })
+        const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+        const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
+        const discordPing = user.discord_id ? ` <@${user.discord_id}> ` : ''
+        const isFollowerBefore = user.isFollower === 'yes'
+        const isOnline = user.timestampOnlineUntill >= h.date.timestamp()
+
+        let event = null
+        if (!isFollowerBefore && isFollowing.length && countFollow === 1) {
+          event = 'new_follower'
+
+        } else if (!isFollowerBefore && isFollowing.length && countFollow > 1) {
+          event = 're_follower'
+
+        } else if (isFollowerBefore && !isFollowing.length) {
+          event = 'un_follower'
         }
 
-        await s.users.updateFollowing(user, isFollowing)
+        await s.socketsInfra.emitSayDiscord(
+          [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
+
+        if (isOnline) {
+          await s.socketsInfra.emitSayTwitch(
+            [event, user.display_name, countFollowTimes])
+        }
 
         p.cron.success()
       }
@@ -41,26 +54,26 @@ export default [
         const { services: s, payloads: p, apis: a } = this
 
         const channel = await s.users.getChannel()
-        const user = await s.users.getOneChatterUnFollower()
+        const user = await s.users.getOneChatterFollowing()
 
         if (!channel || !user) {
           return p.cron.empty()
         }
 
         const isFollowing = await a.follows.check(channel.user_id, user.user_id)
-
-        if (user.isFollower === 'maybe'
-            || (user.isFollower === 'no' && isFollowing.length)
-            || (user.isFollower === 'yes' && !isFollowing.length)) {
-          // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
-          // await s.eventsGlobal.addEvent('chatters_un_follower', {
-          //   countFollow,
-          //   username: user.username,
-          //   previous: user.isFollower,
-          //   current: (isFollowing.length > 0) })
-        }
-
         await s.users.updateFollowing(user, isFollowing)
+
+        if (!isFollowing.length) {
+          const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+          const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
+          const discordPing = user.discord_id ? ` <@${user.discord_id}> ` : ''
+
+          await s.socketsInfra.emitSayDiscord(
+            ['stream_un_follower', discordPing, user.display_name, countFollowTimes])
+
+          await s.socketsInfra.emitSayTwitch(
+            ['un_follower', user.display_name, countFollowTimes])
+        }
 
         p.cron.success()
       }
@@ -73,26 +86,27 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
         const channel = await s.users.getChannel()
-        const user = await s.users.getOneChatterNewFollower()
+        const user = await s.users.getOneChatterNotFollowing()
 
         if (!channel || !user) {
           return p.cron.empty()
         }
 
         const isFollowing = await a.follows.check(channel.user_id, user.user_id)
-
-        if (user.isFollower === 'maybe'
-            || (user.isFollower === 'no' && isFollowing.length)
-            || (user.isFollower === 'yes' && !isFollowing.length)) {
-          // const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
-          // await s.eventsGlobal.addEvent('chatters_new_follower', {
-          //   countFollow,
-          //   username: user.username,
-          //   previous: user.isFollower,
-          //   current: (isFollowing.length > 0) })
-        }
-
         await s.users.updateFollowing(user, isFollowing)
+
+        if (!isFollowing.length) { return p.cron.success() }
+
+        const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
+        const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
+        const discordPing = user.discord_id ? ` <@${user.discord_id}> ` : ''
+        const event = countFollow === 1 ? 'new_follower' : 're_follower'
+
+        await s.socketsInfra.emitSayDiscord(
+          [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
+
+        await s.socketsInfra.emitSayTwitch(
+          [event, user.display_name, countFollowTimes])
 
         p.cron.success()
       }

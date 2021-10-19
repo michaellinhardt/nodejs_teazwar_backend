@@ -29,7 +29,7 @@ exports.up = function (knex) {
     table.biginteger('timestampNewFollowerCheck').defaultTo(0)
     table.biginteger('timestampFollowingCheck').defaultTo(0)
 
-    table.integer('countFollow').defaultTo(0)
+    table.integer('countFollow').defaultTo(0) // track when new following
 
     table.string('socket_id').defaultTo(null)
     table.string('discord_id').defaultTo(null)

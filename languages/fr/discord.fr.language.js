@@ -6,9 +6,10 @@ module.exports = {
   stats_welcome: '🙋 bonjour stats',
 
   server_twitchbot_socketConnected: '🟪 [twitch.bot] connection socket établi',
+  server_twitchbot_socketDisconnected: '🟪 [twitch.bot] socket déconnecté: [0]',
   server_twitchbot_twitchConnected: '🟪 [twitch.bot] connecté au server irc [0]:[1]',
-  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le channel [0] avec le nickname [1]',
-  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le channel [0] avec le nickname [1]',
+  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le tchat avec le nickname [0]',
+  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le tchat avec le nickname [0]',
 
   twitch_chatters_listing: '👨‍💻 [0] utilisateurs connecté dans le tchat',
   twitch_chatters_validate_add: '👨‍💻 [0] nouveaux utilisateurs créer avec les données twitch',
@@ -18,15 +19,19 @@ module.exports = {
   // stream_viewer_leaved: '🚪 [[1]] à quitté le tchat twitch',
   stream_viewer_joined: '➡️ [.1][[0]] à rejoins le tchat twitch',
   stream_viewer_leaved: '⬅️ [.1][[0]] à quitté le tchat twitch',
-
   stream_bot_joined: '🤖 <@[.1]> un bot à rejoins le tchat twitch: [0]',
   stream_bot_leaved: '🤖 <@[.1]> un bot à quitté le tchat twitch: [0]',
+
+  stream_new_follower: '❤ [.0][[1]] est un nouveau follower du stream',
+  stream_un_follower: '💔 [.0][[1]] ne follow plus le stream pour la [2] fois',
+  stream_re_follower: '❤️‍🩹 [.0][[1]] re-follow le stream pour la [2] fois',
 
   stream_chatters_bot_added: '🤖 [0] nouveaux bots référencé',
   stream_chatters_bot_deleted: '🤖 [0] bots supprimé de la liste',
   stream_chatters_bot_detected: '🚨  <@[.0]> il y a [1] nouveaux bots détecté: [2]',
 
   server_discordbot_socketConnected: '🟦 [discord.bot] connection socket établi',
+  server_discordbot_socketDisconnected: '🟦 [discord.bot] socket déconnecté: [0]',
   server_discordbot_slashcommandRegisteredStart: '🟦 [discord.bot] envoie des slash /commandes au server discord',
   server_discordbot_slashcommandRegisteredEnd: '🟦 [discord.bot] les slash /commandes sont bien enregistré',
 

@@ -1,4 +1,9 @@
 /* eslint-disable max-len */
+const cfg = require('../../game/config')
+
+const followerXp = `${(cfg.xp.multiplierFollower * 100) - 100}%`
+const followerGroupXp = `${cfg.xp.multiplierFollowerGroup * 100}%`
+
 module.exports = {
   welcome: [
     'Hello chat!',
@@ -10,6 +15,10 @@ module.exports = {
 
   bot_joined: '🤖 @TeazYou , un bot à rejoins le tchat: @[0]',
   bot_leaved: '🤖 @TeazYou , le bot @[0] à quitté le tchat',
+
+  new_follower: `❤ @[1] merci pour le follow! tu bénéficie maintenant de +${followerXp} XP et le tchat gagne +${followerGroupXp} XP en ta présence 🎉  Si tu as des questions n'hésite pas. @TeazYou`,
+  un_follower: '💔 [[1]] je suis triste de te voir un-follow le stream pour la [2] fois et perdre t\'es bonus d\'XP 🥺 Comment puis-je améliorer le stream pour te faire revenir ? @TeazYou',
+  re_follower: `❤️‍🩹 [[1]] merci pour ton [2] re-follow, tu bénéficie de nouveau de +${followerXp} XP et le tchat gagne +${followerGroupXp} XP en ta présence 🎉 Qu'es-ce qui ta fais changer d'avis ? @TeazYou`,
 
   delation_none: '👌 @[0] , je ne détecte aucun bot présent sur le tchat',
   delation_detected: '🤖 @[0] , je détecte [1] bots présent sur le tchat: [2]',

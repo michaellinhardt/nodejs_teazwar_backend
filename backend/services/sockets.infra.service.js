@@ -25,6 +25,12 @@ export default class extends ServiceSuperclass {
     return socket
   }
 
+  async getById (socket_id) {
+    const socket = await this.getFirstWhere({ socket_id })
+    _.set(this, `payload.socketIds.${socket.infra_name}`, socket.socket_id)
+    return socket
+  }
+
   async buildSayArray (infra_name) {
     const isSay = _.get(this, `payload.say.${infra_name}`, undefined)
     if (isSay && Array.isArray(isSay)) { return true }

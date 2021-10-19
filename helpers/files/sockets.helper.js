@@ -37,10 +37,12 @@ module.exports = {
       _.get(payload, 'socketIds.twitch', null),
       { say: { twitch: _.get(payload, 'say.twitch', []) } },
     ]])
+    delete payload.say.twitch
     await executeSequence([[
       _.get(payload, 'socketIds.discord', null),
       { say: { discord: _.get(payload, 'say.discord', []) } },
     ]])
+    delete payload.say.discord
   },
 
   getSocket: () => io(socketUrl),

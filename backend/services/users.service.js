@@ -37,7 +37,7 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ socket_id }, { socket_id: null })
   }
 
-  async getOneChatterNewFollower () {
+  async getOneChatterNotFollowing () {
     const { helpers: h } = this
 
     const currTimestamp = h.date.timestamp()
@@ -71,7 +71,7 @@ export default class extends ServiceSuperclass {
     return nextGlobalFollowingCheck
   }
 
-  async getOneChatterUnFollower () {
+  async getOneChatterFollowing () {
     const { helpers: h } = this
 
     const currTimestamp = h.date.timestamp()

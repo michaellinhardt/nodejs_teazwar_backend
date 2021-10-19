@@ -1,6 +1,10 @@
 const _ = require('lodash')
 
 const { runRoute, runRouteTeazwar } = require('../../../helpers/files/backend.helper')
+const SocketHelper = require('../../../helpers/files/sockets.helper')
+const BackendHelper = require('../../../helpers/files/backend.helper')
+
+const emitter = SocketHelper.getServerEmitter()
 
 const onAny = async (socket, data = {}) => {
   if (typeof (data) !== 'object' || Array.isArray(data)) {
@@ -12,22 +16,17 @@ const onAny = async (socket, data = {}) => {
   data.jwtoken = _.get(data, 'jwtoken', undefined)
   data.socket_id = socket.id
 
-  await runRoute(data)
-
   try {
-    await runRoute(data)
+    const { payload = {} } = await runRoute(data)
+    await SocketHelper.dispatchSayOrder(payload, emitter)
 
   } catch (err) {
     console.debug(err)
-    const BackendHelper = require('../../../helpers/files/backend.helper')
     const error_location = `socket_router${data.path.split('/').join('..')}`
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
+    await SocketHelper.dispatchSayOrder(payload, emitter)
 
-    if (payload.say && payload.socketIds) {
-      const SocketHelper = require('../../../helpers/files/sockets.helper')
-      await SocketHelper.dispatchSayOrder(payload)
-    }
   }
 }
 
@@ -39,8 +38,21 @@ const onDisconnect = async (socket, reason) => {
     socket_id: socket.id,
   }
 
-  const { payload } = await runRouteTeazwar(data)
-  return payload
+  try {
+    const { payload } = await runRouteTeazwar(data)
+    await SocketHelper.dispatchSayOrder(payload, emitter)
+
+    return payload
+
+  } catch (err) {
+    console.debug(err)
+    const { payload = {} } = await BackendHelper
+      .discordReportError('socket_disconnected', err.message)
+    await SocketHelper.dispatchSayOrder(payload, emitter)
+
+    return payload
+  }
+
 }
 
 module.exports = {
