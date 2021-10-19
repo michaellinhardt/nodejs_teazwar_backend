@@ -14,7 +14,7 @@ export default [
 
         if (updated.length === 1) {
           const user = updated[0]
-          const discordPing = h.language.userDiscordPing(user)
+          const discordPing = h.format.userDiscordPing(user)
           await s.socketsInfra.emitSayDiscord(
             ['game_level_up_one', discordPing, user.display_name, user.level])
           await s.socketsInfra.emitSayTwitch(
@@ -24,8 +24,8 @@ export default [
           const levelUpArrayTwitch = []
           const levelUpArrayDiscord = []
           _.forEach(updated, user => {
-            levelUpArrayTwitch.push(h.language.userTwitchLevlUp(user))
-            levelUpArrayDiscord.push(h.language.userDiscordLevlUp(user))
+            levelUpArrayTwitch.push(h.format.userTwitchLevlUp(user))
+            levelUpArrayDiscord.push(h.format.userDiscordLevlUp(user))
           })
 
           await s.socketsInfra

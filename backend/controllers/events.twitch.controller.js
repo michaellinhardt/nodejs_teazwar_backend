@@ -58,7 +58,7 @@ export default [
 
         } else {
           const isUser = await s.users.getByUsername(username)
-          const discordPing = h.language.userDiscordPing(isUser)
+          const discordPing = h.format.userDiscordPing(isUser)
 
           const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
           await s.socketsInfra.emitSayDiscord([event, discordPing, username])

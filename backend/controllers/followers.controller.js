@@ -17,7 +17,7 @@ export default [
 
         const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
         const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
-        const discordPing = h.language.userDiscordPing(user)
+        const discordPing = h.format.userDiscordPing(user)
         const isFollowerBefore = user.isFollower === 'yes'
         const isOnline = user.timestampOnlineUntill >= h.date.timestamp()
 
@@ -64,7 +64,7 @@ export default [
         if (!isFollowing.length) {
           const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
           const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
-          const discordPing = h.language.userDiscordPing(user)
+          const discordPing = h.format.userDiscordPing(user)
 
           await s.socketsInfra.emitSayDiscord(
             ['stream_un_follower', discordPing, user.display_name, countFollowTimes])
@@ -95,7 +95,7 @@ export default [
 
         const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
         const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
-        const discordPing = h.language.userDiscordPing(user)
+        const discordPing = h.format.userDiscordPing(user)
         const event = countFollow === 1 ? 'new_follower' : 're_follower'
 
         await s.socketsInfra.emitSayDiscord(
