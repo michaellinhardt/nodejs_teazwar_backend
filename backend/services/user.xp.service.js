@@ -1,6 +1,4 @@
 import _ from 'lodash'
-const { xp } = require('../../config')
-
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'user_xp'

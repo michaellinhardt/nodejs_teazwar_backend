@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import RendersHelper from '../../../helpers/files/renders.helper'
 import BackendHelper from '../../../helpers/files/backend.helper'
+import RedisHelper from '../../../helpers/files/redis.helper'
 
 module.exports = {
 
@@ -19,6 +20,7 @@ module.exports = {
         router[method](path, async (req, res) => {
 
           const body = BackendHelper.prepareBodyFromHttp(req, path)
+          _.set(body, 'big_data.redis', RedisHelper.connect('https.router'))
 
           try {
 
@@ -34,7 +36,7 @@ module.exports = {
 
             if (payload.say && payload.socketIds) {
               const SocketHelper = require('../../../helpers/files/sockets.helper')
-              await SocketHelper.dispatchSayOrder(payload)
+              await SocketHelper.dispatchSayOrder(payload, 'https.router')
             }
           }
         })

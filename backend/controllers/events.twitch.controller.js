@@ -74,7 +74,7 @@ export default [
       async handler () {
         const { services: s, body: b } = this
 
-        const user_id = _.get(b.twitchData, 'userstate[\'user-id\']', null)
+        const user_id = _.get(b, 'twitchData.userstate[\'user-id\']', null)
         if (!user_id) { return true }
 
         const user = await s.users.getByUserId(user_id)

@@ -1,8 +1,10 @@
+const _ = require('lodash')
 const h = require('../helpers')
 const config = require('../config')
-const emitter = h.sockets.getServerEmitter()
+const emitter = h.sockets.getServerEmitter('cron.server')
 
 const backend = async (method, path, body = {}) => {
+  _.set(body, 'big_data.redis', h.redis.connect('cron.server'))
   const { payload = {} } = await h.backend.runRouteTeazwar({ ...body, method, path })
   await h.sockets.dispatchSayOrder(payload, emitter)
   return payload
@@ -26,7 +28,7 @@ const executeNextTask = async () => {
     return false
   }
 
-  const { cron, task } = cronRouter
+  const { big_data: { cron }, task } = cronRouter
 
   let taskResult = {}
   try {
@@ -43,7 +45,7 @@ const executeNextTask = async () => {
   }
 
   try {
-    await backend('post', '/cron/interval', { cron, task, taskResult })
+    await backend('post', '/cron/interval', { big_data: { cron }, task, taskResult })
 
   } catch (err) {
     console.debug(err)
@@ -52,7 +54,6 @@ const executeNextTask = async () => {
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
   }
 
-  console.debug(task.path, taskResult)
 }
 
 const start = async () => {

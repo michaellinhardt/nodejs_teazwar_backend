@@ -9,41 +9,77 @@ const { createAdapter } = require('@socket.io/redis-adapter')
 const { Emitter } = require('@socket.io/redis-emitter')
 const { createClient } = require('redis')
 
-const getServerEmitter = () => {
-  const redisClient = createClient({ host: 'localhost', port: 6379 })
-  const emitter = new Emitter(redisClient)
+let emitterHandler = null
 
-  return (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
-    : emitter.to(socket_id).emit(...args)
+const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
+  if (!payload
+    || typeof (payload) !== 'object'
+    || !payload.say
+    || !payload.socketIds) {
+    return true
+  }
+
+  const emitter = typeof (emitterAddr) !== 'string' ? emitterAddr : getServerEmitter(emitterAddr)
+
+  const executeSequence = contents => !contents.length ? true
+    : Promise.each(contents, content => content.length ? emitter(...content) : true,
+      { concurrency: 1 })
+
+  await executeSequence([[
+    _.get(payload, 'socketIds.twitch', null),
+    { say: { twitch: _.get(payload, 'say.twitch', []) } },
+  ]])
+  delete payload.say.twitch
+  await executeSequence([[
+    _.get(payload, 'socketIds.discord', null),
+    { say: { discord: _.get(payload, 'say.discord', []) } },
+  ]])
+  delete payload.say.discord
+}
+
+const reportConnection = async (infra_name, emitter) => {
+
+  const { runRouteTeazwar } = require('./backend.helper')
+
+  const body = {
+    method: 'post',
+    path: '/debug/socket-redis/connected',
+    infra_name,
+  }
+  const { payload = {} } = await runRouteTeazwar(body)
+  await dispatchSayOrder(payload, emitter)
+  return payload
+}
+
+const getServerEmitter = (infra_name) => {
+  if (!emitterHandler) {
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    console.debug('CREATE EMITTERRRRRRR')
+    const redisClient = createClient({ host: 'localhost', port: 6379 })
+    const emitter = new Emitter(redisClient)
+
+    emitterHandler = (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
+      : emitter.to(socket_id).emit(...args)
+
+    reportConnection(infra_name, emitterHandler)
+  }
+
+  return emitterHandler
 }
 
 module.exports = {
 
-  dispatchSayOrder: async (payload, emitterAddr = null) => {
-    if (!payload
-      || typeof (payload) !== 'object'
-      || !payload.say
-      || !payload.socketIds) {
-      return true
-    }
-
-    const emitter = emitterAddr ? emitterAddr : getServerEmitter()
-
-    const executeSequence = contents => !contents.length ? true
-      : Promise.each(contents, content => content.length ? emitter(...content) : true,
-        { concurrency: 1 })
-
-    await executeSequence([[
-      _.get(payload, 'socketIds.twitch', null),
-      { say: { twitch: _.get(payload, 'say.twitch', []) } },
-    ]])
-    delete payload.say.twitch
-    await executeSequence([[
-      _.get(payload, 'socketIds.discord', null),
-      { say: { discord: _.get(payload, 'say.discord', []) } },
-    ]])
-    delete payload.say.discord
-  },
+  dispatchSayOrder,
 
   getSocket: () => io(socketUrl),
 
@@ -58,8 +94,11 @@ module.exports = {
 
   startSocketServer: io => {
     const pubClient = createClient({
-      host: 'localhost',
-      port: 6379,
+      socket: {
+        host: 'localhost',
+        port: 6379,
+
+      },
     })
     const subClient = pubClient.duplicate()
     io.adapter(createAdapter(pubClient, subClient))

@@ -26,7 +26,7 @@ export default [
           return p.cron.empty({ sleep: seconds })
         }
 
-        p.cron.success({ cron, task })
+        p.cron.success({ big_data: { cron }, task })
       }
     },
   },
@@ -37,7 +37,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, body: b } = this
 
-        await s.cronTasks.setTwitchApiNext(b.cron, b.task)
+        await s.cronTasks.setTwitchApiNext(b.big_data.cron, b.task)
         await s.cronTasks.setTaskInterval(b.task, b.taskResult)
 
         p.cron.success()

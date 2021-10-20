@@ -3,8 +3,11 @@ const _ = require('lodash')
 const { runRoute, runRouteTeazwar } = require('../../../helpers/files/backend.helper')
 const SocketHelper = require('../../../helpers/files/sockets.helper')
 const BackendHelper = require('../../../helpers/files/backend.helper')
+const RedisHelper = require('../../../helpers/files/redis.helper')
 
-const emitter = SocketHelper.getServerEmitter()
+const redis = RedisHelper.connect('socket.router')
+
+const emitter = SocketHelper.getServerEmitter('socket.router')
 
 const onAny = async (socket, data = {}) => {
   if (typeof (data) !== 'object' || Array.isArray(data)) {
@@ -15,6 +18,7 @@ const onAny = async (socket, data = {}) => {
   data.method = _.get(data, 'method', '')
   data.jwtoken = _.get(data, 'jwtoken', undefined)
   data.socket_id = socket.id
+  data.redis = redis
 
   try {
     const { payload = {} } = await runRoute(data)
@@ -36,6 +40,7 @@ const onDisconnect = async (socket, reason) => {
     method: 'post',
     reason,
     socket_id: socket.id,
+    redis,
   }
 
   try {

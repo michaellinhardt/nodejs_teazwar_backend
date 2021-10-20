@@ -19,10 +19,41 @@ const getFlattenControllers = () => {
   return ControllersFlatten
 }
 
+const runRouteTeazwar = (body, requestType = 'script') => {
+  body.jwtoken = teazwarToken
+  return runRoute(body, requestType)
+}
+
+const prepareBodyFromSocket = socketData => {
+  const body = {
+    ...socketData,
+  }
+  return body
+}
+
+const prepareBodyFromHttp = (req, path) => {
+  const requestParam = _.get(req, 'params', {})
+  const requestBody = _.get(req, 'body', {})
+
+  const jwtoken = _.get(req, 'headers[\'x-access-token\']', undefined)
+
+  const body = {
+    ...requestParam,
+    ...requestBody,
+    jwtoken,
+    method: req.method.toLowerCase(),
+    path,
+  }
+
+  return body
+}
+
 const runRoute = async (body = {}, requestType = 'script') => {
   const { method = '', path = '' } = body
 
   if (!ControllersFlatten) { getFlattenControllers() }
+
+  if (requestType !== 'http') { body = prepareBodyFromSocket(body) }
 
   const flattenKey = `${method}${path}`
   const ctrl = ControllersFlatten[flattenKey]
@@ -43,12 +74,15 @@ const runRoute = async (body = {}, requestType = 'script') => {
   delete body.method
   delete body.path
 
-  const big_data = _.get(body, 'big_data', undefined)
+  const body_big_data = _.get(body, 'big_data', undefined)
+  const payload_big_data = _.get(payload, 'big_data', undefined)
+
   delete body.big_data
   delete payload.big_data
-  if (big_data && big_data.message) {
-    _.set(body, 'big_data.msg', big_data.message.content)
-    _.set(body, 'big_data.author', big_data.message.author.username)
+
+  if (body_big_data && body_big_data.message) {
+    _.set(body, 'big_data.msg', body_big_data.message.content)
+    _.set(body, 'big_data.author', body_big_data.message.author.username)
   }
 
   try {
@@ -59,63 +93,18 @@ const runRoute = async (body = {}, requestType = 'script') => {
     console.debug('->\n', prettyjson.render(payload))
   } catch (err) { console.log(JSON.stringify(payload, null, 2)) }
 
-  if (big_data) {
-    body.big_data = big_data
-    payload.big_data = big_data
-  }
+  if (body_big_data) { body.big_data = body_big_data }
+  if (payload_big_data) { payload.big_data = payload_big_data }
 
   return controller
 
-}
-
-const runRouteTeazwar = (body, requestType = 'script') => {
-  body.jwtoken = teazwarToken
-  return runRoute(body, requestType)
 }
 
 module.exports = {
 
   getFlattenControllers,
 
-  prepareBodyFromSocket: socketData => {
-    const { extractTwitchData } = require('./data.helper')
-
-    const twitchData = _.get(socketData, 'twitchData', {})
-    const twitch = _.isEmpty(twitchData) ? undefined : extractTwitchData(twitchData)
-
-    const body = {
-      ...socketData,
-      method: socketData.method.toLowerCase(),
-      twitch,
-    }
-
-    delete body.twitchData
-
-    return body
-  },
-
-  prepareBodyFromHttp: (req, path) => {
-    const { extractTwitchData } = require('./data.helper')
-
-    const twitchData = _.get(req, 'body.twitchData', {})
-    const twitch = _.isEmpty(twitchData) ? undefined : extractTwitchData(twitchData)
-
-    const requestParam = _.get(req, 'params', {})
-    const requestBody = _.get(req, 'body', {})
-
-    const jwtoken = _.get(req, 'headers[\'x-access-token\']', undefined)
-
-    const body = {
-      ...requestParam,
-      ...requestBody,
-      twitch,
-      jwtoken,
-      method: req.method.toLowerCase(),
-      path,
-    }
-
-    return body
-  },
+  prepareBodyFromHttp,
 
   runRoute,
   runRouteTeazwar,

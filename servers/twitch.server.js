@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const h = require('../helpers')
-const emitter = h.sockets.getServerEmitter()
+const emitter = h.sockets.getServerEmitter('twitch.bot')
 
 let twitch = null
 let say = null
@@ -19,6 +19,7 @@ const executePayloadOrder = async payload => {
 
 const backend = async (method, path, body = {}) => {
   try {
+    _.set(body, 'big_data.redis', h.redis.connect('twitch.bot'))
     const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
     executePayloadOrder(payload)
 

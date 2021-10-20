@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { render } = require('prettyjson')
 const h = require('../helpers')
 const { discord: { teazyou_discord_user_id, sleepWhenBackendError } } = require('../config')
-const emitter = h.sockets.getServerEmitter()
+const emitter = h.sockets.getServerEmitter('discord.bot')
 
 let discord = null
 let say = null
@@ -69,6 +69,7 @@ const payloadReply = async (payload) => {
 
 const backend = async (method, path, body = {}) => {
   try {
+    _.set(body, 'big_data.redis', h.redis.connect('discord.bot'))
     const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
     executePayloadOrder(payload)
 

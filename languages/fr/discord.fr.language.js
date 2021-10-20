@@ -12,8 +12,11 @@ module.exports = {
   server_twitchbot_socketConnected: '🟪 [twitch.bot] connection socket établi',
   server_twitchbot_socketDisconnected: '🟪 [twitch.bot] socket déconnecté: [?]',
   server_twitchbot_twitchConnected: '🟪 [twitch.bot] connecté au server irc [?]:[?]',
-  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le tchat avec le nickname [?]',
-  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le tchat avec le nickname [?]',
+  server_twitchbot_joined: '🟪 [twitch.bot] à rejoin le tchat twitch',
+  server_twitchbot_leaved: '🟪 [twitch.bot] à quitté le tchat twitch',
+
+  server_redis_connected: '💾 [redis.server] nouvelle connection de [?]',
+  server_socket_redis_connected: '☎ [socket.redis.adapter] liaison établi par: [?]',
 
   spam_chatters_listing: '👨‍💻 [?] utilisateurs sur le tchat: [?]',
 
