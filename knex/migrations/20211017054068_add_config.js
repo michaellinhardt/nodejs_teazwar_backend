@@ -1,21 +1,17 @@
 const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
-const tableName = 'user_xp'
-
-const { xp } = require('../../game/config')
+const tableName = 'config'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
-    table.string('user_uuid', 36).notNullable()
-
-    table.integer('level').defaultTo(xp.startLevel)
-    table.integer('level_xp').defaultTo(0)
-    table.integer('level_xp_max').defaultTo(xp.xpMaxMinimum)
+    table.string('config_key').notNullable()
+    table.text('config_json')
 
   }).then(() => {
-    return true
+    const { config } = require('../seeds')
+    return knex(tableName).insert(config)
   })
 }
 

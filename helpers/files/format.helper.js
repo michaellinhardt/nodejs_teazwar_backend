@@ -5,4 +5,7 @@ module.exports = {
     `=[ ${(discord_id ? `<@${discord_id}> ` : '')}${display_name} ${level} ]=`,
   userDiscordPing: (user = {}) => user && user.discord_id ? ` <@${user.discord_id}> ` : '',
 
+  xpBonusGroupDetails: ({ follower, discord, subscriber }) =>
+    `${follower} Fol. ${subscriber} Sub. ${discord} Disc.`,
+
 }

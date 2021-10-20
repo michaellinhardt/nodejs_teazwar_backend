@@ -4,6 +4,33 @@ import ControllerSuperclass from '../application/superclass/controller.superclas
 export default [
   {
     isTeazwar: true,
+    route: ['post', '/cron/xp/bonus/perma/group'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { payloads: p, modules: m, services: s, helpers: h } = this
+
+        const current = await s.config.get('xpbonus_perma_group')
+        const update = await m.xp.calculateBonusPermaGroup()
+
+        const { xpbonus_perma_group, xpbonus_perma_group_details } = update
+
+        if (update.xpbonus_perma_group !== current) {
+
+          const details = h.format.xpBonusGroupDetails(xpbonus_perma_group_details)
+          await s.socketsInfra
+            .emitSayDiscord(['game_xpbonus_perma_group', xpbonus_perma_group,
+              details])
+
+          await s.socketsInfra
+            .emitSayTwitch(['xpbonus_perma_group', xpbonus_perma_group])
+        }
+
+        p.cron.success()
+      }
+    },
+  },
+  {
+    isTeazwar: true,
     route: ['post', '/cron/xp/levelup'],
     Controller: class extends ControllerSuperclass {
       async handler () {
@@ -52,7 +79,7 @@ export default [
         const chatterUsernames = chatters.map(c => c.username)
         const users = await s.users.getByUsernames(chatterUsernames)
 
-        await m.xp.addXpGainFromChatters(users, chattersFlatten)
+        await m.xp.addXpGainToChatters(users, chattersFlatten)
         await s.userStats.incrementSeenStats(users, chattersFlatten)
 
         await s.chatters.resetByUsernames(chatterUsernames)

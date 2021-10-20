@@ -7,6 +7,8 @@ module.exports = {
   spam_welcome: '🙋 bonjour spam',
   debug_welcome: '🙋 bonjour debug',
 
+  game_xpbonus_perma_group: '👨‍👩‍👧‍👦 xp bonus de group recalculé à [?]% ( [.?] )',
+
   server_twitchbot_socketConnected: '🟪 [twitch.bot] connection socket établi',
   server_twitchbot_socketDisconnected: '🟪 [twitch.bot] socket déconnecté: [?]',
   server_twitchbot_twitchConnected: '🟪 [twitch.bot] connecté au server irc [?]:[?]',

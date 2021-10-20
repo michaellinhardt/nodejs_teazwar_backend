@@ -1,6 +1,8 @@
 // const moment = require('moment')
+const _ = require('lodash')
 const { v1 } = require('uuid')
 const { teazwarToken } = require('../config/files/jwt.config')
+const sqlconfig = require('../config/files/sqlconfig.config')
 
 const users = [{
   uuid: '1e8b6bf0-1b50-11ec-85ec-4d033c80c035',
@@ -38,9 +40,17 @@ const sockets_infra = [
   { uuid: v1(), infra_name: 'discord' },
 ]
 
+const config = []
+_.forEach(sqlconfig, (value, config_key) => config.push({
+  uuid: v1(),
+  config_key,
+  config_json: JSON.stringify({ value }),
+}))
+
 module.exports = {
   users,
   admins,
   sockets_infra,
+  config,
 }
 

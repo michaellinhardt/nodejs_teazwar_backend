@@ -37,6 +37,15 @@ module.exports = {
     // isEnabled: false,
   }, {
 
+    path: '/xp/bonus/perma/group',
+    isTwitchApi: false,
+    interval: 6,
+    intervalEmpty: 60,
+    intervalRetry: 20,
+    timestampNext: 0,
+    // isEnabled: false,
+  }, {
+
     path: '/chatters/xpgain',
     isTwitchApi: false,
     interval: 0,

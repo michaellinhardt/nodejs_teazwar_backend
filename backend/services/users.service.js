@@ -19,6 +19,16 @@ export default class extends ServiceSuperclass {
       .andWhere('timestampOnlineUntill', '>=', currTimestamp)
   }
 
+  // TODO: when extension timestamp exist, replace this
+  getExtensionUsers () {
+    const currTimestamp = this.helpers.date.timestamp()
+    return this.knex()
+      .select('*')
+      .where({ isDeleted: false })
+      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
+      // .andWhere('timestampExtensionUntill', '>=', currTimestamp)
+  }
+
   getChannel () {
     return this.getFirstWhere({ username: twitch.chatbot.channel })
   }
