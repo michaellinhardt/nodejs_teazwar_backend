@@ -12,29 +12,31 @@ const { createClient } = require('redis')
 let emitterHandler = null
 
 const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
+
   if (!payload
     || typeof (payload) !== 'object'
-    || !payload.say
-    || !payload.socketIds) {
+    || !payload.say) {
     return true
   }
-
   const emitter = typeof (emitterAddr) !== 'string' ? emitterAddr : getServerEmitter(emitterAddr)
 
   const executeSequence = contents => !contents.length ? true
     : Promise.each(contents, content => content.length ? emitter(...content) : true,
       { concurrency: 1 })
 
-  await executeSequence([[
-    _.get(payload, 'socketIds.twitch', null),
-    { say: { twitch: _.get(payload, 'say.twitch', []) } },
-  ]])
-  delete payload.say.twitch
-  await executeSequence([[
-    _.get(payload, 'socketIds.discord', null),
-    { say: { discord: _.get(payload, 'say.discord', []) } },
-  ]])
-  delete payload.say.discord
+  const infraNames = []
+  _.forEach(payload.say, (sayArrays, infra_name) => infraNames.push(infra_name))
+
+  await Promise.each(infraNames, async (infra_name) => {
+    const sayArrays = _.get(payload, `say.${infra_name}`, [])
+    if (sayArrays.length) {
+      console.debug('sending ->', infra_name, sayArrays)
+      await executeSequence([[infra_name,
+        { say: { [infra_name]: _.get(payload, `say[${infra_name}]`, []) } },
+      ]])
+      delete payload.say[infra_name]
+    }
+  }, { concurrency: 3 })
 }
 
 const reportConnection = async (infra_name, emitter) => {
@@ -56,8 +58,8 @@ const getServerEmitter = (infra_name) => {
     const redisClient = createClient({ host: 'localhost', port: 6379 })
     const emitter = new Emitter(redisClient)
 
-    emitterHandler = (socket_id, ...args) => (!socket_id || !args || _.isEmpty(args)) ? null
-      : emitter.to(socket_id).emit(...args)
+    emitterHandler = (target, ...args) => (!target || !args || _.isEmpty(args)) ? null
+      : emitter.to(target).emit(...args)
 
     reportConnection(infra_name, emitterHandler)
   }
@@ -98,11 +100,26 @@ module.exports = {
     socket.on('connect', () => {
       console.log('Infra Socket Connected: ', socket.id)
       socket.onAny(data => methods.onSocketMessage(socket, data))
-      methods.backend('post', '/socket/infra/connected', { infra_name, socket_id: socket.id })
+
+      socket.emit({
+        path: '/socket/infra/connected',
+        method: 'post',
+        jwtoken: teazwarToken,
+        infra_name,
+      })
+
       methods.onSocketConnect(socket)
     })
     socket.on('disconnect', reason => {
-      methods.backend('post', '/socket/disconnected', { infra_name, socket_id: socket.id, reason })
+
+      socket.emit({
+        path: '/socket/disconnected',
+        method: 'post',
+        jwtoken: teazwarToken,
+        infra_name,
+        reason,
+      })
+
       methods.onSocketDisconnect(socket)
     })
     socket.on('connect_error', () => {

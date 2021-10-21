@@ -1,6 +1,6 @@
 class AppError extends Error {
-  constructor (error_key, status = 500) {
-    super('Server Error')
+  constructor (error_key = 'Server Error', status = 500) {
+    super(error_key)
     this.constructor = AppError
     // eslint-disable-next-line no-proto
     this.__proto__ = AppError.prototype
@@ -44,7 +44,7 @@ module.exports = {
   },
 
   socket: {
-    Ok: () => console.debug('render ok by socket'),
+    Ok: () => console.info('render ok by socket'),
 
     StopPipeline: class extends AppError {
       constructor (error_key) {
@@ -63,7 +63,7 @@ module.exports = {
   },
 
   script: {
-    Ok: () => console.debug('render ok by script'),
+    Ok: () => console.info('render ok by script'),
 
     StopPipeline: class extends AppError {
       constructor (error_key) {

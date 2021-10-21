@@ -62,7 +62,7 @@ export default [
 
         const sayKey = discord.verify_timestamp === 0
           ? 'discord_verified_first' : 'discord_verified_notFirst'
-        await s.socketsInfra.emitSayTwitch([sayKey, d.displayName])
+        s.socketsInfra.emitSayTwitch([sayKey, d.displayName])
       }
 
     },

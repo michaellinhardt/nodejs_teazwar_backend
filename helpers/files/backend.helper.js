@@ -1,6 +1,6 @@
 const prettyjson = require('prettyjson')
 const _ = require('lodash')
-const { jwt: { teazwarToken } } = require('../../config')
+const { jwt: { teazwarToken }, backend: { log } } = require('../../config')
 
 let ControllersFlatten = null
 const getFlattenControllers = () => {
@@ -69,7 +69,9 @@ const runRoute = async (body = {}, requestType = 'script') => {
 
   const payload = _.get(controller || {}, 'payload', { error_key: 'server_error' })
 
-  console.debug(`\n=======[ ${body.method.toUpperCase()} ${body.path} ]=======`)
+  if (!log) { return controller }
+
+  console.info(`\n=======[ ${body.method.toUpperCase()} ${body.path} ]=======`)
   delete body.jwtoken
   delete body.method
   delete body.path
@@ -86,11 +88,11 @@ const runRoute = async (body = {}, requestType = 'script') => {
   }
 
   try {
-    console.debug(prettyjson.render(body))
+    console.info(prettyjson.render(body))
   } catch (err) { console.log(JSON.stringify(body, null, 2)) }
 
   try {
-    console.debug('->\n', prettyjson.render(payload))
+    console.info('->\n', prettyjson.render(payload))
   } catch (err) { console.log(JSON.stringify(payload, null, 2)) }
 
   if (body_big_data) { body.big_data = body_big_data }

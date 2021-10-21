@@ -7,24 +7,24 @@ export default [
     route: ['post', '/socket/infra/connected'],
     Controller: class extends ControllerSuperclass {
       validator () {
-        const { body: { infra_name, socket_id } } = this
+        const { socket, body: { infra_name } } = this
         if (!infra_name || (infra_name !== 'discord' && infra_name !== 'twitch')) {
           this.StopPipeline('socketConnected_invalidInfraName')
         }
-        if (!socket_id || _.isEmpty(socket_id)) {
-          this.StopPipeline('socketConnected_missingId')
+        if (!socket) {
+          this.StopPipeline('socketConnected_missingSocketClient')
         }
       }
 
-      async handler () {
-        const { body: { infra_name, socket_id }, services: s } = this
+      handler () {
+        const { socket, body: { infra_name }, services: s } = this
 
-        await s.socketsInfra.connected(infra_name, socket_id)
+        socket.join(infra_name)
 
         const sayKey = infra_name === 'twitch'
           ? 'server_twitchbot_socketConnected' : 'server_discordbot_socketConnected'
 
-        await s.socketsInfra.emitSayDiscord([sayKey])
+        s.socketsInfra.emitSayDiscord([sayKey])
       }
     },
   },
@@ -33,35 +33,19 @@ export default [
     route: ['post', '/socket/disconnected'],
     Controller: class extends ControllerSuperclass {
       validator () {
-        const { body: { socket_id, infra_name } } = this
-        if ((!socket_id || _.isEmpty(socket_id))
-        && (!infra_name || _.isEmpty(infra_name))) {
+        const { body: { infra_name } } = this
+        if (!infra_name || _.isEmpty(infra_name)) {
           this.StopPipeline('socketDisconnected_missingData')
-        }
-        if (infra_name && infra_name !== 'discord' && infra_name !== 'twitch') {
-          this.StopPipeline('socketDisconnected_invalidInfraName')
         }
       }
 
-      async handler () {
-        const { body: { socket_id, infra_name, reason }, services: s } = this
+      handler () {
+        const { body: { infra_name, reason }, services: s } = this
 
-        let socket = {}
-
-        if (socket_id) {
-          socket = await s.socketsInfra.getById(socket_id)
-          await s.socketsInfra.disconnected(socket_id)
-          await s.users.socketDisconnected(socket_id)
-
-        } else if (infra_name) {
-          socket = await s.socketsInfra.getByName(infra_name)
-          await s.socketsInfra.disconnectedByName(infra_name)
-        }
-
-        const sayKey = socket.infra_name === 'twitch'
+        const sayKey = infra_name === 'twitch'
           ? 'server_twitchbot_socketDisconnected' : 'server_discordbot_socketDisconnected'
 
-        await s.socketsInfra.emitSayDiscord([sayKey, reason])
+        s.socketsInfra.emitSayDiscord([sayKey, reason])
       }
     },
   },

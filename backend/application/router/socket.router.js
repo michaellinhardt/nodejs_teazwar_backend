@@ -16,8 +16,8 @@ const onAny = async (socket, data = {}) => {
   data.path = _.get(data, 'path', '')
   data.method = _.get(data, 'method', '')
   data.jwtoken = _.get(data, 'jwtoken', undefined)
-  data.socket_id = socket.id
-  data.redis = redis
+  _.set(data, 'big_data.redis', redis)
+  _.set(data, 'big_data.socket', socket)
 
   try {
     const { payload = {} } = await runRoute(data)
@@ -29,7 +29,6 @@ const onAny = async (socket, data = {}) => {
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)
-
   }
 }
 
@@ -38,9 +37,10 @@ const onDisconnect = async (socket, reason) => {
     path: '/socket/disconnected',
     method: 'post',
     reason,
-    socket_id: socket.id,
-    redis,
+    infra_name: 'unknow',
   }
+  _.set(data, 'big_data.redis', redis)
+  _.set(data, 'big_data.socket', socket)
 
   try {
     const { payload } = await runRouteTeazwar(data)

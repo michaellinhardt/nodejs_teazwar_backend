@@ -8,7 +8,7 @@ const start = () => {
   const app = ExpressHelper.getApp()
   ExpressHelper.prepareApp(app)
 
-  RedisHelper.connect()
+  RedisHelper.connect('backend.server')
 
   HttpsRouter.init(app, RedisHelper)
 

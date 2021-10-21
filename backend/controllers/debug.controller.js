@@ -18,9 +18,9 @@ export default [
     isTeazwar: true,
     route: ['post', '/debug/redis/connected'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
         const { services: s, body: b } = this
-        await s.socketsInfra.emitSayDiscord(['server_redis_connected', b.infra_name])
+        s.socketsInfra.emitSayDiscord(['server_redis_connected', b.infra_name])
       }
     },
   },
@@ -28,9 +28,9 @@ export default [
     isTeazwar: true,
     route: ['post', '/debug/socket-redis/connected'],
     Controller: class extends ControllerSuperclass {
-      async handler () {
+      handler () {
         const { services: s, body: b } = this
-        await s.socketsInfra.emitSayDiscord(['server_socket_redis_connected', b.infra_name])
+        s.socketsInfra.emitSayDiscord(['server_socket_redis_connected', b.infra_name])
       }
     },
   },

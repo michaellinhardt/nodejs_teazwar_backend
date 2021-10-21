@@ -33,11 +33,11 @@ export default [
         }
 
         if (event) {
-          await s.socketsInfra.emitSayDiscord(
+          s.socketsInfra.emitSayDiscord(
             [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
 
           if (isOnline) {
-            await s.socketsInfra.emitSayTwitch(
+            s.socketsInfra.emitSayTwitch(
               [event, user.display_name, countFollowTimes])
           }
         }
@@ -66,10 +66,10 @@ export default [
           const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
           const discordPing = h.format.userDiscordPing(user)
 
-          await s.socketsInfra.emitSayDiscord(
+          s.socketsInfra.emitSayDiscord(
             ['stream_un_follower', discordPing, user.display_name, countFollowTimes])
 
-          await s.socketsInfra.emitSayTwitch(
+          s.socketsInfra.emitSayTwitch(
             ['un_follower', user.display_name, countFollowTimes])
         }
 
@@ -98,10 +98,10 @@ export default [
         const discordPing = h.format.userDiscordPing(user)
         const event = countFollow === 1 ? 'new_follower' : 're_follower'
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
 
-        await s.socketsInfra.emitSayTwitch(
+        s.socketsInfra.emitSayTwitch(
           [event, user.display_name, countFollowTimes])
 
         p.cron.success()

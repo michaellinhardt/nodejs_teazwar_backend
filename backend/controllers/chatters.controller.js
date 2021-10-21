@@ -15,7 +15,7 @@ export default [
 
         await s.users.setOnline(chatter_list)
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           ['spam_chatters_listing', chatter_list.length, chatter_list.join(', ')])
 
         p.cron.success()
@@ -46,11 +46,11 @@ export default [
         const updatedUsernames = users.updated.map(u => u.display_name).join(', ')
         const addedUsernames = users.added.map(u => u.display_name).join(', ')
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           ['stream_chatters_validate_update', users.updated.length, updatedUsernames],
           users.updated.length > 0)
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           ['stream_chatters_validate_add', users.added.length, addedUsernames],
           users.added.length > 0)
 
@@ -73,11 +73,11 @@ export default [
         const addedBots = await s.bots.addMissing(apiUsernames, dbUsernames)
         const deletedBots = await s.bots.deleteMissing(apiUsernames, dbUsernames)
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           ['stream_chatters_bot_added', addedBots.length],
           addedBots.length > 0)
 
-        await s.socketsInfra.emitSayDiscord(
+        s.socketsInfra.emitSayDiscord(
           ['stream_chatters_bot_deleted', deletedBots.length],
           deletedBots.length > 0)
 
@@ -100,11 +100,11 @@ export default [
           let detectedBot = taggedBots.map(b => b.username).join(' , ')
           const { teazyou_discord_user_id } = this.config.discord
 
-          await s.socketsInfra.emitSayDiscord(['stream_chatters_bot_detected',
+          s.socketsInfra.emitSayDiscord(['stream_chatters_bot_detected',
             teazyou_discord_user_id, taggedBots.length, detectedBot])
 
           detectedBot = taggedBots.map(b => `@${b.username}`).join(' , ')
-          await s.socketsInfra.emitSayTwitch(['new_bot_detected',
+          s.socketsInfra.emitSayTwitch(['new_bot_detected',
             taggedBots.length, detectedBot])
         }
 

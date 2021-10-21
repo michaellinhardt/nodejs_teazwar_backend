@@ -15,7 +15,7 @@ export default [
 
         await s.discords.updateOrCreateOtp(interaction.user, otp)
 
-        await s.socketsInfra.emitSayDiscord(['server_discordbot_verifying', interaction.member.id])
+        s.socketsInfra.emitSayDiscord(['server_discordbot_verifying', interaction.member.id])
         this.payload.reply = [['command_verify_otp', otp]]
         this.payload.ephemeral = true
       }

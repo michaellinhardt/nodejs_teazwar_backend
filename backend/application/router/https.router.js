@@ -36,7 +36,7 @@ module.exports = {
             const { payload = {} } = await BackendHelper
               .discordReportError(error_location, err.message)
 
-            if (payload.say && payload.socketIds) {
+            if (payload.say) {
               const SocketHelper = require('../../../helpers/files/sockets.helper')
               await SocketHelper.dispatchSayOrder(payload, 'https.router')
             }

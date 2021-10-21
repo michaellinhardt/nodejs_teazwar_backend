@@ -40,7 +40,7 @@ export default class {
       isTwitch = false,
     } = this.routeParam
 
-    // console.debug(this.helpers.jwtoken.generate('1e8b6bf0-1b50-11ec-85ec-4d033c80c035'))
+    // console.info(this.helpers.jwtoken.generate('1e8b6bf0-1b50-11ec-85ec-4d033c80c035'))
 
     await this.identify(isTwitch)
 
@@ -160,6 +160,7 @@ export default class {
 
   build_ressources (body) {
     const bodyRedis = _.get(body, 'big_data.redis', undefined)
+    const bodySocket = _.get(body, 'big_data.socket', undefined)
 
     const ressources = {
       body,
@@ -174,12 +175,14 @@ export default class {
       lang: Languages,
     }
 
+    if (bodySocket) { ressources.socket = bodySocket }
+
     if (bodyRedis) {
       _.set(body, 'big_data.redis', undefined)
       ressources.redis = bodyRedis
 
     } else {
-      ressources.helpers.redis.connect()
+      ressources.helpers.redis.connect('controller.superclass')
       ressources.redis = ressources.helpers.redis
     }
 

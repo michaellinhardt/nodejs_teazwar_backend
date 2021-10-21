@@ -44,9 +44,9 @@ export default [
         if (updated.length === 1) {
           const user = updated[0]
           const discordPing = h.format.userDiscordPing(user)
-          await s.socketsInfra.emitSayDiscord(
+          s.socketsInfra.emitSayDiscord(
             ['game_level_up_one', discordPing, user.display_name, user.level])
-          await s.socketsInfra.emitSayTwitch(
+          s.socketsInfra.emitSayTwitch(
             ['level_up_one', user.display_name, user.level])
 
         } else {

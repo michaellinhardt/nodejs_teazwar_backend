@@ -26,8 +26,8 @@ export default [
 
         const isBot = await s.bots.getByUsername(username)
         if (!self && isBot) {
-          await s.socketsInfra.emitSayTwitch(['bot_joined', username])
-          await s.socketsInfra.emitSayDiscord(
+          s.socketsInfra.emitSayTwitch(['bot_joined', username])
+          s.socketsInfra.emitSayDiscord(
             ['stream_bot_joined', this.config.discord.teazyou_discord_user_id, username])
 
         } else {
@@ -36,7 +36,7 @@ export default [
           const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
 
           const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
-          await s.socketsInfra.emitSayDiscord([event, discordKey, username])
+          s.socketsInfra.emitSayDiscord([event, discordKey, username])
         }
 
       }
@@ -52,8 +52,8 @@ export default [
 
         const isBot = await s.bots.getByUsername(username)
         if (!self && isBot) {
-          await s.socketsInfra.emitSayTwitch(['bot_leaved', username])
-          await s.socketsInfra.emitSayDiscord(
+          s.socketsInfra.emitSayTwitch(['bot_leaved', username])
+          s.socketsInfra.emitSayDiscord(
             ['stream_bot_leaved', this.config.discord.teazyou_discord_user_id, username])
 
         } else {
@@ -61,7 +61,7 @@ export default [
           const discordPing = h.format.userDiscordPing(isUser)
 
           const event = self ? 'server_twitchbot_leaved' : 'stream_viewer_leaved'
-          await s.socketsInfra.emitSayDiscord([event, discordPing, username])
+          s.socketsInfra.emitSayDiscord([event, discordPing, username])
         }
 
       }
