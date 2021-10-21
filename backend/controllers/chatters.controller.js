@@ -7,6 +7,7 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this
+
         const chatters = await a.chatters.get()
 
         const chatter_list = s.chatters.extractChattersDataFromTwitchApi(chatters)
@@ -28,6 +29,7 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, apis: a } = this
+
         const chatters = await s.chatters.getNextValidateList()
 
         if (chatters.length === 0) {

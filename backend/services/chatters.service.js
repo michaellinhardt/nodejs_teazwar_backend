@@ -10,10 +10,6 @@ export default class extends ServiceSuperclass {
 
   constructor (ressources) { super(table, __filename, ressources) }
 
-  getCountFromTwitch (chatters) {
-    return _.get(chatters, 'chatter_count', 0)
-  }
-
   extractChattersDataFromTwitchApi (chatters) {
     return _.get(chatters, 'chatters.broadcaster', [])
       .concat(_.get(chatters, 'chatters.vips', []))
