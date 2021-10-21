@@ -4,13 +4,13 @@ import _ from 'lodash'
 
 import RendersHelper from '../../../helpers/files/renders.helper'
 import BackendHelper from '../../../helpers/files/backend.helper'
-import RedisHelper from '../../../helpers/files/redis.helper'
 
-RedisHelper.connect('https.router')
+let redis = null
 
 module.exports = {
 
-  init: app => {
+  init: (app, redisHandler) => {
+    if (!redis) { redis = redisHandler }
     const router = express.Router()
     const controllers = requireDirectory(module, '../../controllers')
 
@@ -22,7 +22,7 @@ module.exports = {
         router[method](path, async (req, res) => {
 
           const body = BackendHelper.prepareBodyFromHttp(req, path)
-          _.set(body, 'big_data.redis', RedisHelper)
+          _.set(body, 'big_data.redis', redis)
 
           try {
 

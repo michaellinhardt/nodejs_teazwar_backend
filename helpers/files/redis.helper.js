@@ -1,5 +1,6 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const config = require('../../config')
 const { createClient } = require('redis')
 const { promisify } = require('util')
 
@@ -14,7 +15,7 @@ const reportConnection = async (infra_name) => {
     method: 'post',
     path: '/debug/redis/connected',
     infra_name,
-    big_data: { redis: client },
+    big_data: { redis: exports },
   }
   const { payload = {} } = await runRouteTeazwar(body)
   await dispatchSayOrder(payload, infra_name)
@@ -34,27 +35,34 @@ const connect = (infra_name = 'unknow') => {
   return client
 }
 
+const set = (keysValuesObject) => {
+  const saveItems = []
+  _.forEach(keysValuesObject, (value, key) => saveItems.push([key, JSON.stringify(value)]))
+
+  return Promise.each(saveItems, saveItem => {
+    return client.set(saveItem)
+  }, { concurrency: 5 })
+}
+
+const get = async (...keys) => {
+  const result = {}
+  await Promise.each(keys, async key => {
+    const value = await client.get(key)
+    result[key] = JSON.parse(value)
+  }, { concurrency: 5 })
+  return result
+}
+
+const reset = async () => {
+  connect('silent')
+  const flushall = promisify(client.flushall).bind(client)
+  await flushall()
+  await set(config.redis.reset)
+}
+
+const exports = { connect, reset, set, get }
+
 module.exports = {
-
-  connect,
-
-  set: (keysValuesObject) => {
-    const saveItems = []
-    _.forEach(keysValuesObject, (value, key) => saveItems.push([key, JSON.stringify(value)]))
-
-    return Promise.each(saveItems, saveItem => {
-      return client.set(saveItem)
-    }, { concurrency: 5 })
-  },
-
-  get: async (...keys) => {
-    const result = {}
-    await Promise.each(keys, async key => {
-      const value = await client.get(key)
-      result[key] = JSON.parse(value)
-    }, { concurrency: 5 })
-    return result
-  },
-
+  ...exports,
 }
 

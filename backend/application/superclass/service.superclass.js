@@ -11,10 +11,13 @@ export default class {
 
   setModelTable (table) {
     this.table = table
-    this.models[this.name].setTable(table)
+    if (table) {
+      this.models[this.name].setTable(table)
+    }
   }
 
   copyModel () {
+    if (!this.table) { return true }
     const arrMethods = this.helpers.code.getAllMethods(this.models[this.name])
     _.forEach(arrMethods, name => {
       if (name.charAt(0) === '_' && name.charAt(1) !== '_') {

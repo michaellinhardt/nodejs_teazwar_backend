@@ -3,7 +3,8 @@ const _ = require('lodash')
 const { runRoute, runRouteTeazwar } = require('../../../helpers/files/backend.helper')
 const SocketHelper = require('../../../helpers/files/sockets.helper')
 const BackendHelper = require('../../../helpers/files/backend.helper')
-const RedisHelper = require('../../../helpers/files/redis.helper')
+
+let redis = null
 
 const emitter = SocketHelper.getServerEmitter('socket.router')
 
@@ -16,7 +17,7 @@ const onAny = async (socket, data = {}) => {
   data.method = _.get(data, 'method', '')
   data.jwtoken = _.get(data, 'jwtoken', undefined)
   data.socket_id = socket.id
-  data.redis = RedisHelper
+  data.redis = redis
 
   try {
     const { payload = {} } = await runRoute(data)
@@ -38,7 +39,7 @@ const onDisconnect = async (socket, reason) => {
     method: 'post',
     reason,
     socket_id: socket.id,
-    redis: RedisHelper,
+    redis,
   }
 
   try {
@@ -59,8 +60,8 @@ const onDisconnect = async (socket, reason) => {
 }
 
 module.exports = {
-  init: io => io.on('connection', (socket) => {
-    RedisHelper.connect('socket.router')
+  init: (io, redisHandler) => io.on('connection', (socket) => {
+    if (!redis) { redis = redisHandler }
     socket.on('disconnect', reason => onDisconnect(socket, reason))
     socket.onAny((data = {}) => onAny(socket, data))
     console.info('socket connection: ', socket.id)

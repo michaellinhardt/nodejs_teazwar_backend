@@ -111,7 +111,15 @@ const scripts = {
 
 }
 
+scripts.redis_reset = async () => {
+  const RedisHelper = require('../helpers/files/redis.helper')
+  await RedisHelper.reset()
+  return done()
+}
+
 scripts.reset = async (internal = true) => {
+  const RedisHelper = require('../helpers/files/redis.helper')
+  await RedisHelper.reset()
   await scripts.delete(true)
   await scripts.create(true)
   await scripts.latest(internal)

@@ -12,6 +12,7 @@
     "lint": "eslint ./",
     "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
     "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",
+    "redis_reset": "NODE_ENV=development babel-node scripts/run.js redis_reset",
     "database:dev": "NODE_ENV=development babel-node scripts/run.js",
     "database:prod": "NODE_ENV=production babel-node scripts/run.js",
     "ls": "NODE_ENV=development babel-node scripts/run.js ls",
