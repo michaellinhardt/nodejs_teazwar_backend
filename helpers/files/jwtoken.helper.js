@@ -26,15 +26,13 @@ module.exports = {
         : { jwtoken }
 
     } catch (err) {
-      console.debug(err)
+      console.error(err)
       return false
     }
   },
 
   generate: (user_uuid) => {
     const signOptions = Object.assign({}, jwt.signOptions)
-
-    console.debug(signOptions)
 
     signOptions.subject = user_uuid
     const payload = { uuid: uuid() }

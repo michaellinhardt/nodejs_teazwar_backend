@@ -19,12 +19,12 @@ const executePayloadOrder = async payload => {
 
 const backend = async (method, path, body = {}) => {
   try {
-    _.set(body, 'big_data.redis', h.redis.connect('twitch.bot'))
+    _.set(body, 'big_data.redis', h.redis)
     const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
     executePayloadOrder(payload)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const error_location = `discord${path.split('/').join('..')}`
     const { payload = {} } = await h.backend
       .discordReportError(error_location, err.message)
@@ -38,7 +38,7 @@ const onSocketMessage = async (socket, payload) => {
     executePayloadOrder(payload)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const { payload = {} } = await h.backend
       .discordReportError('twitch_socket_message', err.message)
     executePayloadOrder(payload)
@@ -65,6 +65,7 @@ const listen_events = twitch => {
 }
 
 const start = async () => {
+  h.redis.connect('twitch.bot')
   twitch = h.twitch.getTwitch()
   say = h.twitch.buildSay(twitch)
   listen_events(twitch)

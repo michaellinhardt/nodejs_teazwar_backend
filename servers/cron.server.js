@@ -4,7 +4,7 @@ const config = require('../config')
 const emitter = h.sockets.getServerEmitter('cron.server')
 
 const backend = async (method, path, body = {}) => {
-  _.set(body, 'big_data.redis', h.redis.connect('cron.server'))
+  _.set(body, 'big_data.redis', h.redis)
   const { payload = {} } = await h.backend.runRouteTeazwar({ ...body, method, path })
   await h.sockets.dispatchSayOrder(payload, emitter)
   return payload
@@ -16,7 +16,7 @@ const executeNextTask = async () => {
     cronRouter = await backend('post', '/cron/router')
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const { payload = {} } = await h.backend.discordReportError('cron_router', err.message)
     await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronRouterError)
@@ -35,7 +35,7 @@ const executeNextTask = async () => {
     taskResult = await backend('post', `/cron${task.path}`)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     taskResult.success = false
     taskResult.empty = false
     const taskPathKey = task.path.split('/').join('..')
@@ -48,7 +48,7 @@ const executeNextTask = async () => {
     await backend('post', '/cron/interval', { big_data: { cron }, task, taskResult })
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const { payload = {} } = await h.backend.discordReportError('cron_interval', err.message)
     await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
@@ -61,7 +61,7 @@ const start = async () => {
     await executeNextTask()
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const { payload = {} } = await h.backend.discordReportError('cron_server_start', err.message)
     await h.sockets.dispatchSayOrder(payload, emitter)
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
@@ -70,4 +70,5 @@ const start = async () => {
   setTimeout(() => start(), config.cron.interval)
 }
 
+h.redis.connect('cron.server')
 start()

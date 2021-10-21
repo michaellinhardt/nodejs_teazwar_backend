@@ -53,18 +53,6 @@ const reportConnection = async (infra_name, emitter) => {
 
 const getServerEmitter = (infra_name) => {
   if (!emitterHandler) {
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
-    console.debug('CREATE EMITTERRRRRRR')
     const redisClient = createClient({ host: 'localhost', port: 6379 })
     const emitter = new Emitter(redisClient)
 

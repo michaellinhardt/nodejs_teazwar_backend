@@ -159,6 +159,9 @@ export default class {
   }
 
   build_ressources (body) {
+    const redis = _.get(body, 'big_data.redis', undefined)
+    if (redis) { _.set(body, 'big_data.redis', undefined) }
+
     const ressources = {
       body,
       apis: Apis,
@@ -170,6 +173,7 @@ export default class {
       log: msg => process.stdout.write(`${msg}\n`),
       config: _.merge({}, config, gameConfig),
       lang: Languages,
+      redis,
     }
 
     const modelRessources = { helpers: Helpers }

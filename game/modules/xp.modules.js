@@ -22,9 +22,9 @@ export default class extends ModuleSuperclass {
   }
 
   async addXpGainToChatters (users, chattersFlatten) {
-    const { services: s } = this
+    const { redis: r } = this
 
-    const xpbonus_perma_group = await s.config.get('xpbonus_perma_group')
+    const { xpbonus_perma_group } = await r.get('xpbonus_perma_group')
 
     await Promise.each(users, user => {
       const xpPerMin = this._getUserXpPerMin(xpbonus_perma_group, user)
@@ -37,7 +37,7 @@ export default class extends ModuleSuperclass {
   }
 
   async calculateBonusPermaGroup () {
-    const { services: s, config: { xp } } = this
+    const { redis: r, services: s, config: { xp } } = this
 
     const extensionUsers = await s.users.getExtensionUsers()
     const xpbonus_perma_group_details = {
@@ -56,7 +56,7 @@ export default class extends ModuleSuperclass {
       + (xpbonus_perma_group_details.subscriber * xp.subscriber.group)
       + (xpbonus_perma_group_details.discord * xp.discord.group)
 
-    await this.services.config.sets({ xpbonus_perma_group, xpbonus_perma_group_details })
+    await r.set({ xpbonus_perma_group, xpbonus_perma_group_details })
 
     return { xpbonus_perma_group_details, xpbonus_perma_group }
   }

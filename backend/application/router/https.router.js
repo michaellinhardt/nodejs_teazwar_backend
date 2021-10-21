@@ -6,6 +6,8 @@ import RendersHelper from '../../../helpers/files/renders.helper'
 import BackendHelper from '../../../helpers/files/backend.helper'
 import RedisHelper from '../../../helpers/files/redis.helper'
 
+RedisHelper.connect('https.router')
+
 module.exports = {
 
   init: app => {
@@ -20,7 +22,7 @@ module.exports = {
         router[method](path, async (req, res) => {
 
           const body = BackendHelper.prepareBodyFromHttp(req, path)
-          _.set(body, 'big_data.redis', RedisHelper.connect('https.router'))
+          _.set(body, 'big_data.redis', RedisHelper)
 
           try {
 

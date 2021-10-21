@@ -7,14 +7,16 @@ export default [
     route: ['post', '/cron/xp/bonus/perma/group'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { payloads: p, modules: m, services: s, helpers: h } = this
+        const { payloads: p, modules: m, services: s, helpers: h, redis: r } = this
 
-        const current = await s.config.get('xpbonus_perma_group')
-        const update = await m.xp.calculateBonusPermaGroup()
+        const { xpbonus_perma_group: current } = await r.get('xpbonus_perma_group')
 
-        const { xpbonus_perma_group, xpbonus_perma_group_details } = update
+        const {
+          xpbonus_perma_group,
+          xpbonus_perma_group_details,
+        } = await m.xp.calculateBonusPermaGroup()
 
-        if (update.xpbonus_perma_group !== current) {
+        if (xpbonus_perma_group !== current) {
 
           const details = h.format.xpBonusGroupDetails(xpbonus_perma_group_details)
           await s.socketsInfra

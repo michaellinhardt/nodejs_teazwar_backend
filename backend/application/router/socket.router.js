@@ -5,8 +5,6 @@ const SocketHelper = require('../../../helpers/files/sockets.helper')
 const BackendHelper = require('../../../helpers/files/backend.helper')
 const RedisHelper = require('../../../helpers/files/redis.helper')
 
-const redis = RedisHelper.connect('socket.router')
-
 const emitter = SocketHelper.getServerEmitter('socket.router')
 
 const onAny = async (socket, data = {}) => {
@@ -18,14 +16,14 @@ const onAny = async (socket, data = {}) => {
   data.method = _.get(data, 'method', '')
   data.jwtoken = _.get(data, 'jwtoken', undefined)
   data.socket_id = socket.id
-  data.redis = redis
+  data.redis = RedisHelper
 
   try {
     const { payload = {} } = await runRoute(data)
     await SocketHelper.dispatchSayOrder(payload, emitter)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const error_location = `socket_router${data.path.split('/').join('..')}`
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
@@ -40,7 +38,7 @@ const onDisconnect = async (socket, reason) => {
     method: 'post',
     reason,
     socket_id: socket.id,
-    redis,
+    redis: RedisHelper,
   }
 
   try {
@@ -50,7 +48,7 @@ const onDisconnect = async (socket, reason) => {
     return payload
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const { payload = {} } = await BackendHelper
       .discordReportError('socket_disconnected', err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)
@@ -62,6 +60,7 @@ const onDisconnect = async (socket, reason) => {
 
 module.exports = {
   init: io => io.on('connection', (socket) => {
+    RedisHelper.connect('socket.router')
     socket.on('disconnect', reason => onDisconnect(socket, reason))
     socket.onAny((data = {}) => onAny(socket, data))
     console.info('socket connection: ', socket.id)

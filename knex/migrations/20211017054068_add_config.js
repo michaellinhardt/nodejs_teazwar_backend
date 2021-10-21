@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'config'
@@ -11,7 +12,7 @@ exports.up = function (knex) {
 
   }).then(() => {
     const { config } = require('../seeds')
-    return knex(tableName).insert(config)
+    return _.isEmpty(config) ? null : knex(tableName).insert(config)
   })
 }
 

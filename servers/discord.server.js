@@ -29,7 +29,7 @@ const clearBienvenueChannel = async () => {
     return clearBienvenueChannel()
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     reportError('discord_clear_bienvenue', err.message)
   }
 }
@@ -69,12 +69,12 @@ const payloadReply = async (payload) => {
 
 const backend = async (method, path, body = {}) => {
   try {
-    _.set(body, 'big_data.redis', h.redis.connect('discord.bot'))
+    _.set(body, 'big_data.redis', h.redis)
     const { payload } = await h.backend.runRouteTeazwar({ ...body, method, path })
     executePayloadOrder(payload)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     const error_location = `discord${path.split('/').join('..')}`
     reportError(error_location, err.message)
     await h.code.sleep(sleepWhenBackendError)
@@ -83,11 +83,11 @@ const backend = async (method, path, body = {}) => {
 
 const onSocketMessage = (socket, payload) => {
   try {
-    console.debug(`Received from: ${socket.id}\n`, render(payload))
+    console.info(`Received from: ${socket.id}\n`, render(payload))
     executePayloadOrder(payload)
 
   } catch (err) {
-    console.debug(err)
+    console.error(err)
     reportError('discord_socket_message', err.message)
   }
 }
@@ -104,6 +104,7 @@ const executePayloadOrder = async payload => {
 }
 
 const start = async () => {
+  h.redis.connect('discord.bot')
   discord = h.discord.getDiscord()
   await h.discord.connect(discord)
   say = await h.discord.buildSay(discord)

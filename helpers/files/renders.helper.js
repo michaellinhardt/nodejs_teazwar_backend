@@ -11,13 +11,13 @@ class AppError extends Error {
   }
   render (renderObject) {
     if (this.status === 'socket') {
-      return console.debug('return error by socket', this.payload)
+      return console.error('return error by socket', this.payload)
 
     } else if (this.status === 'http') {
       return renderObject.status(this.status).json(this.payload)
 
     }
-    return console.debug('return error by script', this.payload)
+    return console.error('return error by script', this.payload)
 
   }
 }
@@ -58,7 +58,7 @@ module.exports = {
       process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
       if (socket.headersSent) { return }
       const payload = { error_key: 'server_error' }
-      return console.debug('return uncaught error by socket', payload)
+      return console.error('return uncaught error by socket', payload)
     },
   },
 
@@ -77,7 +77,7 @@ module.exports = {
       process.stdout.write(`${(err && err.stack) || (err && err.message) || err}\r\n`)
       if (socket.headersSent) { return }
       const payload = { error_key: 'server_error' }
-      return console.debug('return uncaught error by script', payload)
+      return console.error('return uncaught error by script', payload)
     },
   },
 
