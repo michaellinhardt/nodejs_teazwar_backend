@@ -30,7 +30,6 @@ const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
   await Promise.each(infraNames, async (infra_name) => {
     const sayArrays = _.get(payload, `say.${infra_name}`, [])
     if (sayArrays.length) {
-      console.debug('sending ->', infra_name, sayArrays)
       await executeSequence([[infra_name,
         { say: { [infra_name]: _.get(payload, `say[${infra_name}]`, []) } },
       ]])

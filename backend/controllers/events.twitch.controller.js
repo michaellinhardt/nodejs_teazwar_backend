@@ -77,7 +77,7 @@ export default [
         const user_id = _.get(b, 'twitchData.userstate[\'user-id\']', null)
         if (!user_id) { return true }
 
-        const user = await s.users.getByUserId(user_id)
+        const user = await s.users.getFullByUserId(user_id)
         if (!user) { return true }
 
         await s.userStats.incrementChatStats(user, b.twitchData.msg)

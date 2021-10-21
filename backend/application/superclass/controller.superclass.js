@@ -105,9 +105,9 @@ export default class {
 
       let isUser = null
       if (d.user_uuid && d.jwtoken) {
-        isUser = await s.users.getBy('uuid', d.user_uuid)
+        isUser = await s.users.getByUserUuid(d.user_uuid)
       } else if (d.user_id && d.jwtoken) {
-        isUser = await s.users.getBy('user_id', d.user_id)
+        isUser = await s.users.getByUserId('user_id', d.user_id)
       }
 
       if (isUser && isUser.jwtoken === d.jwtoken.token) {
@@ -126,7 +126,7 @@ export default class {
     const { services: s, data: d, twitch: t } = this
 
     if (t.userId) {
-      d.user = await s.users.getBy('user_id', t.userId)
+      d.user = await s.users.getByUserId(t.userId)
       d.user_uuid = _.get(d, 'user.uuid', null)
 
     } else {
@@ -153,7 +153,7 @@ export default class {
       return true
     }
 
-    d.admin = await s.admins.getBy('user_uuid', user_uuid)
+    d.admin = await s.admins.getByUserUuid(user_uuid)
 
     if (!d.admin) { this.StopPipeline('router_admin') }
   }

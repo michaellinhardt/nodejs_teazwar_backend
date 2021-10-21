@@ -141,7 +141,17 @@ export default class extends ServiceSuperclass {
       { discord_id: discord.discord_id, guild_id: discord.guild_id })
   }
 
-  async getByUserId (user_id) {
+  async getByUserUuid (uuid) {
+    const user = await this.knex()
+      .select('*')
+      .where('users.isDeleted', false)
+      .andWhere('users.uuid', uuid)
+      .first()
+    if (user) { user.uuid = user.user_uuid }
+    return user
+  }
+
+  async getFullByUserId (user_id) {
     const user = await this.knex()
       .select('*')
       .where('users.isDeleted', false)
@@ -154,14 +164,21 @@ export default class extends ServiceSuperclass {
     return user
   }
 
+  async getByUserId (user_id) {
+    const user = await this.knex()
+      .select('*')
+      .where('users.isDeleted', false)
+      .andWhere('users.user_id', user_id)
+      .first()
+    if (user) { user.uuid = user.user_uuid }
+    return user
+  }
+
   async getByUsername (username) {
     const user = await this.knex()
       .select('*')
       .where('users.isDeleted', false)
       .andWhere('users.username', username.toLowerCase())
-      .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
-      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
-      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
       .first()
     if (user) { user.uuid = user.user_uuid }
     return user

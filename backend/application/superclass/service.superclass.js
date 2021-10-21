@@ -40,14 +40,4 @@ export default class {
     })
   }
 
-  async getBy (key, value) {
-    const isSaved = _.get(this, `db.${this.table}.${key}[${value}]`, undefined)
-    if (isSaved !== undefined) { return isSaved }
-
-    const data = await this.getFirstWhere({ [key]: value })
-    _.set(this, `db.${this.table}.${key}[${value}]`, data)
-
-    return data
-  }
-
 }
