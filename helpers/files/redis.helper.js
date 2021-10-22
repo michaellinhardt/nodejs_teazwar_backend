@@ -62,7 +62,5 @@ const reset = async () => {
 
 const exports = { connect, reset, set, get }
 
-module.exports = {
-  ...exports,
-}
+module.exports = { ...exports }
 

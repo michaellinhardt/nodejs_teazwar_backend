@@ -111,6 +111,14 @@ const scripts = {
 
 }
 
+scripts.file = async () => {
+  const Script = require(`${__dirname}/files/${process.argv[3]}.script.js`)
+  process.stdout.write('====================\n\n')
+  await Script()
+  process.stdout.write('\n====================\n')
+  return done()
+}
+
 scripts.redis_reset = async () => {
   const RedisHelper = require('../helpers/files/redis.helper')
   await RedisHelper.reset()

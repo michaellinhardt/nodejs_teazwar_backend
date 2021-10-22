@@ -16,5 +16,6 @@ module.exports = {
   dateShort: (date) => moment(date).format('MM.DD HH:mm:ss'),
 
   timestamp: () => parseInt(moment().format('X'), 10),
+  timestampMs: () => Date.now(),
 
 }
