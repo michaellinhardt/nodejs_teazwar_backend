@@ -11,6 +11,8 @@ exports.up = function (knex) {
 
     table.biginteger('timestampValidatedUntil').defaultTo(0)
 
+    table.unique('username')
+
   }).then(() => {
     // const { chatters } = require('../seeds')
     // return knex(tableName).insert(chatters)

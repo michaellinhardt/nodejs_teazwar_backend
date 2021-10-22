@@ -35,6 +35,8 @@ exports.up = function (knex) {
     table.string('socket_id').defaultTo(null)
     table.string('discord_id').defaultTo(null)
 
+    table.unique('user_id')
+
   }).then(() => {
     const { users } = require('../seeds')
     return knex(tableName).insert(users)

@@ -53,8 +53,7 @@ export default class extends ServiceSuperclass {
   getNextValidateList () {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
-      .where({ isDeleted: false })
-      .andWhere('count_seen', '>', 0)
+      .where('count_seen', '>', 0)
       .andWhere('timestampValidatedUntil', '<', currTimestamp)
       .orderBy('count_seen', 'desc')
       .limit(twitch.usersPerPage)
@@ -63,8 +62,7 @@ export default class extends ServiceSuperclass {
   getNextXpGain () {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
-      .where({ isDeleted: false })
-      .andWhere('count_seen', '>', 0)
+      .where('count_seen', '>', 0)
       .andWhere('timestampValidatedUntil', '>=', currTimestamp)
       .orderBy('count_seen', 'desc')
   }

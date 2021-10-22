@@ -14,8 +14,7 @@ export default class extends ServiceSuperclass {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .select('*')
-      .where({ isDeleted: false })
-      .andWhere('isBot', 'yes')
+      .where('isBot', 'yes')
       .andWhere('timestampOnlineUntill', '>=', currTimestamp)
   }
 
@@ -24,8 +23,7 @@ export default class extends ServiceSuperclass {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .select('*')
-      .where({ isDeleted: false })
-      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
+      .where('timestampOnlineUntill', '>=', currTimestamp)
       // .andWhere('timestampExtensionUntill', '>=', currTimestamp)
   }
 
@@ -54,8 +52,7 @@ export default class extends ServiceSuperclass {
 
     const nextNewFollowCheck = await this.knex()
       .select('*')
-      .where({ isDeleted: false })
-      .andWhereNot('isFollower', 'yes')
+      .where('isFollower', 'yes')
       .andWhere('timestampOnlineUntill', '>=', currTimestamp)
       .andWhere('timestampNewFollowerCheck', '<=', currTimestamp)
       .orderBy('timestampNewFollowerCheck', 'asc')
@@ -72,8 +69,7 @@ export default class extends ServiceSuperclass {
 
     const nextGlobalFollowingCheck = await this.knex()
       .select('*')
-      .where({ isDeleted: false })
-      .andWhere('timestampFollowingCheck', '<=', currTimestamp)
+      .where('timestampFollowingCheck', '<=', currTimestamp)
       .orderBy('timestampFollowingCheck', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
@@ -88,8 +84,7 @@ export default class extends ServiceSuperclass {
 
     const nextUnFollowCheck = await this.knex()
       .select('*')
-      .where({ isDeleted: false })
-      .andWhere('isFollower', 'yes')
+      .where('isFollower', 'yes')
       .andWhere('timestampOnlineUntill', '>=', currTimestamp)
       .andWhere('timestampUnFollowerCheck', '<=', currTimestamp)
       .orderBy('timestampUnFollowerCheck', 'asc')
@@ -125,7 +120,6 @@ export default class extends ServiceSuperclass {
       .select('*')
       .whereIn('users.username', botUsernames)
       .andWhere({
-        isDeleted: false,
         isBot: 'maybe',
       })
 
@@ -144,8 +138,7 @@ export default class extends ServiceSuperclass {
   async getByUserUuid (uuid) {
     const user = await this.knex()
       .select('*')
-      .where('users.isDeleted', false)
-      .andWhere('users.uuid', uuid)
+      .where('users.uuid', uuid)
       .first()
     if (user) { user.uuid = user.user_uuid }
     return user
@@ -154,8 +147,7 @@ export default class extends ServiceSuperclass {
   async getFullByUserId (user_id) {
     const user = await this.knex()
       .select('*')
-      .where('users.isDeleted', false)
-      .andWhere('users.user_id', user_id)
+      .where('users.user_id', user_id)
       .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
       .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
       .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
@@ -167,8 +159,7 @@ export default class extends ServiceSuperclass {
   async getByUserId (user_id) {
     const user = await this.knex()
       .select('*')
-      .where('users.isDeleted', false)
-      .andWhere('users.user_id', user_id)
+      .where('users.user_id', user_id)
       .first()
     if (user) { user.uuid = user.user_uuid }
     return user
@@ -177,8 +168,7 @@ export default class extends ServiceSuperclass {
   async getByUsername (username) {
     const user = await this.knex()
       .select('*')
-      .where('users.isDeleted', false)
-      .andWhere('users.username', username.toLowerCase())
+      .where('users.username', username.toLowerCase())
       .first()
     if (user) { user.uuid = user.user_uuid }
     return user

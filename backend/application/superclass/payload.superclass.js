@@ -38,8 +38,6 @@ export default class {
   removeGenericProperties (payload) {
     const genericProperties = [
       'id',
-      'deleted_at',
-      'isDeleted',
       'user_uuid',
     ]
 

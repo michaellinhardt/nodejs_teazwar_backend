@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { del } from 'superagent'
 
 export default class {
 
@@ -27,13 +28,11 @@ export default class {
   _getLast () {
     return this.knex()
       .select('*')
-      .where({ isDeleted: false })
       .orderBy('id', 'desc')
       .first()
   }
 
   _getLastWhere (where) {
-    where.isDeleted = false
     return this.knex()
       .select('*')
       .where(where)
@@ -48,7 +47,6 @@ export default class {
       const method = index > 0 ? 'orWhere' : 'where'
       request[method]({
         ...where,
-        isDeleted: false,
       })
     })
 
@@ -61,12 +59,10 @@ export default class {
   _getFirst () {
     return this.knex()
       .select('*')
-      .where({ isDeleted: false })
       .first()
   }
 
   _getFirstWhere (where) {
-    where.isDeleted = false
     return this.knex()
       .select('*')
       .where(where)
@@ -79,7 +75,6 @@ export default class {
     _.forEach(args, (where, index) => {
       const method = index > 0 ? 'orWhere' : 'where'
       request[method]({
-        isDeleted: false,
         ...where,
       })
     })
@@ -92,18 +87,15 @@ export default class {
   _getAll () {
     return this.knex()
       .select('*')
-      .where({ isDeleted: false })
   }
 
   _getAllFirstWhere (where) {
-    where.isDeleted = false
     return this.knex()
       .select('*')
       .where(where)
   }
 
   _getAllLastWhere (where) {
-    where.isDeleted = false
     return this.knex()
       .select('*')
       .where(where)
@@ -116,7 +108,6 @@ export default class {
     _.forEach(args, (where, index) => {
       const method = index > 0 ? 'orWhere' : 'where'
       request[method]({
-        isDeleted: false,
         ...where,
       })
     })
@@ -132,7 +123,6 @@ export default class {
     _.forEach(args, (where, index) => {
       const method = index > 0 ? 'orWhere' : 'where'
       request[method]({
-        isDeleted: false,
         ...where,
       })
     })
@@ -145,7 +135,6 @@ export default class {
     return this.knex()
       .select('*')
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
       .orderBy('id', 'desc')
       .first()
   }
@@ -154,7 +143,6 @@ export default class {
     return this.knex()
       .select('*')
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
       .first()
   }
 
@@ -162,19 +150,16 @@ export default class {
     return this.knex()
       .select('*')
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
   }
 
   _getAllLastWhereIn (field, arrayValue) {
     return this.knex()
       .select('*')
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
       .orderBy('id', 'desc')
   }
 
   _decrementAllWhere (where, decrements) {
-    where.isDeleted = false
     return this.knex()
       .decrement(decrements)
       .where(where)
@@ -184,11 +169,9 @@ export default class {
     return this.knex()
       .decrement(decrements)
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
   }
 
   _incrementAllWhere (where, increments) {
-    where.isDeleted = false
     return this.knex()
       .increment(increments)
       .where(where)
@@ -198,41 +181,69 @@ export default class {
     return this.knex()
       .increment(increments)
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
   }
 
   _updAllWhere (where, update) {
-    where.isDeleted = false
     return this.knex()
       .update(update)
       .where(where)
+  }
+
+  _addOrUpd (entryArray) {
+    const knex = this.helpers.knex.get()
+
+    const fields = []
+    _.forEach(entryArray, entry => {
+
+      _.forEach(entry, (value, field) => {
+        if (!fields.find(f => f === field)) {
+          fields.push(field)
+        }
+      })
+    })
+
+    const valuesString = []
+    const valueBinds = []
+    _.forEach(entryArray, entry => {
+      const valueString = []
+      _.forEach(fields, field => {
+        if (entry[field] !== undefined) {
+          valueBinds.push(entry[field])
+          valueString.push('?')
+        } else if (field === 'uuid') {
+          valueBinds.push(this.helpers.string.uuid())
+          valueString.push('?')
+        } else {
+          valueString.push('DEFAULT')
+        }
+      })
+      valuesString.push(`(${valueString.join(', ')})`)
+    })
+
+    return knex.raw(`
+    INSERT INTO ${this.table} (${fields.join(', ')})
+      VALUES ${valuesString.join(', ')}
+      ON DUPLICATE KEY UPDATE
+      ${fields.map(f => `${f}=VALUES(${f})`).join(', ')}
+  `, valueBinds)
   }
 
   _updAllWhereIn (field, arrayValue, update) {
     return this.knex()
       .update(update)
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
   }
 
   _delAllWhere (where) {
-    where.isDeleted = false
     return this.knex()
-      .update({
-        isDeleted: true,
-        deleted_at: this.helpers.date.timestampSql(),
-      })
       .where(where)
+      .del()
   }
 
   _delAllWhereIn (field, arrayValue) {
     return this.knex()
-      .update({
-        isDeleted: true,
-        deleted_at: this.helpers.date.timestampSql(),
-      })
       .whereIn(field, arrayValue)
-      .andWhere({ isDeleted: false })
+      .del()
   }
 
   async _add (entry = {}) {

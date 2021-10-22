@@ -17,7 +17,7 @@ module.exports = async () => {
   timestamp.sql.result = 0
   timestamp.redis.result = 0
 
-  const occurence = 1000
+  const occurence = 300
 
   await backend('post', '/benchmark/init')
   await backend('post', '/benchmark/init')
@@ -42,10 +42,10 @@ module.exports = async () => {
   console.info('\n === TESTING GET PERF ===')
 
   console.info('\nstart GET REDIS test..')
-  timestamp.sql.start = h.date.timestampMs()
+  timestamp.redis.start = h.date.timestampMs()
   await backend('post', '/benchmark/redis/get', { occurence })
-  timestamp.sql.total = h.date.timestampMs() - timestamp.sql.start
-  console.info('time total: ', timestamp.sql.total, ' ms')
+  timestamp.redis.total = h.date.timestampMs() - timestamp.redis.start
+  console.info('time total: ', timestamp.redis.total, ' ms')
   timestamp.redis.result += timestamp.redis.total
 
   console.info('\nstart GET SQL test..')
@@ -58,10 +58,10 @@ module.exports = async () => {
   console.info('\n === TESTING UPD PERF ===')
 
   console.info('\nstart UPD REDIS test..')
-  timestamp.sql.start = h.date.timestampMs()
+  timestamp.redis.start = h.date.timestampMs()
   await backend('post', '/benchmark/redis/upd', { occurence })
-  timestamp.sql.total = h.date.timestampMs() - timestamp.sql.start
-  console.info('time total: ', timestamp.sql.total, ' ms')
+  timestamp.redis.total = h.date.timestampMs() - timestamp.redis.start
+  console.info('time total: ', timestamp.redis.total, ' ms')
   timestamp.redis.result += timestamp.redis.total
 
   console.info('\nstart UPD SQL test..')

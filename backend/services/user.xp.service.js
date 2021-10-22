@@ -23,13 +23,8 @@ export default class extends ServiceSuperclass {
   }
 
   getUsersRequiringLvlUp () {
-    const where = {
-      'users.isDeleted': false,
-      'user_xp.isDeleted': false,
-    }
     return this.knex()
-      .where(where)
-      .andWhereRaw('?? >= ??', ['user_xp.level_xp', 'user_xp.level_xp_max'])
+      .whereRaw('?? >= ??', ['user_xp.level_xp', 'user_xp.level_xp_max'])
       .join('users', 'users.uuid', '=', 'user_xp.user_uuid')
   }
 

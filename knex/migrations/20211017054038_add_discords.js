@@ -22,6 +22,8 @@ exports.up = function (knex) {
 
     table.biginteger('joinedTimestamp').defaultTo(0)
 
+    table.unique('discord_id')
+
   })
 }
 

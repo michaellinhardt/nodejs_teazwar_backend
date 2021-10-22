@@ -10,6 +10,8 @@ exports.up = function (knex) {
 
     // table.boolean('pause').defaultTo(false)
 
+    table.unique('user_uuid')
+
   }).then(() => {
     const { admins } = require('../seeds')
     return knex(tableName).insert(admins)

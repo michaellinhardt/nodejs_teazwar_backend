@@ -41,11 +41,13 @@ const sockets_infra = [
 ]
 
 const config = []
-_.forEach(sqlconfig, (value, config_key) => config.push({
-  uuid: v1(),
-  config_key,
-  config_json: JSON.stringify({ value }),
-}))
+_.forEach(sqlconfig, (group, config_group) => {
+  _.forEach(group, (config_json, config_key) => config.push({
+    config_key,
+    config_json: JSON.stringify(config_json),
+    config_group,
+  }))
+})
 
 module.exports = {
   users,

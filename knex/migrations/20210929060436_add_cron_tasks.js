@@ -11,6 +11,8 @@ exports.up = function (knex) {
     table.string('path').notNullable()
     table.biginteger('timestampNext').defaultTo(0)
 
+    table.unique('path')
+
   }).then(() => {
     const cronTasks = cron.tasks.map(c => ({
       uuid: v1(),

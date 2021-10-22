@@ -7,9 +7,9 @@ export default [
     route: ['post', '/cron/xp/bonus/perma/group'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { payloads: p, modules: m, services: s, helpers: h, redis: r } = this
+        const { payloads: p, modules: m, services: s, helpers: h } = this
 
-        const { xpbonus_perma_group: current } = await r.get('xpbonus_perma_group')
+        const current = await s.config.get('xpbonus_perma_group')
 
         const {
           xpbonus_perma_group,

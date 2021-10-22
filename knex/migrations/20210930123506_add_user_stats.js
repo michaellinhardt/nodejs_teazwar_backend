@@ -22,6 +22,8 @@ exports.up = function (knex) {
 
     table.biginteger('timestampLastChatLine').defaultTo(0)
 
+    table.unique('user_uuid')
+
   }).then(() => {
     return true
   })

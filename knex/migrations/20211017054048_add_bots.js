@@ -8,6 +8,8 @@ exports.up = function (knex) {
 
     table.string('username').notNullable()
 
+    table.unique('username')
+
   })
 }
 

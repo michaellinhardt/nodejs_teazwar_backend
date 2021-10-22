@@ -13,14 +13,116 @@ export default [
   },
   {
     isTeazwar: true,
+    route: ['post', '/benchmark/sql/upd/prepare'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s, body: b } = this
+        const occurence = b.occurence || 10000
+
+        const bots = []
+        for (let i = 0; i < occurence; i++) {
+          bots.push({ username: `u${i}@google.com` })
+        }
+
+        await Promise.map(bots, async bot => {
+          await this.helpers.code.sleep(5)
+          await s.bots.add(bot)
+        }, { concurrency: 99 })
+
+        const bots2 = await s.bots.getAll()
+        console.debug(bots2[0], bots2[bots.length - 1])
+
+      }
+    },
+  },
+  {
+    isTeazwar: true,
+    route: ['post', '/benchmark/sql/upd/case'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s } = this
+        const bots = await s.bots.getAll()
+
+        const uuids = []
+        let sqlValues = ''
+        _.forEach(bots, bot => {
+          uuids.push(`'${bot.uuid}'`)
+          sqlValues
+          = `${sqlValues} WHEN '${bot.uuid}' THEN 'u${bot.id}@upd.case'`
+        })
+
+        const knex = this.helpers.knex.get()
+
+        await knex.raw(`UPDATE bots
+          SET username = CASE uuid ${sqlValues} ELSE username END
+          WHERE uuid IN(${uuids})`)
+
+        const bots2 = await s.bots.getAll()
+        console.debug(bots2[0], bots2[bots.length - 1])
+
+      }
+    },
+  },
+  {
+    isTeazwar: true,
+    route: ['post', '/benchmark/sql/upd/onduplicate'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s } = this
+        const bots = await s.bots.getAll()
+
+        const sqlValues = []
+        _.forEach(bots, bot => {
+          sqlValues.push(`('${bot.uuid}', 'u${bot.id}@upd.onduplicate')`)
+        })
+
+        const knex = this.helpers.knex.get()
+
+        await knex.raw(`
+          INSERT INTO bots (uuid, username)
+            VALUES ${sqlValues.join(', ')}
+            ON DUPLICATE KEY UPDATE username=VALUES(username);
+        `)
+
+        const bots2 = await s.bots.getAll()
+        console.debug(bots2[0], bots2[bots.length - 1])
+
+      }
+    },
+  },
+  {
+    isTeazwar: true,
+    route: ['post', '/benchmark/sql/upd/byone'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s } = this
+        const bots = await s.bots.getAll()
+
+        _.forEach(bots, bot => {
+          bot.username = `u${bot.id}@upd.byone`
+        })
+
+        await Promise.map(bots, async bot => {
+          await s.bots.knex()
+            .update({ username: bot.username })
+            .where({ uuid: bot.uuid })
+        }, { concurrency: 99 })
+
+        const bots2 = await s.bots.getAll()
+        console.debug(bots2[0], bots2[bots.length - 1])
+
+      }
+    },
+  },
+  {
+    isTeazwar: true,
     route: ['post', '/benchmark/sql/upd'],
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s } = this
         const bots = await s.bots.knex()
           .update({ username: 'lol' })
-          .where({ isDeleted: false })
-          .andWhere('id', '>', 0)
+          .where('id', '>', 0)
         console.info(`SQL UPD: ${bots} entries`)
       }
     },
@@ -78,9 +180,9 @@ export default [
         }
 
         await Promise.map(bots, async bot => {
-          await this.helpers.code.sleep(5)
+          // await this.helpers.code.sleep(1)
           await s.bots.add(bot)
-        }, { concurrency: 1 })
+        }, { concurrency: 99 })
 
       }
     },
@@ -99,9 +201,9 @@ export default [
         }
 
         await Promise.map(bots, async (bot, index) => {
-          await this.helpers.code.sleep(5)
+          // await this.helpers.code.sleep(1)
           await r.set({ [`bot:${index}`]: bot })
-        }, { concurrency: 1 })
+        }, { concurrency: 99 })
 
       }
     },

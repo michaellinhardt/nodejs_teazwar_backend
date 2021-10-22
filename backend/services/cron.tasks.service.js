@@ -30,7 +30,6 @@ export default class extends ServiceSuperclass {
   async buildCronObject () {
     const tasks = await this.knex()
       .select('*')
-      .where({ isDeleted: false })
       .orderBy('id', 'ask')
 
     const twitchTask = tasks.shift()

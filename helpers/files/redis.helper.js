@@ -25,13 +25,15 @@ const reportConnection = async (infra_name) => {
 const onClientError = () => client.on('error', (err) => console.log('Redis Client Error', err))
 const connect = (infra_name = 'unknow') => {
   if (client) { return client }
-  client = createClient()
-  onClientError()
-  const getAddr = client.get
-  client.get = promisify(getAddr).bind(client)
-  if (infra_name !== 'silent') {
-    reportConnection(infra_name)
-  }
+  if (config.redis.activated) {
+    client = createClient()
+    onClientError()
+    const getAddr = client.get
+    client.get = promisify(getAddr).bind(client)
+    if (infra_name !== 'silent') {
+      reportConnection(infra_name)
+    }
+  } else { client = 'disable' }
   exports.client = client
   return client
 }
@@ -55,6 +57,9 @@ const get = async (...keys) => {
 }
 
 const reset = async () => {
+  if (!config.redis.activated) {
+    return console.info('Redis reset abort (config.redis.activated = false)')
+  }
   connect('silent')
   const flushall = promisify(client.flushall).bind(client)
   await flushall()

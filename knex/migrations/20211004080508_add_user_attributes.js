@@ -14,6 +14,8 @@ exports.up = function (knex) {
     table.integer('str').defaultTo(0)
     table.integer('int').defaultTo(0)
 
+    table.unique('user_uuid')
+
   }).then(() => {
     return true
   })
