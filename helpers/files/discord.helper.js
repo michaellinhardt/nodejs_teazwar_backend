@@ -36,12 +36,12 @@ module.exports = {
   },
 
   buildSay: async discord => {
-    await Promise.each(chatbot.channels, async channelArr => {
+    await Promise.map(chatbot.channels, async channelArr => {
       const [name, id] = channelArr
       const channel = await discord.channels.cache.get(id)
       discord[`_${name}`] = channel
       discord[`_${name}`].say = (msg) => channel.send(msg)
-    }, { concurrency: 3 })
+    }, { concurrency: 99 })
 
     return (message_key, ...args) => {
       const channel = (message_key.split('_'))[0]

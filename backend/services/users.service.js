@@ -30,6 +30,17 @@ export default class extends ServiceSuperclass {
     return this.getFirstWhere({ username: twitch.chatbot.channel })
   }
 
+  async getFullByUsernames (usernames) {
+    const user = await this.knex()
+      .select('*')
+      .whereIn('username', usernames)
+      .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
+      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
+      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
+    if (user) { user.uuid = user.user_uuid }
+    return user
+  }
+
   getByUsernames (usernames) {
     return this.getAllFirstWhereIn('username', usernames)
   }

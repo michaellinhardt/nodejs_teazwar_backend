@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird'
 import _ from 'lodash'
 
 import ServiceSuperclass from '../application/superclass/service.superclass'
@@ -34,21 +33,38 @@ export default class extends ServiceSuperclass {
     const { helpers: h } = this
     const currTimestamp = h.date.timestamp()
 
-    await Promise.each(users, async user => {
+    const userStats = await this.getAllLastWhereIn('user_uuid', users.map(u => u.uuid))
+    const updates = []
+
+    _.forEach(users, user => {
       const count_seen = _.get(chatters, `${user.username}.count_seen`, 0)
+
       let label = 'chat_seen_normal'
       if (user.isFollower === 'yes') { label = 'chat_seen_follower' }
       if (user.isSubscriber === 'yes') { label = 'chat_seen_subscriber' }
-
       if (user.timestampExtensionUntill >= currTimestamp) {
         label.replace('chat', 'extension')
       }
 
-      await this.incrementAllWhere({ user_uuid: user.uuid }, {
-        [label]: count_seen,
-      })
+      const userStat = userStats.find(u => u.user_uuid === user.uuid)
 
-    }, { concurrency: 3 })
+      const update = _.pick(userStat, [
+        'user_uuid',
+        'chat_seen_normal',
+        'chat_seen_follower',
+        'chat_seen_subscriber',
+        'extension_seen_normal',
+        'extension_seen_follower',
+        'extension_seen_subscriber',
+      ])
+
+      update[label] += count_seen
+
+      updates.push(update)
+
+    })
+
+    await this.addOrUpdArray(updates)
 
   }
 

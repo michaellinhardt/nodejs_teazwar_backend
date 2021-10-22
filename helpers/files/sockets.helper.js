@@ -27,7 +27,7 @@ const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
   const infraNames = []
   _.forEach(payload.say, (sayArrays, infra_name) => infraNames.push(infra_name))
 
-  await Promise.each(infraNames, async (infra_name) => {
+  await Promise.map(infraNames, async (infra_name) => {
     const sayArrays = _.get(payload, `say.${infra_name}`, [])
     if (sayArrays.length) {
       await executeSequence([[infra_name,
@@ -35,7 +35,7 @@ const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
       ]])
       delete payload.say[infra_name]
     }
-  }, { concurrency: 3 })
+  }, { concurrency: 99 })
 }
 
 const reportConnection = async (infra_name, emitter) => {

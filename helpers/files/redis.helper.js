@@ -42,17 +42,17 @@ const set = (keysValuesObject) => {
   const saveItems = []
   _.forEach(keysValuesObject, (value, key) => saveItems.push([key, JSON.stringify(value)]))
 
-  return Promise.each(saveItems, saveItem => {
+  return Promise.map(saveItems, saveItem => {
     return client.set(saveItem)
-  }, { concurrency: 5 })
+  }, { concurrency: 99 })
 }
 
 const get = async (...keys) => {
   const result = {}
-  await Promise.each(keys, async key => {
+  await Promise.map(keys, async key => {
     const value = await client.get(key)
     result[key] = JSON.parse(value)
-  }, { concurrency: 5 })
+  }, { concurrency: 99 })
   return result
 }
 

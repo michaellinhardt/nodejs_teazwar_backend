@@ -74,13 +74,13 @@ export default [
       async handler () {
         const { services: s, body: b } = this
 
-        const user_id = _.get(b, 'twitchData.userstate[\'user-id\']', null)
+        const user_id = _.get(b, 'userstate[\'user-id\']', null)
         if (!user_id) { return true }
 
         const user = await s.users.getFullByUserId(user_id)
         if (!user) { return true }
 
-        await s.userStats.incrementChatStats(user, b.twitchData.msg)
+        await s.userStats.incrementChatStats(user, b.msg)
       }
     },
   },

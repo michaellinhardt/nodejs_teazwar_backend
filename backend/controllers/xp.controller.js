@@ -79,7 +79,7 @@ export default [
         if (chatters.length === 0) { return p.cron.empty() }
 
         const chatterUsernames = chatters.map(c => c.username)
-        const users = await s.users.getByUsernames(chatterUsernames)
+        const users = await s.users.getFullByUsernames(chatterUsernames)
 
         await m.xp.addXpGainToChatters(users, chattersFlatten)
         await s.userStats.incrementSeenStats(users, chattersFlatten)

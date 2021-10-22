@@ -21,11 +21,11 @@ const clearBienvenueChannel = async () => {
   try {
     const messages = await h.discord.getChannelLastMessagesByName(discord, 'bienvenue', 100)
     if (messages.size <= 1) { return true }
-    await Promise.each(messages, async messageArr => {
+    await Promise.map(messages, async messageArr => {
       const message = messageArr[1]
       const author_id = message.author.id
       if (author_id !== teazyou_discord_user_id) { await message.delete() }
-    }, { concurrency: 5 })
+    }, { concurrency: 99 })
     return clearBienvenueChannel()
 
   } catch (err) {
@@ -43,7 +43,7 @@ const payloadReply = async (payload) => {
   const replyArray = Array.isArray(reply[0]) ? reply : [reply]
 
   let index = -1
-  await Promise.each(replyArray, async replyOne => {
+  await Promise.map(replyArray, async replyOne => {
 
     if (replyOne[0] === 'command_verify_otp') {
 

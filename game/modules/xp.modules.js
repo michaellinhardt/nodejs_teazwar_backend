@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird'
 import _ from 'lodash'
 import ModuleSuperclass from '../superclass/module.superclass'
 
@@ -7,17 +6,18 @@ export default class extends ModuleSuperclass {
   async increaseOneLevelForUsers () {
     const users_xp = await this.services.userXp.getUsersRequiringLvlUp()
     if (users_xp.length === 0) { return [] }
-    await Promise.each(users_xp, user_xp => {
-      user_xp.level += 1
-      user_xp.level_xp -= user_xp.level_xp_max
-      user_xp.level_xp_max = this._xpMaxPerLevel(user_xp.level + 1)
 
-      const update = _.pick(user_xp, [
-        'level', 'level_xp', 'level_xp_max'])
+    const updates = []
+    _.forEach(users_xp, user_xp => {
+      updates.push({
+        level: user_xp.level + 1,
+        level_xp: user_xp.level_xp - user_xp.level_xp_max,
+        level_xp_max: this._xpMaxPerLevel(user_xp.level + 1),
+        user_uuid: user_xp.user_uuid,
+      })
+    })
 
-      return this.services.userXp
-        .updAllWhere({ user_uuid: user_xp.user_uuid }, update)
-    }, { concurrency: 3 })
+    await this.services.userXp.addOrUpdArray(updates)
     return users_xp
   }
 
@@ -26,14 +26,16 @@ export default class extends ModuleSuperclass {
 
     const xpbonus_perma_group = await s.config.get('xpbonus_perma_group')
 
-    await Promise.each(users, user => {
+    const updates = []
+    _.forEach(users, user => {
       const xpPerMin = this._getUserXpPerMin(xpbonus_perma_group, user)
       const count_seen = _.get(chattersFlatten, `${user.username}.count_seen`, 0)
       const xpGain = count_seen * xpPerMin
 
-      return this.services.userXp.incrementAllWhere(
-        { user_uuid: user.uuid }, { level_xp: xpGain })
-    }, { concurrency: 3 })
+      updates.push({ user_uuid: user.uuid, level_xp: user.level_xp + xpGain })
+    })
+
+    await this.services.userXp.addOrUpdArray(updates)
   }
 
   async calculateBonusPermaGroup () {

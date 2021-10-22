@@ -18,7 +18,7 @@ module.exports = {
     socketRetryDelay: 3000, // ms
 
     tmiOpts: {
-      options: { debug: true },
+      options: { debug: false },
       connection: {
         reconnect: true,
         secure: true,
