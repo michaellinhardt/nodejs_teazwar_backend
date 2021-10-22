@@ -14,8 +14,7 @@ class AppError extends Error {
       return console.error('return error by socket', this.payload)
 
     } else if (this.status === 'http') {
-      return renderObject.status(this.status).json(this.payload)
-
+      return renderObject.status(400).json(this.payload)
     }
     return console.error('return error by script', this.payload)
 
@@ -29,7 +28,7 @@ module.exports = {
 
     StopPipeline: class extends AppError {
       constructor (error_key) {
-        super(error_key, 400)
+        super(error_key, 'http')
       }
     },
 

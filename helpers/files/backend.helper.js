@@ -32,6 +32,7 @@ const prepareBodyFromSocket = socketData => {
 }
 
 const prepareBodyFromHttp = (req, path) => {
+
   const requestParam = _.get(req, 'params', {})
   const requestBody = _.get(req, 'body', {})
 

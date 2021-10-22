@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const config = require('../../config')
-const { createClient } = require('redis')
+const { createClient } = require('ioredis')
 const { promisify } = require('util')
 
 let client = null
@@ -32,6 +32,7 @@ const connect = (infra_name = 'unknow') => {
   if (infra_name !== 'silent') {
     reportConnection(infra_name)
   }
+  exports.client = client
   return client
 }
 
@@ -62,5 +63,5 @@ const reset = async () => {
 
 const exports = { connect, reset, set, get }
 
-module.exports = { ...exports }
+module.exports = exports
 

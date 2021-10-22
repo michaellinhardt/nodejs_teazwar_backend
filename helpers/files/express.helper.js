@@ -4,7 +4,7 @@ import http from 'http'
 import express from 'express'
 const { backend } = require('../../config')
 
-const log = message => process.stdout.write(`${message}\n`)
+const log = message => backend.log ? process.stdout.write(`${message}\n`) : null
 
 const Middlewares = {
   dumpRequest: (req, res, next) => {
