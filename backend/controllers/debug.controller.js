@@ -30,10 +30,10 @@ export default [
         bots2.push({ username: 'IM NEW' })
         bots2.push({ username: 'IM NEW 2' })
 
-        await s.bots.addOrUpd(bots2)
+        await s.bots.addOrUpdArray(bots2)
 
         const bots3 = await s.bots.getAll()
-        console.debug('\n\n===')
+        console.info('\n\n===')
         this.helpers.code.dump(bots3)
       }
     },

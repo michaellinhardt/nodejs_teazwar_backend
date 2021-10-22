@@ -6,26 +6,22 @@ export default class extends ServiceSuperclass {
 
   constructor (ressources) { super(table, __filename, ressources) }
 
-  async updateOrCreateOtp (discord_user, verify_otp) {
+  updateOrCreateOtp (discord_user, verify_otp) {
     const { helpers: h, config: { discord: { verify_valid_until } } } = this
 
     const verify_expire_timestamp = h.date.timestamp() + verify_valid_until
 
-    const discord = await this.getFirstWhere({ discord_id: discord_user.id })
-    if (!discord) {
-      return this.add({
-        verify_otp,
-        discord_id: discord_user.id,
-        discord_username: discord_user.username,
-        discord_discriminator: discord_user.discriminator,
-        isBot: !!discord_user.bot,
-        isSystem: !!discord_user.system,
-        language: discord_user.locale,
-        verify_expire_timestamp,
-      })
+    const addOrUpdate = {
+      verify_otp,
+      discord_id: discord_user.id,
+      discord_username: discord_user.username,
+      discord_discriminator: discord_user.discriminator,
+      isBot: !!discord_user.bot,
+      isSystem: !!discord_user.system,
+      verify_expire_timestamp,
     }
-    return this.updAllWhere({ discord_id: discord_user.id }, {
-      verify_otp, verify_expire_timestamp })
+
+    return this.addOrUpd(addOrUpdate)
   }
 
   getByOtp (verify_otp) {

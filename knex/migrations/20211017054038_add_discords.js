@@ -1,17 +1,15 @@
-const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
 
 const tableName = 'discords'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetup(knex, table)
+    createTableDefaultSetupNoUuid(knex, table)
 
     table.string('discord_id').notNullable()
 
     table.string('discord_username').notNullable()
     table.string('discord_discriminator').notNullable()
-
-    table.string('language')
 
     table.boolean('isBot')
     table.boolean('isSystem')

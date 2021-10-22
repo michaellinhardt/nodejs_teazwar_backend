@@ -161,6 +161,7 @@ export default class {
   build_ressources (body) {
     const bodyRedis = _.get(body, 'big_data.redis', undefined)
     const bodySocket = _.get(body, 'big_data.socket', undefined)
+    const bodyInteraction = _.get(body, 'big_data.interaction', undefined)
 
     const ressources = {
       body,
@@ -175,7 +176,13 @@ export default class {
       lang: Languages,
     }
 
-    if (bodySocket) { ressources.socket = bodySocket }
+    if (bodyInteraction) {
+      _.set(ressources, 'payload.big_data.interaction', bodyInteraction)
+    }
+
+    if (bodySocket) {
+      ressources.socket = bodySocket
+    }
 
     if (bodyRedis) {
       _.set(body, 'big_data.redis', undefined)

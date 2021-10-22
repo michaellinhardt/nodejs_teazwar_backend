@@ -32,7 +32,7 @@ export default class extends ServiceSuperclass {
       configArray.push({ config_json: JSON.stringify(config_json), config_key })
     })
 
-    await this.addOrUpd(configArray)
+    await this.addOrUpdArray(configArray)
     return configObject
   }
 

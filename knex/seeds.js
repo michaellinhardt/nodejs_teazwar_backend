@@ -49,10 +49,13 @@ _.forEach(sqlconfig, (group, config_group) => {
   }))
 })
 
+const user_sub_tables = [{ user_uuid: users[0].uuid }, { user_uuid: users[1].uuid }]
+
 module.exports = {
   users,
   admins,
   sockets_infra,
   config,
+  user_sub_tables,
 }
 

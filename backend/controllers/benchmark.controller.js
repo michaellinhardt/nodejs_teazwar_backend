@@ -30,7 +30,7 @@ export default [
         }, { concurrency: 99 })
 
         const bots2 = await s.bots.getAll()
-        console.debug(bots2[0], bots2[bots.length - 1])
+        console.info(bots2[0], bots2[bots.length - 1])
 
       }
     },
@@ -58,7 +58,7 @@ export default [
           WHERE uuid IN(${uuids})`)
 
         const bots2 = await s.bots.getAll()
-        console.debug(bots2[0], bots2[bots.length - 1])
+        console.info(bots2[0], bots2[bots.length - 1])
 
       }
     },
@@ -85,7 +85,7 @@ export default [
         `)
 
         const bots2 = await s.bots.getAll()
-        console.debug(bots2[0], bots2[bots.length - 1])
+        console.info(bots2[0], bots2[bots.length - 1])
 
       }
     },
@@ -109,7 +109,7 @@ export default [
         }, { concurrency: 99 })
 
         const bots2 = await s.bots.getAll()
-        console.debug(bots2[0], bots2[bots.length - 1])
+        console.info(bots2[0], bots2[bots.length - 1])
 
       }
     },

@@ -1,10 +1,10 @@
-const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
 
 const tableName = 'user_stats'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetup(knex, table)
+    createTableDefaultSetupNoUuid(knex, table)
 
     table.string('user_uuid', 36).notNullable()
 
@@ -25,7 +25,8 @@ exports.up = function (knex) {
     table.unique('user_uuid')
 
   }).then(() => {
-    return true
+    const { user_sub_tables } = require('../seeds')
+    return knex(tableName).insert(user_sub_tables)
   })
 }
 

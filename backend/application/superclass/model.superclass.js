@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { del } from 'superagent'
 
 export default class {
 
@@ -189,7 +188,27 @@ export default class {
       .where(where)
   }
 
-  _addOrUpd (entryArray) {
+  _addOrUpd (entry) {
+    const knex = this.helpers.knex.get()
+
+    const fields = []
+    const valueBinds = []
+    const valueString = []
+    _.forEach(entry, (value, field) => {
+      fields.push(field)
+      valueBinds.push(value)
+      valueString.push('?')
+    })
+
+    return knex.raw(`
+    INSERT INTO ${this.table} (${fields.join(', ')})
+      VALUES (${valueString.join(', ')})
+      ON DUPLICATE KEY UPDATE
+      ${fields.map(f => `${f}=VALUES(${f})`).join(', ')}
+  `, valueBinds)
+  }
+
+  _addOrUpdArray (entryArray) {
     const knex = this.helpers.knex.get()
 
     const fields = []

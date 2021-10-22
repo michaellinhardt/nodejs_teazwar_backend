@@ -1,4 +1,3 @@
-import * as Promise from 'bluebird'
 import _ from 'lodash'
 
 import ServiceSuperclass from '../application/superclass/service.superclass'
@@ -140,7 +139,6 @@ export default class extends ServiceSuperclass {
       .select('*')
       .where('users.uuid', uuid)
       .first()
-    if (user) { user.uuid = user.user_uuid }
     return user
   }
 
@@ -161,7 +159,6 @@ export default class extends ServiceSuperclass {
       .select('*')
       .where('users.user_id', user_id)
       .first()
-    if (user) { user.uuid = user.user_uuid }
     return user
   }
 
@@ -170,7 +167,6 @@ export default class extends ServiceSuperclass {
       .select('*')
       .where('users.username', username.toLowerCase())
       .first()
-    if (user) { user.uuid = user.user_uuid }
     return user
   }
 
@@ -192,41 +188,31 @@ export default class extends ServiceSuperclass {
         avatar_url: twitchUser.profile_image_url,
         view_count: twitchUser.view_count,
         twitch_created_at: twitchUser.created_at,
-        isFollower: 'maybe',
-        isSubscriber: 'maybe',
-        isBot: 'maybe',
       }
 
       const isExisting = existingUsers.find(e => e.user_id === twitchUser.id)
 
       if (isExisting) {
-        user.isBot = isExisting.isBot
-        user.isFollower = isExisting.isFollower
-        user.isSubscriber = isExisting.isSubscriber
         user.uuid = isExisting.uuid
         updates.push(user)
 
-      } else { adds.push(user) }
+      } else {
+        user.uuid = this.helpers.string.uuid()
+        adds.push(user)
+      }
     })
 
-    let added = []
-    if (adds.length) {
-      added = await this.addArray(adds)
-    }
-
-    if (updates.length) {
-      await Promise.each(updates, async user => {
-        await this.updAllWhere({ user_id: user.user_id }, user)
-      }, { concurrency: 3 })
-    }
+    const allUsers = adds.concat(updates)
+    await this.addOrUpdArray(allUsers)
 
     // TESt
-    const allUsers = added.concat(updates)
-    await this.services.userXp.addMissingEntry(allUsers)
-    await this.services.userStats.addMissingEntry(allUsers)
-    await this.services.userAttributes.addMissingEntry(allUsers)
+    if (adds.length) {
+      await this.services.userXp.addMissingEntry(adds)
+      await this.services.userStats.addMissingEntry(adds)
+      await this.services.userAttributes.addMissingEntry(adds)
+    }
 
-    return { added, updated: updates }
+    return { added: adds, updated: updates }
 
   }
 
