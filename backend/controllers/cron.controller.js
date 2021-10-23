@@ -7,16 +7,16 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, payloads: p, helpers: h } = this
-        const cron = await s.cronTasks.buildCronObject()
+        const cronDbBuild = await s.cronTasks.buildCronObject()
 
         const currTimestamp = h.date.timestamp()
 
-        const task = s.cronTasks.getNextTask(currTimestamp, cron)
+        const task = s.cronTasks.getNextTask(currTimestamp, cronDbBuild)
         if (!task) {
 
           const nextTaskIn = (seconds = 1) => {
             const nextTimestamp = currTimestamp + seconds
-            const nextTask = s.cronTasks.getNextTask(nextTimestamp, cron)
+            const nextTask = s.cronTasks.getNextTask(nextTimestamp, cronDbBuild)
             if (!nextTask) { return nextTaskIn(seconds + 1) }
             return seconds
           }
@@ -26,7 +26,7 @@ export default [
           return p.cron.empty({ sleep: seconds })
         }
 
-        p.cron.success({ big_data: { cron }, task })
+        p.cron.success({ big_data: { cron: cronDbBuild }, task })
       }
     },
   },

@@ -9,7 +9,7 @@ exports.up = function (knex) {
     createTableDefaultSetup(knex, table)
 
     table.string('path').notNullable()
-    table.biginteger('timestampNext').defaultTo(0)
+    table.biginteger('tsnCronTaskExec').defaultTo(0)
 
     table.unique('path')
 

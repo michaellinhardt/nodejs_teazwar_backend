@@ -22,9 +22,9 @@ export default class extends ServiceSuperclass {
 
   setUsersAsValidated (users) {
     const currTimestamp = this.helpers.date.timestamp()
-    const timestampValidatedUntil = currTimestamp + cron.chatterValidatedUntill
+    const tsuTwitchDataUpToDate = currTimestamp + cron.itvTwitchDataRevalidate
     const usernames = users.map(u => u.username)
-    return this.updAllWhereIn('username', usernames, { timestampValidatedUntil })
+    return this.updAllWhereIn('username', usernames, { tsuTwitchDataUpToDate })
   }
 
   async addOrIncrement (chatter_list) {
@@ -50,11 +50,11 @@ export default class extends ServiceSuperclass {
     }
   }
 
-  getNextValidateList () {
+  getNextTwitchUpdateList () {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .where('count_seen', '>', 0)
-      .andWhere('timestampValidatedUntil', '<', currTimestamp)
+      .andWhere('tsuTwitchDataUpToDate', '<', currTimestamp)
       .orderBy('count_seen', 'desc')
       .limit(twitch.usersPerPage)
   }
@@ -63,7 +63,7 @@ export default class extends ServiceSuperclass {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .where('count_seen', '>', 0)
-      .andWhere('timestampValidatedUntil', '>=', currTimestamp)
+      .andWhere('tsuTwitchDataUpToDate', '>=', currTimestamp)
       .orderBy('count_seen', 'desc')
   }
 

@@ -30,7 +30,7 @@ export default [
       async handler () {
         const { services: s, payloads: p, apis: a } = this
 
-        const chatters = await s.chatters.getNextValidateList()
+        const chatters = await s.chatters.getNextTwitchUpdateList()
 
         if (chatters.length === 0) {
           return p.cron.empty()

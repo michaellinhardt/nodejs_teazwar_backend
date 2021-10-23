@@ -9,7 +9,7 @@ exports.up = function (knex) {
     table.string('username').defaultTo('')
     table.integer('count_seen').defaultTo(1)
 
-    table.biginteger('timestampValidatedUntil').defaultTo(0)
+    table.biginteger('tsuTwitchDataUpToDate').defaultTo(0)
 
     table.unique('username')
 

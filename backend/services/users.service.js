@@ -14,7 +14,7 @@ export default class extends ServiceSuperclass {
     return this.knex()
       .select('*')
       .where('isBot', 'yes')
-      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
+      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
   }
 
   // TODO: when extension timestamp exist, replace this
@@ -22,8 +22,8 @@ export default class extends ServiceSuperclass {
     const currTimestamp = this.helpers.date.timestamp()
     return this.knex()
       .select('*')
-      .where('timestampOnlineUntill', '>=', currTimestamp)
-      // .andWhere('timestampExtensionUntill', '>=', currTimestamp)
+      .where('tsuOnlineTchat', '>=', currTimestamp)
+      // .andWhere('tsuOnlineExtension', '>=', currTimestamp)
   }
 
   getChannel () {
@@ -47,8 +47,8 @@ export default class extends ServiceSuperclass {
 
   setOnline (chatter_list) {
     const { helpers: h } = this
-    const timestampOnlineUntill = h.date.timestamp() + cron.viewerOnlineUntill
-    return this.updAllWhereIn('username', chatter_list, { timestampOnlineUntill })
+    const tsuOnlineTchat = h.date.timestamp() + cron.tsuOnlineTchat
+    return this.updAllWhereIn('username', chatter_list, { tsuOnlineTchat })
   }
 
   socketDisconnected (socket_id) {
@@ -62,10 +62,10 @@ export default class extends ServiceSuperclass {
 
     const nextNewFollowCheck = await this.knex()
       .select('*')
-      .where('isFollower', 'yes')
-      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
-      .andWhere('timestampNewFollowerCheck', '<=', currTimestamp)
-      .orderBy('timestampNewFollowerCheck', 'asc')
+      .whereNot('isFollower', 'yes')
+      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
+      .andWhere('tsnCheckChatterNewFollower', '<=', currTimestamp)
+      .orderBy('tsnCheckChatterNewFollower', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
 
@@ -79,8 +79,8 @@ export default class extends ServiceSuperclass {
 
     const nextGlobalFollowingCheck = await this.knex()
       .select('*')
-      .where('timestampFollowingCheck', '<=', currTimestamp)
-      .orderBy('timestampFollowingCheck', 'asc')
+      .where('tsnCheckFollowingStatus', '<=', currTimestamp)
+      .orderBy('tsnCheckFollowingStatus', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
 
@@ -95,9 +95,9 @@ export default class extends ServiceSuperclass {
     const nextUnFollowCheck = await this.knex()
       .select('*')
       .where('isFollower', 'yes')
-      .andWhere('timestampOnlineUntill', '>=', currTimestamp)
-      .andWhere('timestampUnFollowerCheck', '<=', currTimestamp)
-      .orderBy('timestampUnFollowerCheck', 'asc')
+      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
+      .andWhere('tsnCheckChatterUnFollow', '<=', currTimestamp)
+      .orderBy('tsnCheckChatterUnFollow', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
 
@@ -114,12 +114,12 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ uuid: user.uuid }, {
       isFollower,
       countFollow,
-      timestampUnFollowerCheck: currTimestamp
-        + (cron.chattersUnFollowerControlEvery * isBotMultiplier),
-      timestampNewFollowerCheck: currTimestamp
-        + (cron.chattersNewFollowerControlEvery * isBotMultiplier),
-      timestampFollowingCheck: currTimestamp
-        + (cron.globalFollowingControlEvery * isBotMultiplier),
+      tsnCheckChatterUnFollow: currTimestamp
+        + (cron.itvCheckChatterUnFollow * isBotMultiplier),
+      tsnCheckChatterNewFollower: currTimestamp
+        + (cron.itvCheckChatterNewFollower * isBotMultiplier),
+      tsnCheckFollowingStatus: currTimestamp
+        + (cron.itvCheckFollowingStatus * isBotMultiplier),
     })
   }
 

@@ -13,8 +13,8 @@ exports.up = function (knex) {
     table.string('target').notNullable()
 
     // maximum duration, 1 = 1 min, -1 = infinite
-    table.bigint('tic_max').notNullable()
-    table.bigint('tic').notNullable()
+    table.biginteger('tic_max').notNullable()
+    table.biginteger('tic').notNullable()
 
   }).then(() => {
     // const { config } = require('../seeds')

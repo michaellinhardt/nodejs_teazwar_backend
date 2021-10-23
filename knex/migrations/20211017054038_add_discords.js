@@ -15,8 +15,8 @@ exports.up = function (knex) {
     table.boolean('isSystem')
 
     table.string('verify_otp').defaultTo(null)
-    table.biginteger('verify_expire_timestamp').defaultTo(0)
-    table.biginteger('verify_timestamp').defaultTo(0)
+    table.biginteger('tsuDiscordOtpValid').defaultTo(0)
+    table.biginteger('tslDiscordOtpValidated').defaultTo(0)
 
     table.biginteger('joinedTimestamp').defaultTo(0)
 

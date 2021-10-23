@@ -14,58 +14,58 @@ export default class extends ServiceSuperclass {
     if (!task.isTwitchApi) { return true }
     const { helpers: h } = this
     const currTimestamp = h.date.timestamp()
-    const twitchApiNext = currTimestamp + cron.twitchApiInterval
-    await this.updAllWhere({ path: 'twitch' }, { timestampNext: twitchApiNext })
+    const tsnTwitchApiCall = currTimestamp + cron.itvTwitchApiCall
+    await this.updAllWhere({ path: 'twitch' }, { tsnCronTaskExec: tsnTwitchApiCall })
   }
 
   async setTaskInterval (task, payload) {
     const { helpers: h } = this
     const currTimestamp = h.date.timestamp()
-    const interval = payload.success ? task.interval : task.intervalRetry
-    task.timestampNext = currTimestamp + interval
-    task.timestampNext = payload.empty ? currTimestamp + task.intervalEmpty : task.timestampNext
-    await this.updAllWhere({ path: task.path }, { timestampNext: task.timestampNext })
+    const interval = payload.success ? task.itvWhenSuccess : task.itvWhenError
+    task.tsnCronTaskExec = currTimestamp + interval
+    task.tsnCronTaskExec = payload.empty ? currTimestamp + task.itvWhenEmpty : task.tsnCronTaskExec
+    await this.updAllWhere({ path: task.path }, { tsnCronTaskExec: task.tsnCronTaskExec })
   }
 
   async buildCronObject () {
-    const tasks = await this.knex()
+    const dbTasks = await this.knex()
       .select('*')
       .orderBy('id', 'ask')
 
-    const twitchTask = tasks.shift()
+    const twitchTask = dbTasks.shift()
 
     const mergedTasks = []
-    _.forEach(cron.tasks, c => {
-      const isTask = tasks.find(t => t.path === c.path)
+    _.forEach(cron.tasks, cfgTask => {
+      const isDbTask = dbTasks.find(dbTask => dbTask.path === cfgTask.path)
 
-      if (isTask) {
+      if (isDbTask) {
         mergedTasks.push({
-          ...c,
-          timestampNext: isTask.timestampNext,
+          ...cfgTask,
+          tsnCronTaskExec: isDbTask.tsnCronTaskExec || 0,
         })
       }
     })
 
     return {
       ...cron,
-      twitchApiNext: twitchTask.timestampNext,
+      tsnTwitchApiCall: twitchTask.tsnCronTaskExec,
       tasks: mergedTasks,
     }
   }
 
-  getNextTask (currTimestamp, cron) {
+  getNextTask (currTimestamp, cronDbBuild) {
     let selectedTaskId = -1
-    _.forEach(cron.tasks, (task, taskId) => {
-      const isLock = task.isTwitchApi && cron.twitchApiNext > currTimestamp
+    _.forEach(cronDbBuild.tasks, (task, taskId) => {
+      const isLock = task.isTwitchApi && cronDbBuild.tsnTwitchApiCall > currTimestamp
       const isEnabled = _.get(task, 'isEnabled', true)
       if (isEnabled && !isLock
-            && task.timestampNext <= currTimestamp
+            && task.tsnCronTaskExec <= currTimestamp
             && selectedTaskId === -1) {
         selectedTaskId = taskId
         return false
       }
     })
-    return selectedTaskId === -1 ? false : cron.tasks[selectedTaskId]
+    return selectedTaskId === -1 ? false : cronDbBuild.tasks[selectedTaskId]
   }
 
 }

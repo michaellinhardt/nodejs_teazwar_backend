@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const expire10Years = 60 * 60 * 24 * 365 * 10
+const itvJwtExpireIn10Years = 60 * 60 * 24 * 365 * 10
 
 const twitchSecret = 'uyASGPXW5jNMKcG8tscdLyCy1wKsKvuDaZEFiq3My40='
 
@@ -10,7 +10,7 @@ module.exports = {
   signOptions: {
     issuer: 'TeazYou',
     audience: 'https://teazyou.com',
-    expiresIn: expire10Years,
+    expiresIn: itvJwtExpireIn10Years,
     algorithm: 'RS512',
   },
   privateKEY: fs.readFileSync(`${__dirname}/../jwtoken/private.jwtoken.key`, 'utf8'),

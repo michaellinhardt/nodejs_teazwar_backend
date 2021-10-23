@@ -8,14 +8,7 @@ module.exports = {
     bearer: `Bearer ${require('../../knex/seeds').users[0].jwtoken}`,
 
     endpoint: '/twitch',
-
-    pollingEvery: 1000,
     channel: 'teazyou',
-    joinRetry: 10,
-    joinInterval: 5000,
-
-    socketRetryMax: 20,
-    socketRetryDelay: 3000, // ms
 
     tmiOpts: {
       options: { debug: false },

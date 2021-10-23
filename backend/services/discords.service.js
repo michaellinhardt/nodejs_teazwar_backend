@@ -7,9 +7,9 @@ export default class extends ServiceSuperclass {
   constructor (ressources) { super(table, __filename, ressources) }
 
   updateOrCreateOtp (discord_user, verify_otp) {
-    const { helpers: h, config: { discord: { verify_valid_until } } } = this
+    const { helpers: h, config: { discord: { itvDiscordOtpValidity } } } = this
 
-    const verify_expire_timestamp = h.date.timestamp() + verify_valid_until
+    const tsuDiscordOtpValid = h.date.timestamp() + itvDiscordOtpValidity
 
     const addOrUpdate = {
       verify_otp,
@@ -18,7 +18,7 @@ export default class extends ServiceSuperclass {
       discord_discriminator: discord_user.discriminator,
       isBot: !!discord_user.bot,
       isSystem: !!discord_user.system,
-      verify_expire_timestamp,
+      tsuDiscordOtpValid,
     }
 
     return this.addOrUpd(addOrUpdate)
@@ -32,7 +32,7 @@ export default class extends ServiceSuperclass {
     const currTimestamp = this.helpers.date.timestamp()
     return this.updAllWhere({ verify_otp }, {
       verify_otp: null,
-      verify_timestamp: currTimestamp,
+      tslDiscordOtpValidated: currTimestamp,
     })
   }
 

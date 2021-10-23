@@ -45,8 +45,8 @@ export default [
         }
 
         const currTimestamp = h.date.timestamp()
-        if (discord.verify_expire_timestamp < currTimestamp) {
-          const validity_minutes = this.config.discord.verify_valid_until / 60
+        if (discord.tsuDiscordOtpValid < currTimestamp) {
+          const validity_minutes = this.config.discord.itvDiscordOtpValidity / 60
           return s.socketsInfra
             .emitSayTwitch(['discord_verfy_expired', d.displayName, validity_minutes])
         }
@@ -56,11 +56,11 @@ export default [
         await s.discords.validateByOtp(d.otp)
         await s.users.setDiscordIds(user, discord)
 
-        if (discord.verify_timestamp === 0) {
+        if (discord.tslDiscordOtpValidated === 0) {
           // TODO give rewards
         }
 
-        const sayKey = discord.verify_timestamp === 0
+        const sayKey = discord.tslDiscordOtpValidated === 0
           ? 'discord_verified_first' : 'discord_verified_notFirst'
         s.socketsInfra.emitSayTwitch([sayKey, d.displayName])
       }

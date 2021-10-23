@@ -23,7 +23,7 @@ export default class extends ServiceSuperclass {
       total_lines,
       total_chars,
       chars_per_line,
-      timestampLastChatLine: this.helpers.date.timestamp(),
+      tslChatLine: this.helpers.date.timestamp(),
     }
 
     return this.updAllWhere({ user_uuid: user.uuid }, updateStats)
@@ -42,7 +42,7 @@ export default class extends ServiceSuperclass {
       let label = 'chat_seen_normal'
       if (user.isFollower === 'yes') { label = 'chat_seen_follower' }
       if (user.isSubscriber === 'yes') { label = 'chat_seen_subscriber' }
-      if (user.timestampExtensionUntill >= currTimestamp) {
+      if (user.tsuOnlineExtension >= currTimestamp) {
         label.replace('chat', 'extension')
       }
 

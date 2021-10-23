@@ -4,108 +4,98 @@ module.exports = {
   sleepWhenCronRouterError: 3000,
   sleepWhenCronTaskError: 1000,
 
-  interval: 100,
-  twitchApiInterval: 2,
-  twitchApiNext: 0,
+  itvWhenSuccess: 100,
+  itvTwitchApiCall: 2,
+  tsnTwitchApiCall: 0,
 
-  viewerOnlineUntill: 60 * 3,
-  viewerExtensionUntill: 60 * 3,
-  chatterValidatedUntill: 60 * 3, // validate chatters once every..
+  tsuOnlineTchat: 60 * 3,
+  itvOnlineExtension: 60 * 3, // not used yet
+  itvTwitchDataRevalidate: 60 * 3, // validate chatters once every..
 
-  chattersUnFollowerControlEvery: 60 * 60 * 24,
-  chattersNewFollowerControlEvery: 60 * 5,
-  globalFollowingControlEvery: 60 * 60 * 24 * 7,
+  itvCheckChatterUnFollow: 60 * 60 * 24,
+  itvCheckChatterNewFollower: 60 * 5,
+  itvCheckFollowingStatus: 60 * 60 * 24 * 7,
 
   followingBotsMultiplier: 5, // follow verification timers for bots is increase by xTimes
 
   tasks: [{
     path: '/chatters/listing',
     isTwitchApi: true,
-    interval: 20,
-    intervalEmpty: 20,
-    intervalRetry: 20,
-    timestampNext: 0,
+    itvWhenSuccess: 20,
+    itvWhenEmpty: 20,
+    itvWhenError: 20,
     // isEnabled: false,
   }, {
 
     path: '/chatters/validate',
     isTwitchApi: true,
-    interval: 0,
-    intervalEmpty: 20,
-    intervalRetry: 20,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 20,
+    itvWhenError: 20,
     // isEnabled: false,
   }, {
 
     path: '/xp/bonus/perma/group',
     isTwitchApi: false,
-    interval: 6,
-    intervalEmpty: 60,
-    intervalRetry: 20,
-    timestampNext: 0,
+    itvWhenSuccess: 6,
+    itvWhenEmpty: 60,
+    itvWhenError: 20,
     // isEnabled: false,
   }, {
 
     path: '/chatters/xpgain',
     isTwitchApi: false,
-    interval: 0,
-    intervalEmpty: 20,
-    intervalRetry: 20,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 20,
+    itvWhenError: 20,
     // isEnabled: false,
   }, {
 
     path: '/xp/levelup',
     isTwitchApi: false,
-    interval: 0,
-    intervalEmpty: 60,
-    intervalRetry: 60,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 60,
+    itvWhenError: 60,
     // isEnabled: false,
   }, {
 
     path: '/chatters/bots/update',
     isTwitchApi: false,
-    interval: 60 * 60 * 1,
-    intervalEmpty: 60 * 60 * 1,
-    intervalRetry: 60 * 60 * 1,
-    timestampNext: 0,
+    itvWhenSuccess: 60 * 60 * 1,
+    itvWhenEmpty: 60 * 60 * 1,
+    itvWhenError: 60 * 60 * 1,
     // isEnabled: false,
   }, {
 
     path: '/chatters/bots/detect',
     isTwitchApi: false,
-    interval: 0,
-    intervalEmpty: 10,
-    intervalRetry: 60 * 5,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 10,
+    itvWhenError: 60 * 5,
     // isEnabled: false,
   }, {
 
     path: '/chatters/newfollower',
     isTwitchApi: true,
-    interval: 0,
-    intervalEmpty: 60 * 5,
-    intervalRetry: 60 * 5,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 60 * 5,
+    itvWhenError: 60 * 5,
     // isEnabled: false,
   }, {
 
     path: '/chatters/unfollower',
     isTwitchApi: true,
-    interval: 0,
-    intervalEmpty: 60 * 60 * 12,
-    intervalRetry: 60 * 5,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 60 * 60 * 12,
+    itvWhenError: 60 * 5,
     // isEnabled: false,
   }, {
 
     path: '/global/following',
     isTwitchApi: true,
-    interval: 0,
-    intervalEmpty: 60 * 60,
-    intervalRetry: 60 * 60,
-    timestampNext: 0,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: 60 * 60,
+    itvWhenError: 60 * 60,
     // isEnabled: false,
   }],
 }

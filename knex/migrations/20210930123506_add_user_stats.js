@@ -20,7 +20,7 @@ exports.up = function (knex) {
     table.integer('extension_seen_follower').defaultTo(0)
     table.integer('extension_seen_subscriber').defaultTo(0)
 
-    table.biginteger('timestampLastChatLine').defaultTo(0)
+    table.biginteger('tslChatLine').defaultTo(0)
 
     table.unique('user_uuid')
 

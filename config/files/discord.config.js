@@ -14,7 +14,7 @@ module.exports = {
     '899558715060027442', // bienvenue text verification
   ],
 
-  verify_valid_until: 60 * 10,
+  itvDiscordOtpValidity: 60 * 10,
 
   roles: [
     ['Membres', '899121536861097984'],
@@ -25,13 +25,8 @@ module.exports = {
     bearer: `Bearer ${require('../../knex/seeds').users[0].jwtoken}`,
 
     username: 'teazwar',
-
     endpoint: '/discord',
 
-    socketRetry: 20,
-    socketRetryDelay: 3000, // ms
-
-    pollingEvery: 1000,
     channels: [
       ['server', '898775699312242728'],
       ['game', '890397933663567932'],
