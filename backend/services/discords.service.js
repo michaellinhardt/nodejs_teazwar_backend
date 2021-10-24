@@ -9,7 +9,7 @@ export default class extends ServiceSuperclass {
   updateOrCreateOtp (discord_user, verify_otp) {
     const { helpers: h, config: { discord: { itvDiscordOtpValidity } } } = this
 
-    const tsuDiscordOtpValid = h.date.timestamp() + itvDiscordOtpValidity
+    const tsuDiscordOtpValid = h.date.timestampMs() + itvDiscordOtpValidity
 
     const addOrUpdate = {
       verify_otp,
@@ -29,10 +29,10 @@ export default class extends ServiceSuperclass {
   }
 
   validateByOtp (verify_otp) {
-    const currTimestamp = this.helpers.date.timestamp()
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.updAllWhere({ verify_otp }, {
       verify_otp: null,
-      tslDiscordOtpValidated: currTimestamp,
+      tslDiscordOtpValidated: currTimestampMs,
     })
   }
 

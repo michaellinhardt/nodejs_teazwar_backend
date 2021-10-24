@@ -13,17 +13,25 @@ export default class extends ServiceSuperclass {
   async setTwitchApiNext (cron, task) {
     if (!task.isTwitchApi) { return true }
     const { helpers: h } = this
-    const currTimestamp = h.date.timestamp()
-    const tsnTwitchApiCall = currTimestamp + cron.itvTwitchApiCall
+    const currTimestampMS = h.date.timestampMs()
+    const tsnTwitchApiCall = currTimestampMS + cron.itvTwitchApiCall
+    cron.tsnTwitchApiCall = tsnTwitchApiCall
     await this.updAllWhere({ path: 'twitch' }, { tsnCronTaskExec: tsnTwitchApiCall })
   }
 
-  async setTaskInterval (task, payload) {
+  async setTaskInterval (cron, task, payload) {
     const { helpers: h } = this
-    const currTimestamp = h.date.timestamp()
-    const interval = payload.success ? task.itvWhenSuccess : task.itvWhenError
-    task.tsnCronTaskExec = currTimestamp + interval
-    task.tsnCronTaskExec = payload.empty ? currTimestamp + task.itvWhenEmpty : task.tsnCronTaskExec
+    const currTimestampMs = h.date.timestampMs()
+    const intervalSuccessOrError = payload.success ? task.itvWhenSuccess : task.itvWhenError
+    task.tsnCronTaskExec = payload.empty
+      ? currTimestampMs + task.itvWhenEmpty
+      : currTimestampMs + intervalSuccessOrError
+
+    const isTask = cron.tasks.find(t => t.path === task.path)
+    if (isTask) {
+      isTask.tsnCronTaskExec = task.tsnCronTaskExec
+    }
+
     await this.updAllWhere({ path: task.path }, { tsnCronTaskExec: task.tsnCronTaskExec })
   }
 
@@ -51,6 +59,20 @@ export default class extends ServiceSuperclass {
       tsnTwitchApiCall: twitchTask.tsnCronTaskExec,
       tasks: mergedTasks,
     }
+  }
+
+  calculateNextTaskTimestamp (cronDbBuild, nextTimestampMs) {
+    const { services: s } = this
+
+    const nextTask = s.cronTasks.getNextTask(nextTimestampMs, cronDbBuild)
+
+    if (!nextTask) { return this.calculateNextTaskTimestamp(cronDbBuild, nextTimestampMs + 100) }
+
+    const tsnCronTaskExec
+      = (nextTask.isTwitchApi && cronDbBuild.tsnTwitchApiCall > nextTask.tsnCronTaskExec)
+        ? cronDbBuild.tsnTwitchApiCall : nextTask.tsnCronTaskExec
+
+    return tsnCronTaskExec - this.helpers.date.timestampMs()
   }
 
   getNextTask (currTimestamp, cronDbBuild) {

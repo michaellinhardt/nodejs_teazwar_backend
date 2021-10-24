@@ -1,6 +1,10 @@
+const {
+  msOneYear,
+} = require('../../helpers/files/date.helper')
+
 const fs = require('fs')
 
-const itvJwtExpireIn10Years = 60 * 60 * 24 * 365 * 10
+const itvJwtExpireIn10Years = msOneYear * 10
 
 const twitchSecret = 'uyASGPXW5jNMKcG8tscdLyCy1wKsKvuDaZEFiq3My40='
 

@@ -19,7 +19,7 @@ export default [
         const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
         const discordPing = h.format.userDiscordPing(user)
         const isFollowerBefore = user.isFollower === 'yes'
-        const isOnline = user.tsuOnlineTchat >= h.date.timestamp()
+        const isOnline = user.tsuOnlineTchat >= h.date.timestampMs()
 
         let event = null
         if (!isFollowerBefore && isFollowing.length && countFollow === 1) {

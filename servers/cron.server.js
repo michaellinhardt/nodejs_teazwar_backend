@@ -22,11 +22,15 @@ const executeNextTask = async () => {
     await h.code.sleep(config.cron.sleepWhenCronRouterError)
   }
 
-  if (!cronRouter.task) {
-    // console.info('NEXT TASK IN ->', cronRouter.sleep)
-    await h.code.sleep((cronRouter.sleep * 1000) - 600)
-    return false
+  if (cronRouter.sleep) {
+    const removeValue = 5
+    const sleepRemove = cronRouter.sleep > removeValue ? removeValue : 0
+    const sleepTime = cronRouter.sleep - sleepRemove
+    console.info('SLEEP (cron router) ->', sleepTime)
+    await h.code.sleep(sleepTime)
   }
+
+  if (!cronRouter.task) { return false }
 
   const { big_data: { cron }, task } = cronRouter
 
@@ -45,7 +49,16 @@ const executeNextTask = async () => {
   }
 
   try {
-    await backend('post', '/cron/interval', { big_data: { cron }, task, taskResult })
+    const cronInterval
+      = await backend('post', '/cron/interval', { big_data: { cron }, task, taskResult })
+
+    if (cronInterval.sleep) {
+      const removeValue = 5
+      const sleepRemove = cronInterval.sleep > removeValue ? removeValue : 0
+      const sleepTime = cronInterval.sleep - sleepRemove
+      console.info('SLEEP (cron interval) ->', sleepTime)
+      await h.code.sleep(sleepTime)
+    }
 
   } catch (err) {
     console.error(err)

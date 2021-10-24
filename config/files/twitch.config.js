@@ -1,10 +1,14 @@
+const {
+  msOneSec,
+} = require('../../helpers/files/date.helper')
+
 module.exports = {
   usersPerPage: 100,
   clientId: 'gp762nuuoqcoxypju8c569th9wz7q5',
   oauth: '0ekw7q9n0rwxnzcr13hp2lkc9cdklq',
 
   chatbot: {
-    sleepAfterConnect: 1000,
+    sleepAfterConnect: msOneSec,
     bearer: `Bearer ${require('../../knex/seeds').users[0].jwtoken}`,
 
     endpoint: '/twitch',

@@ -9,21 +9,16 @@ export default [
         const { services: s, payloads: p, helpers: h } = this
         const cronDbBuild = await s.cronTasks.buildCronObject()
 
-        const currTimestamp = h.date.timestamp()
+        const currTimestampMs = h.date.timestampMs()
 
-        const task = s.cronTasks.getNextTask(currTimestamp, cronDbBuild)
+        const task = s.cronTasks.getNextTask(currTimestampMs, cronDbBuild)
         if (!task) {
 
-          const nextTaskIn = (seconds = 1) => {
-            const nextTimestamp = currTimestamp + seconds
-            const nextTask = s.cronTasks.getNextTask(nextTimestamp, cronDbBuild)
-            if (!nextTask) { return nextTaskIn(seconds + 1) }
-            return seconds
-          }
+          const isSleep = this.services.cronTasks
+            .calculateNextTaskTimestamp(cronDbBuild, currTimestampMs + 10)
+          const sleep = isSleep > 0 ? { sleep: isSleep } : {}
 
-          const seconds = nextTaskIn()
-
-          return p.cron.empty({ sleep: seconds })
+          return p.cron.empty(sleep)
         }
 
         p.cron.success({ big_data: { cron: cronDbBuild }, task })
@@ -38,9 +33,15 @@ export default [
         const { services: s, payloads: p, body: b } = this
 
         await s.cronTasks.setTwitchApiNext(b.big_data.cron, b.task)
-        await s.cronTasks.setTaskInterval(b.task, b.taskResult)
+        await s.cronTasks.setTaskInterval(b.big_data.cron, b.task, b.taskResult)
 
-        p.cron.success()
+        const currTimestampMs = this.helpers.date.timestampMs()
+
+        const isSleep = this.services.cronTasks
+          .calculateNextTaskTimestamp(b.big_data.cron, currTimestampMs + 10)
+        const sleep = isSleep > 0 ? { sleep: isSleep } : {}
+
+        p.cron.success(sleep)
       }
     },
   },

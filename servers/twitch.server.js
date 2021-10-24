@@ -1,7 +1,9 @@
 const Promise = require('bluebird')
+const { render } = require('prettyjson')
 const _ = require('lodash')
 const h = require('../helpers')
 const emitter = h.sockets.getServerEmitter('twitch.bot')
+const { backend: { log } } = require('../config')
 
 let twitch = null
 let say = null
@@ -35,6 +37,9 @@ const backend = async (method, path, body = {}) => {
 
 const onSocketMessage = async (socket, payload) => {
   try {
+    if (log) {
+      console.info(`Received from: ${socket.id}\n`, render(payload))
+    }
     executePayloadOrder(payload)
 
   } catch (err) {

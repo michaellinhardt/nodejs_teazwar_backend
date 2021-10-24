@@ -23,7 +23,7 @@ export default class extends ServiceSuperclass {
       total_lines,
       total_chars,
       chars_per_line,
-      tslChatLine: this.helpers.date.timestamp(),
+      tslChatLine: this.helpers.date.timestampMs(),
     }
 
     return this.updAllWhere({ user_uuid: user.uuid }, updateStats)
@@ -31,7 +31,7 @@ export default class extends ServiceSuperclass {
 
   async incrementSeenStats (users, chatters) {
     const { helpers: h } = this
-    const currTimestamp = h.date.timestamp()
+    const currTimestampMs = h.date.timestampMs()
 
     const userStats = await this.getAllLastWhereIn('user_uuid', users.map(u => u.uuid))
     const updates = []
@@ -42,7 +42,7 @@ export default class extends ServiceSuperclass {
       let label = 'chat_seen_normal'
       if (user.isFollower === 'yes') { label = 'chat_seen_follower' }
       if (user.isSubscriber === 'yes') { label = 'chat_seen_subscriber' }
-      if (user.tsuOnlineExtension >= currTimestamp) {
+      if (user.tsuOnlineExtension >= currTimestampMs) {
         label.replace('chat', 'extension')
       }
 

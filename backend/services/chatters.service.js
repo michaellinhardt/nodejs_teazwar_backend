@@ -21,8 +21,8 @@ export default class extends ServiceSuperclass {
   }
 
   setUsersAsValidated (users) {
-    const currTimestamp = this.helpers.date.timestamp()
-    const tsuTwitchDataUpToDate = currTimestamp + cron.itvTwitchDataRevalidate
+    const currTimestampMs = this.helpers.date.timestampMs()
+    const tsuTwitchDataUpToDate = currTimestampMs + cron.itvTwitchDataRevalidate
     const usernames = users.map(u => u.username)
     return this.updAllWhereIn('username', usernames, { tsuTwitchDataUpToDate })
   }
@@ -51,19 +51,19 @@ export default class extends ServiceSuperclass {
   }
 
   getNextTwitchUpdateList () {
-    const currTimestamp = this.helpers.date.timestamp()
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.knex()
       .where('count_seen', '>', 0)
-      .andWhere('tsuTwitchDataUpToDate', '<', currTimestamp)
+      .andWhere('tsuTwitchDataUpToDate', '<', currTimestampMs)
       .orderBy('count_seen', 'desc')
       .limit(twitch.usersPerPage)
   }
 
   getNextXpGain () {
-    const currTimestamp = this.helpers.date.timestamp()
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.knex()
       .where('count_seen', '>', 0)
-      .andWhere('tsuTwitchDataUpToDate', '>=', currTimestamp)
+      .andWhere('tsuTwitchDataUpToDate', '>=', currTimestampMs)
       .orderBy('count_seen', 'desc')
   }
 

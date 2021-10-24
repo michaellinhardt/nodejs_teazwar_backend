@@ -29,7 +29,7 @@ export default [
       }
 
       async handler () {
-        const { apis: a, data: d, services: s, helpers: h } = this
+        const { apis: a, data: d, services: s, helpers: h, config } = this
 
         const discord = await s.discords.getByOtp(d.otp)
         if (!discord) {
@@ -44,9 +44,9 @@ export default [
             .emitSayTwitch(['discord_verfy_noUser', d.displayName])
         }
 
-        const currTimestamp = h.date.timestamp()
-        if (discord.tsuDiscordOtpValid < currTimestamp) {
-          const validity_minutes = this.config.discord.itvDiscordOtpValidity / 60
+        const currTimestampMs = h.date.timestampMs()
+        if (discord.tsuDiscordOtpValid < currTimestampMs) {
+          const validity_minutes = config.discord.itvDiscordOtpValidity / h.date.msOneMin
           return s.socketsInfra
             .emitSayTwitch(['discord_verfy_expired', d.displayName, validity_minutes])
         }

@@ -2,7 +2,9 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { render } = require('prettyjson')
 const h = require('../helpers')
-const { discord: { teazyou_discord_user_id, sleepWhenBackendError } } = require('../config')
+const {
+  discord: { teazyou_discord_user_id, sleepWhenBackendError }, backend: { log },
+} = require('../config')
 const emitter = h.sockets.getServerEmitter('discord.bot')
 
 let discord = null
@@ -83,7 +85,9 @@ const backend = async (method, path, body = {}) => {
 
 const onSocketMessage = (socket, payload) => {
   try {
-    console.info(`Received from: ${socket.id}\n`, render(payload))
+    if (log) {
+      console.info(`Received from: ${socket.id}\n`, render(payload))
+    }
     executePayloadOrder(payload)
 
   } catch (err) {

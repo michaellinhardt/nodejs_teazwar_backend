@@ -10,20 +10,20 @@ export default class extends ServiceSuperclass {
   constructor (ressources) { super(table, __filename, ressources) }
 
   getOnlineBots () {
-    const currTimestamp = this.helpers.date.timestamp()
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.knex()
       .select('*')
       .where('isBot', 'yes')
-      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
+      .andWhere('tsuOnlineTchat', '>=', currTimestampMs)
   }
 
   // TODO: when extension timestamp exist, replace this
   getExtensionUsers () {
-    const currTimestamp = this.helpers.date.timestamp()
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.knex()
       .select('*')
-      .where('tsuOnlineTchat', '>=', currTimestamp)
-      // .andWhere('tsuOnlineExtension', '>=', currTimestamp)
+      .where('tsuOnlineTchat', '>=', currTimestampMs)
+      // .andWhere('tsuOnlineExtension', '>=', currTimestampMs)
   }
 
   getChannel () {
@@ -47,7 +47,7 @@ export default class extends ServiceSuperclass {
 
   setOnline (chatter_list) {
     const { helpers: h } = this
-    const tsuOnlineTchat = h.date.timestamp() + cron.tsuOnlineTchat
+    const tsuOnlineTchat = h.date.timestampMs() + cron.itvOnlineTchat
     return this.updAllWhereIn('username', chatter_list, { tsuOnlineTchat })
   }
 
@@ -58,13 +58,13 @@ export default class extends ServiceSuperclass {
   async getOneChatterNotFollowing () {
     const { helpers: h } = this
 
-    const currTimestamp = h.date.timestamp()
+    const currTimestampMs = h.date.timestampMs()
 
     const nextNewFollowCheck = await this.knex()
       .select('*')
       .whereNot('isFollower', 'yes')
-      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
-      .andWhere('tsnCheckChatterNewFollower', '<=', currTimestamp)
+      .andWhere('tsuOnlineTchat', '>=', currTimestampMs)
+      .andWhere('tsnCheckChatterNewFollower', '<=', currTimestampMs)
       .orderBy('tsnCheckChatterNewFollower', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
@@ -75,11 +75,11 @@ export default class extends ServiceSuperclass {
   async getOneGlobalFollowing () {
     const { helpers: h } = this
 
-    const currTimestamp = h.date.timestamp()
+    const currTimestampMs = h.date.timestampMs()
 
     const nextGlobalFollowingCheck = await this.knex()
       .select('*')
-      .where('tsnCheckFollowingStatus', '<=', currTimestamp)
+      .where('tsnCheckFollowingStatus', '<=', currTimestampMs)
       .orderBy('tsnCheckFollowingStatus', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
@@ -90,13 +90,13 @@ export default class extends ServiceSuperclass {
   async getOneChatterFollowing () {
     const { helpers: h } = this
 
-    const currTimestamp = h.date.timestamp()
+    const currTimestampMs = h.date.timestampMs()
 
     const nextUnFollowCheck = await this.knex()
       .select('*')
       .where('isFollower', 'yes')
-      .andWhere('tsuOnlineTchat', '>=', currTimestamp)
-      .andWhere('tsnCheckChatterUnFollow', '<=', currTimestamp)
+      .andWhere('tsuOnlineTchat', '>=', currTimestampMs)
+      .andWhere('tsnCheckChatterUnFollow', '<=', currTimestampMs)
       .orderBy('tsnCheckChatterUnFollow', 'asc')
       .first()
       // .andWhereNot('username', twitch.chatbot.channel)
@@ -106,19 +106,19 @@ export default class extends ServiceSuperclass {
 
   updateFollowing (user, isFollowing) {
     const { helpers: h } = this
-    const currTimestamp = h.date.timestamp()
+    const currTimestampMs = h.date.timestampMs()
 
-    const isBotMultiplier = user.isBot === 'yes' ? cron.followingBotsMultiplier : 1
+    const isBotMultiplier = user.isBot === 'yes' ? cron.itvFollowingBotsMultiplier : 1
     const isFollower = isFollowing.length === 1 ? 'yes' : 'no'
     const countFollow = isFollowing.length === 1 ? user.countFollow + 1 : user.countFollow
     return this.updAllWhere({ uuid: user.uuid }, {
       isFollower,
       countFollow,
-      tsnCheckChatterUnFollow: currTimestamp
+      tsnCheckChatterUnFollow: currTimestampMs
         + (cron.itvCheckChatterUnFollow * isBotMultiplier),
-      tsnCheckChatterNewFollower: currTimestamp
+      tsnCheckChatterNewFollower: currTimestampMs
         + (cron.itvCheckChatterNewFollower * isBotMultiplier),
-      tsnCheckFollowingStatus: currTimestamp
+      tsnCheckFollowingStatus: currTimestampMs
         + (cron.itvCheckFollowingStatus * isBotMultiplier),
     })
   }
