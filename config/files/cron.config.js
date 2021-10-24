@@ -101,5 +101,13 @@ module.exports = {
     itvWhenEmpty: msOneHour,
     itvWhenError: msOneHour,
     // isEnabled: false,
+  }, {
+
+    path: '/chatters/clean',
+    isTwitchApi: false,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: msOneSec * 10,
+    itvWhenError: msOneHour,
+    // isEnabled: false,
   }],
 }

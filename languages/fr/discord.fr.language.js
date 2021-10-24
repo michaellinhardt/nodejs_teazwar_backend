@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+const config = require('../../config')
+
 module.exports = {
   server_welcome: '🟦 [discord.bot] bonjour debug',
   game_welcome: '🙋 bonjour game',
@@ -45,8 +47,9 @@ module.exports = {
   server_discordbot_slashcommandRegisteredEnd: '🟦 [discord.bot] les slash /commandes sont bien enregistré',
 
   server_discordbot_verifying: '🟦 [discord.bot] code de vérification généré pour <@[.?]>',
+  server_chatters_clean: '⏱ [cron.server] nettoyage SQL de [?] \'chatters\'',
 
-  debug_discord_report: '🪲 [.?] ➡️ [.?]',
+  debug_discord_report: `🪲 <@${config.discord.teazyou_discord_user_id}> [.?] ➡️ [.?]`,
 
   command_description_verifier: 'Génére un code de vérification à copier sur le tchat de twitch pour devenir membre',
   command_description_quete: 'Obtiens des bonus d\'xp et de loot en réalisant cette quête journaliére',

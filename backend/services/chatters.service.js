@@ -27,6 +27,14 @@ export default class extends ServiceSuperclass {
     return this.updAllWhereIn('username', usernames, { tsuTwitchDataUpToDate })
   }
 
+  cleanTable () {
+    const currTimestampMs = this.helpers.date.timestampMs()
+    return this.knex()
+      .where({ count_seen: 0 })
+      .andWhere('tsuTwitchDataUpToDate', '<', currTimestampMs)
+      .del()
+  }
+
   async addOrIncrementCountSeen (chatter_list) {
     const chattersUsername = chatter_list.map(username => username.toLowerCase())
     const chattersDb = await this.getAllFirstWhereIn('username', chattersUsername)

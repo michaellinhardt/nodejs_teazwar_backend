@@ -1,10 +1,10 @@
-const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
 
 const tableName = 'admins'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetup(knex, table)
+    createTableDefaultSetupNoUuid(knex, table)
 
     table.string('user_uuid', 36).notNullable()
 
