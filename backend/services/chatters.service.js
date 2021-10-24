@@ -5,10 +5,11 @@ import ServiceSuperclass from '../application/superclass/service.superclass'
 const { twitch, cron } = require('../../config')
 
 const table = 'chatters'
+const isUuid = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   extractChattersDataFromTwitchApi (chatters) {
     return _.get(chatters, 'chatters.broadcaster', [])

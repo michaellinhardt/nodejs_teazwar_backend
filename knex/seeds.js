@@ -1,15 +1,14 @@
-// const moment = require('moment')
 const _ = require('lodash')
-const { v1 } = require('uuid')
-const { teazwarToken } = require('../config/files/jwt.config')
+const cron = require('../config/files/cron.config')
 const sqlconfig = require('../config/files/sqlconfig.config')
+const jwt = require('../config/files/jwt.config')
 
 const users = [{
   uuid: '1e8b6bf0-1b50-11ec-85ec-4d033c80c035',
   user_id: '728591707',
   username: 'teazwar',
   display_name: 'TeazWar',
-  jwtoken: teazwarToken,
+  jwtoken: jwt.teazwarToken,
   isSubscriber: 'yes',
   isFollower: 'yes',
   isBot: 'no',
@@ -25,19 +24,9 @@ const users = [{
 
 }]
 
-const addAdmin = (uuid, user_uuid) => ({
-  uuid,
-  user_uuid,
-})
-
 const admins = [
-  addAdmin(v1(), users[0].uuid),
-  addAdmin(v1(), users[1].uuid),
-]
-
-const sockets_infra = [
-  { uuid: v1(), infra_name: 'twitch' },
-  { uuid: v1(), infra_name: 'discord' },
+  { user_uuid: users[0].uuid },
+  { user_uuid: users[1].uuid },
 ]
 
 const config = []
@@ -49,13 +38,17 @@ _.forEach(sqlconfig, (group, config_group) => {
   }))
 })
 
+const cron_tasks = cron.tasks
+  .map(c => ({ path: c.path }))
+cron_tasks.unshift({ path: 'twitch' })
+
 const user_sub_tables = [{ user_uuid: users[0].uuid }, { user_uuid: users[1].uuid }]
 
 module.exports = {
   users,
   admins,
-  sockets_infra,
   config,
   user_sub_tables,
+  cron_tasks,
 }
 

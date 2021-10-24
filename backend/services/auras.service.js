@@ -1,7 +1,7 @@
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
-const table = 'admins'
-const isUuid = false
+const table = 'auras'
+const isUuid = true
 
 export default class extends ServiceSuperclass {
 

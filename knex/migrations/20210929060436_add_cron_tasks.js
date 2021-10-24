@@ -1,6 +1,4 @@
-const { v1 } = require('uuid')
 const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
-const { cron } = require('../../config')
 
 const tableName = 'cron_tasks'
 
@@ -14,15 +12,8 @@ exports.up = function (knex) {
     table.unique('path')
 
   }).then(() => {
-    const cronTasks = cron.tasks.map(c => ({
-      uuid: v1(),
-      path: c.path,
-    }))
-    cronTasks.unshift({
-      uuid: v1(),
-      path: 'twitch',
-    })
-    return knex(tableName).insert(cronTasks)
+    const { cron_tasks } = require('../seeds')
+    return knex(tableName).insert(cron_tasks)
   })
 }
 

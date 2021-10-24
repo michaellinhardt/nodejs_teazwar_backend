@@ -2,17 +2,18 @@ import _ from 'lodash'
 
 export default class {
 
-  constructor (table, filePath, ressources) {
+  constructor (table, filePath, ressources, isUuid) {
     this.build_ressources(ressources)
     this.setName(filePath)
-    this.setModelTable(table)
+    this.setModelTable(table, isUuid)
     this.copyModel()
   }
 
-  setModelTable (table) {
+  setModelTable (table, isUuid) {
     this.table = table
     if (table) {
       this.models[this.name].setTable(table)
+      this.models[this.name].setIsUuid(isUuid)
     }
   }
 

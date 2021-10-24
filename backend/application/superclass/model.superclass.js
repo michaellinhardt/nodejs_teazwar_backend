@@ -7,6 +7,8 @@ export default class {
     this.build_ressources(ressources)
   }
 
+  setIsUuid (boolean) { this.isUuid = boolean }
+
   setTable (table) {
     this.table = table
   }
@@ -266,13 +268,17 @@ export default class {
   }
 
   async _add (entry = {}) {
-    entry.uuid = this.helpers.string.uuid()
+    if (this.isUuid) {
+      entry.uuid = this.helpers.string.uuid()
+    }
     await this.knex().insert(entry)
     return entry
   }
 
   async _addArray (entries) {
-    entries.forEach(entry => { entry.uuid = this.helpers.string.uuid() })
+    if (this.isUuid) {
+      entries.forEach(entry => { entry.uuid = this.helpers.string.uuid() })
+    }
     await this.knex().insert(entries)
     return entries
   }

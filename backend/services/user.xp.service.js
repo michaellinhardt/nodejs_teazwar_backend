@@ -2,10 +2,11 @@ import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'user_xp'
+const isUuid = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   async addMissingEntry (users) {
     const addOrUpdate = []

@@ -2,10 +2,11 @@ import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = null
+const isUuid = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   buildSayArray (infra_name) {
     const isSay = _.get(this, `payload.say.${infra_name}`, undefined)

@@ -4,10 +4,11 @@ import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const { twitch, cron } = require('../../config')
 const table = 'users'
+const isUuid = true
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   getOnlineBots () {
     const currTimestampMs = this.helpers.date.timestampMs()

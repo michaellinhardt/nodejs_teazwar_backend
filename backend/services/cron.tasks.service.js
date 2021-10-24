@@ -3,12 +3,13 @@ import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'cron_tasks'
+const isUuid = false
 
 const { cron } = require('../../config')
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   async setTwitchApiNext (cron, task) {
     if (!task.isTwitchApi) { return true }

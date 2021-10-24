@@ -106,7 +106,7 @@ module.exports = {
     path: '/chatters/clean',
     isTwitchApi: false,
     itvWhenSuccess: 0,
-    itvWhenEmpty: msOneSec * 10,
+    itvWhenEmpty: msOneSec * 30,
     itvWhenError: msOneHour,
     // isEnabled: false,
   }],

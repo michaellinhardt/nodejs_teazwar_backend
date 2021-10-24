@@ -1,10 +1,11 @@
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'bots'
+const isUuid = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   addMissing (apiUsernames, dbUsernames) {
 

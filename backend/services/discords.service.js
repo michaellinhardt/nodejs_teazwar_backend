@@ -1,10 +1,11 @@
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'discords'
+const isUuid = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources) }
+  constructor (ressources) { super(table, __filename, ressources, isUuid) }
 
   updateOrCreateOtp (discord_user, verify_otp) {
     const { helpers: h, config: { discord: { itvDiscordOtpValidity } } } = this

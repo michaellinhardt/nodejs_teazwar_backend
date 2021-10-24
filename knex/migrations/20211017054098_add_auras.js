@@ -1,12 +1,12 @@
 const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
-const tableName = 'user_auras'
+const tableName = 'auras'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
-    table.string('user_uuid', 36).notNullable()
+    table.string('owner_uuid', 36).notNullable()
     table.string('aura_id').notNullable()
 
     // either user_uuid or 'combat', 'ooc', 'global'
