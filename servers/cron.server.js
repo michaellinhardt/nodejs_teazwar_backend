@@ -10,6 +10,15 @@ const backend = async (method, path, body = {}) => {
   return payload
 }
 
+const sleepUntilNextTask = async (payload = {}) => {
+  if (!payload.sleep) { return true }
+  const removeValue = 5
+  const sleepRemove = payload.sleep > removeValue ? removeValue : 0
+  const sleepTime = payload.sleep - sleepRemove
+  if (config.backend.log) { console.info('SLEEP ->', sleepTime) }
+  await h.code.sleep(sleepTime)
+}
+
 const executeNextTask = async () => {
   let cronRouter = {}
   try {
@@ -22,13 +31,7 @@ const executeNextTask = async () => {
     await h.code.sleep(config.cron.sleepWhenCronRouterError)
   }
 
-  if (cronRouter.sleep) {
-    const removeValue = 5
-    const sleepRemove = cronRouter.sleep > removeValue ? removeValue : 0
-    const sleepTime = cronRouter.sleep - sleepRemove
-    console.info('SLEEP (cron router) ->', sleepTime)
-    await h.code.sleep(sleepTime)
-  }
+  await sleepUntilNextTask(cronRouter)
 
   if (!cronRouter.task) { return false }
 
@@ -49,16 +52,9 @@ const executeNextTask = async () => {
   }
 
   try {
-    const cronInterval
-      = await backend('post', '/cron/interval', { big_data: { cron }, task, taskResult })
-
-    if (cronInterval.sleep) {
-      const removeValue = 5
-      const sleepRemove = cronInterval.sleep > removeValue ? removeValue : 0
-      const sleepTime = cronInterval.sleep - sleepRemove
-      console.info('SLEEP (cron interval) ->', sleepTime)
-      await h.code.sleep(sleepTime)
-    }
+    const payload = { big_data: { cron }, task, taskResult }
+    const cronInterval = await backend('post', '/cron/interval', payload)
+    await sleepUntilNextTask(cronInterval)
 
   } catch (err) {
     console.error(err)
