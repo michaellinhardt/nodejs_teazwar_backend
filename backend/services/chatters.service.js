@@ -27,26 +27,20 @@ export default class extends ServiceSuperclass {
     return this.updAllWhereIn('username', usernames, { tsuTwitchDataUpToDate })
   }
 
-  async addOrIncrement (chatter_list) {
-    const databaseChatters = await this.getAll()
+  async addOrIncrementCountSeen (chatter_list) {
+    const chattersUsername = chatter_list.map(username => username.toLowerCase())
+    const chattersDb = await this.getAllFirstWhereIn('username', chattersUsername)
 
-    const chattersIncrement = []
-    const chattersAdd = []
-
-    _.forEach(chatter_list, username => {
-      const formatedUsername = username.toLowerCase()
-      const isChatters = databaseChatters.find(c => c.username === formatedUsername)
-      return isChatters
-        ? chattersIncrement.push(formatedUsername)
-        : chattersAdd.push({ username: formatedUsername })
+    const addOrUpdArray = []
+    _.forEach(chattersUsername, username => {
+      const isDbChatter = chattersDb.find(c => c.username === username)
+      const count_seen = isDbChatter ? isDbChatter.count_seen + 1 : 1
+      const chatter = { username, count_seen }
+      addOrUpdArray.push(chatter)
     })
 
-    if (chattersAdd.length > 0) {
-      await this.addArray(chattersAdd)
-    }
-
-    if (chattersIncrement.length > 0) {
-      await this.incrementAllWhereIn('username', chattersIncrement, { count_seen: 1 })
+    if (addOrUpdArray.length) {
+      await this.addOrUpdArray(addOrUpdArray)
     }
   }
 

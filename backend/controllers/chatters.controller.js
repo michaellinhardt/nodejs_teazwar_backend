@@ -12,7 +12,7 @@ export default [
 
         const chatter_list = s.chatters.extractChattersDataFromTwitchApi(chatters)
 
-        await s.chatters.addOrIncrement(chatter_list)
+        await s.chatters.addOrIncrementCountSeen(chatter_list)
 
         await s.users.setOnline(chatter_list)
 

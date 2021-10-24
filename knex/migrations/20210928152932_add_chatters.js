@@ -7,7 +7,7 @@ exports.up = function (knex) {
     createTableDefaultSetup(knex, table)
 
     table.string('username').defaultTo('')
-    table.integer('count_seen').defaultTo(1)
+    table.integer('count_seen').defaultTo(0)
 
     table.biginteger('tsuTwitchDataUpToDate').defaultTo(0)
 
