@@ -15,7 +15,7 @@ export default class extends ServiceSuperclass {
     await this.addOrUpdArray(addOrUpdate)
   }
 
-  incrementChatStats (user, msg) {
+  async incrementChatStats (user, msg) {
     const total_lines = user.total_lines + 1
     const total_chars = user.total_chars + msg.length
     const chars_per_line = Math.floor(total_chars / total_lines)
@@ -27,7 +27,9 @@ export default class extends ServiceSuperclass {
       tslChatLine: this.helpers.date.timestampMs(),
     }
 
-    return this.updAllWhere({ user_uuid: user.uuid }, updateStats)
+    await this.updAllWhere({ user_uuid: user.uuid }, updateStats)
+
+    return updateStats
   }
 
   async incrementSeenStats (users, chatters) {

@@ -107,7 +107,7 @@ const executePayloadOrder = async payload => {
   await h.sockets.dispatchSayOrder(payload, emitter)
 }
 
-const start = async () => {
+const start_discord = async () => {
   h.redis.connect('discord.bot')
   discord = h.discord.getDiscord()
   await h.discord.connect(discord)
@@ -138,4 +138,6 @@ const start = async () => {
   return socket
 }
 
-start()
+start_discord()
+
+module.exports = start_discord

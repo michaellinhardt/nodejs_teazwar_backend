@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 const config = require('../../config')
+const cfgGame = require('../../game/config')
 
 module.exports = {
   server_welcome: '🟦 [discord.bot] bonjour debug',
@@ -21,6 +22,7 @@ module.exports = {
   server_socket_redis_connected: '☎ [socket.redis.adapter] liaison établi par: [?]',
 
   spam_chatters_listing: '👨‍💻 [?] utilisateurs sur le tchat: [?]',
+  spam_xp_chatline: `🥳 +${cfgGame.xp.xpPerChatLine} XP pour tous les viewer de la part de [[?]]`,
 
   stream_chatters_validate_add: '👨‍💻 [?] nouveaux utilisateurs: [?]',
   stream_chatters_validate_update: '👨‍💻 [?] utilisateurs mis à jours: [?]',

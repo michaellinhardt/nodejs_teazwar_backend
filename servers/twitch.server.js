@@ -69,7 +69,7 @@ const listen_events = twitch => {
     backend('post', '/twitch/part', { channel, username, self }))
 }
 
-const start = async () => {
+const start_twitch = async () => {
   h.redis.connect('twitch.bot')
   twitch = h.twitch.getTwitch()
   say = h.twitch.buildSay(twitch)
@@ -89,4 +89,6 @@ const start = async () => {
   return socket
 }
 
-start()
+start_twitch()
+
+module.exports = start_twitch

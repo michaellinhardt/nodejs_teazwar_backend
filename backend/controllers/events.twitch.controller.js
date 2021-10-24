@@ -72,15 +72,22 @@ export default [
     route: ['post', '/twitch/chat'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, body: b } = this
+        const { services: s, body: b, modules: m } = this
 
         const user_id = _.get(b, 'userstate[\'user-id\']', null)
-        if (!user_id) { return true }
+        if (!user_id) { return false }
 
         const user = await s.users.getFullByUserId(user_id)
-        if (!user) { return true }
+        if (!user) { return false }
 
-        await s.userStats.incrementChatStats(user, b.msg)
+        const newStats = await s.userStats.incrementChatStats(user, b.msg)
+
+        const isXpGain = await m.xp.addXpForChatline(user, user.tslXpChatLine, newStats.tslChatLine)
+
+        if (!isXpGain) { return false }
+
+        s.socketsInfra.emitSayDiscord(['spam_xp_chatline', user.display_name])
+
       }
     },
   },

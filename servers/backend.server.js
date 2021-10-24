@@ -4,7 +4,7 @@ import SocketHelper from '../helpers/files/sockets.helper'
 import ExpressHelper from '../helpers/files/express.helper'
 import RedisHelper from '../helpers/files/redis.helper'
 
-const start = () => {
+const start_backend = () => {
   const app = ExpressHelper.getApp()
   ExpressHelper.prepareApp(app)
 
@@ -21,4 +21,6 @@ const start = () => {
   ExpressHelper.startHttpServer(httpServer, app)
 }
 
-start()
+start_backend()
+
+module.exports = start_backend

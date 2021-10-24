@@ -21,16 +21,33 @@ export default class extends ModuleSuperclass {
     return users_xp
   }
 
+  async addXpForChatline (user, tslXpChatLineOld, tslXpChatLineNew) {
+    const { config: c, services: s } = this
+
+    const tsBetweenChatlines = tslXpChatLineNew - tslXpChatLineOld
+    if (tsBetweenChatlines < c.xp.itvPerChatLine) { return false }
+
+    await s.userXp.addXpFromChatLine(tslXpChatLineNew)
+    await s.userXp.setLastXpChatLine(user, tslXpChatLineNew)
+
+    return true
+  }
+
   async addXpGainToChatters (users, chattersFlatten) {
-    const { services: s } = this
+    const { services: s, config: { xp } } = this
 
     const xpbonus_perma_group = await s.config.get('xpbonus_perma_group')
 
     const updates = []
     _.forEach(users, user => {
-      const xpPerMin = this._getUserXpPerMin(xpbonus_perma_group, user)
+      const xpbonus_perma_self = this._getUserBonusPermaSelf(user)
+      const xpbonus_perma_total = xpbonus_perma_group + xpbonus_perma_self
+      const xpbonus_perma_real_value = xp.xpPerMin * (xpbonus_perma_total / 100)
+
+      const userXpPerMin = xp.xpPerMin + xpbonus_perma_real_value
+
       const count_seen = _.get(chattersFlatten, `${user.username}.count_seen`, 0)
-      const xpGain = count_seen * xpPerMin
+      const xpGain = count_seen * userXpPerMin
 
       updates.push({ user_uuid: user.uuid, level_xp: user.level_xp + xpGain })
     })
@@ -69,16 +86,6 @@ export default class extends ModuleSuperclass {
     return (user.isFollower === 'yes' ? xp.follower.self : 0)
       + (user.isSubscriber === 'yes' ? xp.subscriber.self : 0)
       + (user.discord_id ? xp.discord.self : 0)
-  }
-
-  _getUserXpPerMin (xpbonus_perma_group, user) {
-    const { config: { xp } } = this
-
-    const xpbonus_perma_self = this._getUserBonusPermaSelf(user)
-    const xpbonus_perma_total = xpbonus_perma_group + xpbonus_perma_self
-    const xp_perma_total = xp.xpPerMin * (xpbonus_perma_total / 100)
-
-    return xp_perma_total
   }
 
   _xpMaxPerLevel (level) {

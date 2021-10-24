@@ -9,6 +9,7 @@
     "cron": "NODE_ENV=development nodemon servers/cron.server.js --exec babel-node",
     "twitch": "NODE_ENV=development nodemon servers/twitch.server.js --exec babel-node",
     "discord": "NODE_ENV=development nodemon servers/discord.server.js --exec babel-node",
+    "all": "NODE_ENV=development nodemon servers/all.server.js --exec babel-node",
     "lint": "eslint ./",
     "reset": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm install",
     "update": "watchman watch-del-all ; rm -rf ./node_modules ; rm -rf package-lock.json ; npm update",

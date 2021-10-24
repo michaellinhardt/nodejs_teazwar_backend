@@ -1,3 +1,7 @@
+const {
+  msOneMin,
+} = require('../../../helpers/files/date.helper')
+
 const xpPerMin = 100
 
 module.exports = {
@@ -6,6 +10,9 @@ module.exports = {
   xpPerMin,
 
   xpMaxMinimum: xpPerMin * 5,
+
+  xpPerChatLine: 1,
+  itvPerChatLine: msOneMin,
 
   follower: {
     new: {

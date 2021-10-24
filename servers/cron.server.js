@@ -65,7 +65,7 @@ const executeNextTask = async () => {
 
 }
 
-const start = async () => {
+const start_cron = async () => {
   try {
     await executeNextTask()
 
@@ -76,8 +76,10 @@ const start = async () => {
     await h.code.sleep(config.cron.sleepWhenCronTaskError)
   }
 
-  setTimeout(() => start(), config.cron.interval)
+  setTimeout(() => start_cron(), config.cron.interval)
 }
 
 h.redis.connect('cron.server')
-start()
+start_cron()
+
+module.exports = start_cron

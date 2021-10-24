@@ -14,6 +14,8 @@ exports.up = function (knex) {
     table.integer('level_xp').defaultTo(0)
     table.integer('level_xp_max').defaultTo(xp.xpMaxMinimum)
 
+    table.biginteger('tslXpChatLine').defaultTo(0)
+
     table.unique('user_uuid')
 
   }).then(() => {
