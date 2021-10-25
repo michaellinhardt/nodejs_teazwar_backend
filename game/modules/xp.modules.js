@@ -66,10 +66,11 @@ export default class extends ModuleSuperclass {
     const auraTicUpdates = aurasInstanceXpBonusMultiplier
       .map(aura => {
         const multiplier = aura.getParam('group')
+        const aura_name = aura.getLayout('aura_name')
         const owner_uuid = aura.getDatabase('owner_uuid')
         const count_seen = _.get(chattersFlatten, `${owner_uuid}.count_seen`, 1)
         const display_name = _.get(chattersFlatten, `${owner_uuid}.display_name`, 'error')
-        multipliersReport.push({ multiplier, display_name })
+        multipliersReport.push({ multiplier, display_name, aura_name })
         return aura.databaseDecrementTic(count_seen)
       })
 

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 module.exports = {
 
   userTwitchLevlUp: ({ display_name, level }) => `[ @${display_name} ${level} ]`,
@@ -9,6 +10,6 @@ module.exports = {
     `${follower} Fol. ${subscriber} Sub. ${discord} Disc.`,
 
   xpBonusMultipliers: (multipliersReport) =>
-    `=${multipliersReport.map(m => `[ +${m.multiplier}% ${m.display_name} ]`).join('=')}=`,
+    `=${multipliersReport.map(m => `[ +${m.multiplier}% ${m.display_name} (${m.aura_name}) ]`).join('=')}=`,
 
 }

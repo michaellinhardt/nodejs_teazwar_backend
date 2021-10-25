@@ -6,13 +6,13 @@ export default class extends ModuleSuperclass {
 
   async create (aura_id, params) {
     const auraInstance = this.getInstanceById(aura_id, { params })
-    const auraDb = await auraInstance.create()
+    await auraInstance.create()
     await auraInstance.onCreate()
-    return auraDb
+    return auraInstance
   }
 
   getInstanceById (aura_id, properties = {}) {
-    const { helpers: h, config: { auras: { layout } } } = this
+    const { helpers: h, config: { auras: { layout } }, config, lang } = this
     const aura = layout.byId[aura_id]
     const auraClassName = h.string.camelCaseString(aura.aura_class, '_')
     const auraInstance = new this.auras[auraClassName]({
@@ -21,6 +21,7 @@ export default class extends ModuleSuperclass {
         aura_id,
         ...aura,
         params: undefined,
+        aura_name: lang[config.language.default].auras[aura_id],
       },
       params: {
         ...(aura.params || {}),

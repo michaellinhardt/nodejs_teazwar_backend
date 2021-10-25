@@ -29,7 +29,7 @@ export default [
       }
 
       async handler () {
-        const { apis: a, data: d, services: s, helpers: h, config } = this
+        const { apis: a, data: d, services: s, helpers: h, config, modules: m } = this
 
         const discord = await s.discords.getByOtp(d.otp)
         if (!discord) {
@@ -58,6 +58,15 @@ export default [
 
         if (discord.tslDiscordOtpValidated === 0) {
           // TODO give rewards
+
+          const auraInstance = await m.auras
+            .create('auras_new_discord', { owner_uuid: user.user_uuid })
+          const discordPing = h.format.userDiscordPing(user)
+          s.socketsInfra.emitSayDiscord(
+            ['stream_aura_create',
+              auraInstance.getLayout('aura_name'),
+              discordPing,
+              user.display_name])
         }
 
         const sayKey = discord.tslDiscordOtpValidated === 0
