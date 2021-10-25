@@ -1,5 +1,5 @@
 const {
-  msOneSec, msOneMin, msOneHour, msOneDay, msOneWeek,
+  msOneSec, msOneMin, msOneHour, msOneDay,
 } = require('../../helpers/files/date.helper')
 
 module.exports = {
@@ -18,7 +18,6 @@ module.exports = {
 
   itvCheckChatterUnFollow: msOneDay,
   itvCheckChatterNewFollower: msOneMin * 5,
-  itvCheckFollowingStatus: msOneWeek,
 
   itvFollowingBotsMultiplier: 5,
 
@@ -92,14 +91,6 @@ module.exports = {
     itvWhenSuccess: 0,
     itvWhenEmpty: msOneHour * 12,
     itvWhenError: msOneMin * 5,
-    // isEnabled: false,
-  }, {
-
-    path: '/global/following',
-    isTwitchApi: true,
-    itvWhenSuccess: 0,
-    itvWhenEmpty: msOneHour,
-    itvWhenError: msOneHour,
     // isEnabled: false,
   }, {
 

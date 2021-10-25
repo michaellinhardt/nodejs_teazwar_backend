@@ -73,21 +73,6 @@ export default class extends ServiceSuperclass {
     return nextNewFollowCheck
   }
 
-  async getOneGlobalFollowing () {
-    const { helpers: h } = this
-
-    const currTimestampMs = h.date.timestampMs()
-
-    const nextGlobalFollowingCheck = await this.knex()
-      .select('*')
-      .where('tsnCheckFollowingStatus', '<=', currTimestampMs)
-      .orderBy('tsnCheckFollowingStatus', 'asc')
-      .first()
-      // .andWhereNot('username', twitch.chatbot.channel)
-
-    return nextGlobalFollowingCheck
-  }
-
   async getOneChatterFollowing () {
     const { helpers: h } = this
 
@@ -119,8 +104,6 @@ export default class extends ServiceSuperclass {
         + (cron.itvCheckChatterUnFollow * isBotMultiplier),
       tsnCheckChatterNewFollower: currTimestampMs
         + (cron.itvCheckChatterNewFollower * isBotMultiplier),
-      tsnCheckFollowingStatus: currTimestampMs
-        + (cron.itvCheckFollowingStatus * isBotMultiplier),
     })
   }
 

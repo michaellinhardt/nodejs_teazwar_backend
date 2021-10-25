@@ -3,51 +3,6 @@ import ControllerSuperclass from '../application/superclass/controller.superclas
 export default [
   {
     isTeazwar: true,
-    route: ['post', '/cron/global/following'],
-    Controller: class extends ControllerSuperclass {
-      async handler () {
-        const { services: s, payloads: p, apis: a, helpers: h } = this
-        const channel = await s.users.getChannel()
-        const user = await s.users.getOneGlobalFollowing()
-
-        if (!channel || !user) { return p.cron.empty() }
-
-        const isFollowing = await a.follows.check(channel.user_id, user.user_id)
-        await s.users.updateFollowing(user, isFollowing)
-
-        const countFollow = isFollowing.length > 0 ? user.countFollow + 1 : user.countFollow
-        const countFollowTimes = countFollow === 1 ? `${countFollow}er` : `${countFollow}eme`
-        const discordPing = h.format.userDiscordPing(user)
-        const isFollowerBefore = user.isFollower === 'yes'
-        const isOnline = user.tsuOnlineTchat >= h.date.timestampMs()
-
-        let event = null
-        if (!isFollowerBefore && isFollowing.length && countFollow === 1) {
-          event = 'new_follower'
-
-        } else if (!isFollowerBefore && isFollowing.length && countFollow > 1) {
-          event = 're_follower'
-
-        } else if (isFollowerBefore && !isFollowing.length) {
-          event = 'un_follower'
-        }
-
-        if (event) {
-          s.socketsInfra.emitSayDiscord(
-            [`stream_${event}`, discordPing, user.display_name, countFollowTimes])
-
-          if (isOnline) {
-            s.socketsInfra.emitSayTwitch(
-              [event, user.display_name, countFollowTimes])
-          }
-        }
-
-        p.cron.success()
-      }
-    },
-  },
-  {
-    isTeazwar: true,
     route: ['post', '/cron/chatters/unfollower'],
     Controller: class extends ControllerSuperclass {
       async handler () {

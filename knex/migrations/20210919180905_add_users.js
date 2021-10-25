@@ -28,7 +28,6 @@ exports.up = function (knex) {
     table.biginteger('tsuOnlineTchat').defaultTo(0)
     table.biginteger('tsnCheckChatterUnFollow').defaultTo(0)
     table.biginteger('tsnCheckChatterNewFollower').defaultTo(0)
-    table.biginteger('tsnCheckFollowingStatus').defaultTo(0)
 
     table.integer('countFollow').defaultTo(0) // track when new following
 
