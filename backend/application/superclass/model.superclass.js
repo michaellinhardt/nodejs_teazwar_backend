@@ -7,10 +7,14 @@ export default class {
     this.build_ressources(ressources)
   }
 
-  setIsUuid (boolean) { this.isUuid = boolean }
+  setIsUuid (boolean) {
+    this.isUuid = boolean
+    this._isUuid = boolean
+  }
 
   setTable (table) {
     this.table = table
+    this._table = table
   }
 
   build_ressources (ressources) {

@@ -11,6 +11,7 @@ export default class {
 
   setModelTable (table, isUuid) {
     this.table = table
+    this.isUuid = isUuid
     if (table) {
       this.models[this.name].setTable(table)
       this.models[this.name].setIsUuid(isUuid)

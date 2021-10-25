@@ -34,14 +34,14 @@ module.exports = {
 
   stream_new_follower: '❤ [.?][[?]] est un nouveau follower du stream',
   stream_un_follower: '💔 [.?][[?]] ne follow plus le stream pour la [?] fois',
-  stream_re_follower: '❤️‍🩹 [.?][[?]] re-follow le stream pour la [?] fois',
+  stream_re_follower: '❤️ [.?][[?]] re-follow le stream pour la [?] fois',
 
   stream_chatters_bot_added: '🤖 [?] nouveaux bots référencé',
   stream_chatters_bot_deleted: '🤖 [?] bots supprimé de la liste',
   stream_chatters_bot_detected: '🚨  <@[.?]> il y a [?] nouveaux bots détecté: [?]',
 
   game_level_up_one: '✨ LVL UP =[ [.?] [.?] [.?] ]=',
-  game_level_up_multi: '✨ LVL UP [.?]',
+  game_level_up_multi: '✨ LVL UP =[.?]=',
 
   server_discordbot_socketConnected: '🟦 [discord.bot] connection socket établi',
   server_discordbot_socketDisconnected: '🟦 [discord.bot] socket déconnecté: [?]',
@@ -50,6 +50,7 @@ module.exports = {
 
   server_discordbot_verifying: '🟦 [discord.bot] code de vérification généré pour <@[.?]>',
   server_chatters_clean: '⏱ [cron.server] nettoyage SQL de [?] \'chatters\'',
+  server_auras_clean: '⏱ [cron.server] nettoyage SQL de [?] \'auras\'',
 
   debug_discord_report: `🪲 <@${config.discord.teazyou_discord_user_id}> [.?] ➡️ [.?]`,
 

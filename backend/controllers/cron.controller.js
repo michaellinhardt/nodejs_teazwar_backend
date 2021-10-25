@@ -60,4 +60,19 @@ export default [
       }
     },
   },
+  {
+    isTeazwar: true,
+    route: ['post', '/cron/auras/clean'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s, payloads: p } = this
+
+        const nbAurasClean = await s.auras.cleanTable()
+
+        s.socketsInfra.emitSayDiscord(['server_auras_clean', nbAurasClean])
+
+        return nbAurasClean === 0 ? p.cron.empty() : p.cron.success()
+      }
+    },
+  },
 ]

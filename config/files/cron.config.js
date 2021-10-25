@@ -100,5 +100,13 @@ module.exports = {
     itvWhenEmpty: msOneHour,
     itvWhenError: msOneHour,
     // isEnabled: false,
+  }, {
+
+    path: '/auras/clean',
+    isTwitchApi: false,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: msOneHour,
+    itvWhenError: msOneHour,
+    // isEnabled: false,
   }],
 }

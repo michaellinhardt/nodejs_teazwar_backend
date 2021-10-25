@@ -4,6 +4,7 @@ export default class {
 
   constructor (ressources) {
     this.build_ressources(ressources)
+    this.ressources = ressources
   }
 
   build_ressources (ressources) {

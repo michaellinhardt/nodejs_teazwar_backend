@@ -47,6 +47,7 @@ export default class extends ModuleSuperclass {
       const userXpPerMin = xp.xpPerMin + xpbonus_perma_real_value
 
       const count_seen = _.get(chattersFlatten, `${user.username}.count_seen`, 0)
+
       const xpGain = count_seen * userXpPerMin
 
       updates.push({ user_uuid: user.uuid, level_xp: user.level_xp + xpGain })

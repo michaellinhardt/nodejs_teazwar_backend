@@ -9,13 +9,13 @@ module.exports = {
 
   new_follower: `❤ @[?] merci pour le follow! tu as maintenant +${xp.follower.self}% XP et le tchat gagne +${xp.follower.group}% XP en ta présence 🎉  Une récompense t'attends également dans t'es courrier TeazWar 🎁  Si tu as des questions n'hésite pas. @TeazYou`,
   un_follower: '💔 [[?]] je suis triste de te voir dé-follow le stream pour la [?] fois et perdre t\'es bonus d\'XP 🥺 Comment puis-je améliorer le stream pour te faire revenir ? @TeazYou',
-  re_follower: `❤️‍🩹 [[?]] merci pour ton [?] re-follow, tu bénéficie de nouveau de +${xp.follower.self} XP et le tchat gagne +${xp.follower.group} XP en ta présence 🎉 Qu'es-ce qui ta fais changer d'avis ? @TeazYou`,
+  re_follower: `❤️ [[?]] merci pour ton [?] re-follow, tu bénéficie de nouveau de +${xp.follower.self} XP et le tchat gagne +${xp.follower.group} XP en ta présence 🎉 Qu'es-ce qui ta fais changer d'avis ? @TeazYou`,
 
   delation_none: '👌 @[?] , je ne détecte aucun bot présent sur le tchat',
   delation_detected: '🤖 @[?] , je détecte [?] bots présent sur le tchat: [?]',
 
   level_up_one: '✨ LVL UP =[ @[?] [?] ]=',
-  level_up_multi: '✨ LVL UP [?]',
+  level_up_multi: '✨ LVL UP =[?]=',
 
   discord_verfy_noUser: '🙊 Oups, @[?] , ton compte est en cours de création. J\'ai détruit le code que tu viens d\'utiliser. Recommence la procédure depuis discord dans 5 minutes',
   discord_verfy_noOtp: '🙊 Oups, @[?] , je ne trouve aucun code discord associé à ta demande. Vérifie que tu as bien taper le code, ou demande en un nouveau',

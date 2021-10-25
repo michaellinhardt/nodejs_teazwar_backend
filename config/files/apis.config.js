@@ -9,3 +9,5 @@ module.exports = {
     discord: 'https://discord.com/api/v9',
   },
 }
+
+// https://dev.twitch.tv/docs/v5/reference/channels#get-channel-subscribers

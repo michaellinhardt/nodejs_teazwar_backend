@@ -15,26 +15,14 @@ module.exports = {
   itvPerChatLine: msOneMin,
 
   follower: {
-    new: {
-      charge: 60,
-      group: 10,
-    },
     group: 1,
     self: 50,
   },
   discord: {
-    new: {
-      charge: 60,
-      group: 10,
-    },
     group: 1,
     self: 50,
   },
   subscriber: {
-    new: {
-      charge: 60,
-      group: 10,
-    },
     group: 1,
     self: 50,
   },

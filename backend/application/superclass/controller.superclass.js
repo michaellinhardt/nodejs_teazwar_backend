@@ -13,6 +13,7 @@ const Models = importDefaultByFilename('../../backend/models', '.model')
 const Payloads = importDefaultByFilename('../../backend/payloads', '.payload')
 const Apis = importDefaultByFilename('../../backend/apis', '.api')
 const GameModules = importDefaultByFilename('../../game/modules', '.modules')
+const GameAuras = importDefaultByFilename('../../game/auras', '.aura')
 
 import ModelSuperclass from './model.superclass'
 class EmptyModel extends ModelSuperclass {}
@@ -209,11 +210,15 @@ export default class {
       })
     })
 
+    const auras = {}
+    _.forEach(GameAuras, (Aura, name) => { auras[name] = Aura })
+
     this.modules = {}
     _.forEach(GameModules, (Module, name) => {
       this.modules[name] = new Module({
         ...ressources,
         services: this.services,
+        auras,
       })
     })
 

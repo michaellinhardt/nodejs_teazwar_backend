@@ -9,12 +9,12 @@ exports.up = function (knex) {
     table.string('owner_uuid', 36).notNullable()
     table.string('aura_id').notNullable()
 
-    // either user_uuid or 'combat', 'ooc', 'global'
-    table.string('target').notNullable()
+    // either user_uuid or null ('combat', 'ooc', 'global', 'self')
+    table.string('target_uuid').defaultTo(null)
 
-    // maximum duration, 1 = 1 min, -1 = infinite
-    table.biginteger('tic_max').notNullable()
-    table.biginteger('tic').notNullable()
+    table.biginteger('tic').notNullable().defaultTo(-1)
+    table.biginteger('tsnTic').notNullable().defaultTo(-1)
+    table.biginteger('tsuActive').notNullable().defaultTo(-1)
 
   }).then(() => {
     // const { config } = require('../seeds')
