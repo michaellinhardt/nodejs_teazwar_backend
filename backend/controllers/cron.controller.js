@@ -45,4 +45,19 @@ export default [
       }
     },
   },
+  {
+    isTeazwar: true,
+    route: ['post', '/cron/chatters/clean'],
+    Controller: class extends ControllerSuperclass {
+      async handler () {
+        const { services: s, payloads: p } = this
+
+        const nbChattersClean = await s.chatters.cleanTable()
+
+        s.socketsInfra.emitSayDiscord(['server_chatters_clean', nbChattersClean])
+
+        return nbChattersClean === 0 ? p.cron.empty() : p.cron.success()
+      }
+    },
+  },
 ]
