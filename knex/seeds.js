@@ -10,7 +10,7 @@ const users = [{
   display_name: 'TeazWar',
   jwtoken: jwt.teazwarToken,
   isSubscriber: 'yes',
-  isFollower: 'yes',
+  // isFollower: 'yes',
   isBot: 'no',
 },
 {
@@ -19,7 +19,7 @@ const users = [{
   username: 'teazyou',
   display_name: 'TeazYou',
   isSubscriber: 'yes',
-  isFollower: 'yes',
+  // isFollower: 'yes',
   isBot: 'no',
 
 }]
