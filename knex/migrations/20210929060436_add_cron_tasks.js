@@ -1,10 +1,10 @@
-const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'cron_tasks'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetupNoUuid(knex, table)
+    createTableDefaultSetup(knex, table)
 
     table.string('path').notNullable()
     table.biginteger('tsnCronTaskExec').defaultTo(0)

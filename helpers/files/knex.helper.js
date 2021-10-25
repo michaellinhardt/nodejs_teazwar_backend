@@ -12,16 +12,6 @@ module.exports = {
 
     table.charset(mysql.charset)
     table.collate(mysql.collate)
-
-    table.increments('id').primary()
-    table.string('uuid', 36).notNullable()
-
-    table.unique('uuid')
-  },
-
-  createTableDefaultSetupNoUuid: (knex, table) => {
-    table.charset(mysql.charset)
-    table.collate(mysql.collate)
     table.increments('id').primary()
   },
 

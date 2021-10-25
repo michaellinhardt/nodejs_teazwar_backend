@@ -7,9 +7,9 @@ export default class {
     this.build_ressources(ressources)
   }
 
-  setIsUuid (boolean) {
-    this.isUuid = boolean
-    this._isUuid = boolean
+  setUuidField (uuid_field) {
+    this.uuid_field = uuid_field
+    this._uuid_field = uuid_field
   }
 
   setTable (table) {
@@ -215,6 +215,8 @@ export default class {
   }
 
   _addOrUpdArray (entryArray) {
+    if (!entryArray.length) { return entryArray }
+
     const knex = this.helpers.knex.get()
 
     const fields = []
@@ -272,16 +274,19 @@ export default class {
   }
 
   async _add (entry = {}) {
-    if (this.isUuid) {
-      entry.uuid = this.helpers.string.uuid()
+    if (this.uuid_field) {
+      entry[this.uuid_field] = this.helpers.string.uuid()
     }
     await this.knex().insert(entry)
     return entry
   }
 
   async _addArray (entries) {
-    if (this.isUuid) {
-      entries.forEach(entry => { entry.uuid = this.helpers.string.uuid() })
+    if (!entries.length) { return entries }
+    if (this.uuid_field) {
+      entries.forEach(entry => {
+        entry[this.uuid_field] = this.helpers.string.uuid()
+      })
     }
     await this.knex().insert(entries)
     return entries

@@ -4,12 +4,12 @@
 
 class testeuh {
 
-  onDelete () { console.debug('no on delete method') }
+  onDelete () { console.info('no on delete method') }
 
 }
 
 class testeuhh extends testeuh {
-  // onDelete () { console.debug('deleted!') }
+  // onDelete () { console.info('deleted!') }
 }
 
 const start = () => {

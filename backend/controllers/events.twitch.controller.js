@@ -73,6 +73,7 @@ export default [
     Controller: class extends ControllerSuperclass {
       async handler () {
         const { services: s, body: b, modules: m } = this
+        if (b.self) { return false }
 
         const user_id = _.get(b, 'userstate[\'user-id\']', null)
         if (!user_id) { return false }

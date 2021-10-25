@@ -4,7 +4,7 @@ const sqlconfig = require('../config/files/sqlconfig.config')
 const jwt = require('../config/files/jwt.config')
 
 const users = [{
-  uuid: '1e8b6bf0-1b50-11ec-85ec-4d033c80c035',
+  user_uuid: '1e8b6bf0-1b50-11ec-85ec-4d033c80c035',
   user_id: '728591707',
   username: 'teazwar',
   display_name: 'TeazWar',
@@ -14,7 +14,7 @@ const users = [{
   isBot: 'no',
 },
 {
-  uuid: '29e86b60-1b64-11ec-b0db-6ba803c7d2d7',
+  user_uuid: '29e86b60-1b64-11ec-b0db-6ba803c7d2d7',
   user_id: '720229257',
   username: 'teazyou',
   display_name: 'TeazYou',
@@ -25,8 +25,8 @@ const users = [{
 }]
 
 const admins = [
-  { user_uuid: users[0].uuid },
-  { user_uuid: users[1].uuid },
+  { user_uuid: users[0].user_uuid },
+  { user_uuid: users[1].user_uuid },
 ]
 
 const config = []
@@ -42,7 +42,7 @@ const cron_tasks = cron.tasks
   .map(c => ({ path: c.path }))
 cron_tasks.unshift({ path: 'twitch' })
 
-const user_sub_tables = [{ user_uuid: users[0].uuid }, { user_uuid: users[1].uuid }]
+const user_sub_tables = [{ user_uuid: users[0].user_uuid }, { user_uuid: users[1].user_uuid }]
 
 module.exports = {
   users,

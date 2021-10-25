@@ -35,7 +35,7 @@ module.exports = {
     const signOptions = Object.assign({}, jwt.signOptions)
 
     signOptions.subject = user_uuid
-    const payload = { uuid: uuid() }
+    const payload = { jwtoken_uuid: uuid() }
 
     const token = jsonwebtoken.sign(payload, jwt.privateKEY, signOptions)
 

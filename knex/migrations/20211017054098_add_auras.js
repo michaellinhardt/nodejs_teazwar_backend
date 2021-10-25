@@ -2,14 +2,20 @@ const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'auras'
 
+// DO NOT FORGET TO UPDATE THE CONST 'sqlField'
+// INSIDE THE AURA.SUPERCLASS
+// IF NOT, IT WILL BUG !!!!
+
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
+    table.string('aura_uuid', 36).notNullable()
+    table.unique('aura_uuid')
+
     table.string('owner_uuid', 36).notNullable()
     table.string('aura_id').notNullable()
 
-    // either user_uuid or null ('combat', 'ooc', 'global', 'self')
     table.string('target_uuid').defaultTo(null)
 
     table.biginteger('tic').notNullable().defaultTo(-1)

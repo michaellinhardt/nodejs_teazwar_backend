@@ -2,11 +2,11 @@ import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'config'
-const isUuid = false
+const uuid_field = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources, isUuid) }
+  constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
   async getByGroup (config_group) {
     const group = await this.getAllLastWhere({ config_group })

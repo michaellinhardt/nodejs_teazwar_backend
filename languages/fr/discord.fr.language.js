@@ -23,6 +23,10 @@ module.exports = {
 
   spam_chatters_listing: '👨‍💻 [?] utilisateurs sur le tchat: [?]',
   spam_xp_chatline: `🥳 +${cfgGame.xp.xpPerChatLine} XP pour tous les viewer de la part de [[?]]`,
+  spam_xpbonus_multipliers: '🎂 XP bonus multiplicatif de groupe [.?]',
+
+  stream_aura_create: '🌕 création de l\'aura [[?]] pour [.?][[?]]',
+  stream_aura_delete: '🌑 supression de l\'aura [[?]] pour [.?][[?]]',
 
   stream_chatters_validate_add: '👨‍💻 [?] nouveaux utilisateurs: [?]',
   stream_chatters_validate_update: '👨‍💻 [?] utilisateurs mis à jours: [?]',

@@ -1,10 +1,10 @@
-const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'chatters'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetupNoUuid(knex, table)
+    createTableDefaultSetup(knex, table)
 
     table.string('username').defaultTo('')
     table.integer('count_seen').defaultTo(0)

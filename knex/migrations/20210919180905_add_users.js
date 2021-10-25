@@ -6,6 +6,9 @@ exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
+    table.string('user_uuid', 36).notNullable()
+    table.unique('user_uuid')
+
     table.text('jwtoken')
 
     table.string('user_id').notNullable()

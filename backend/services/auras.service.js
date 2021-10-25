@@ -1,17 +1,35 @@
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'auras'
-const isUuid = true
+const uuid_field = 'aura_uuid'
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources, isUuid) }
+  constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
-  async getAurasByClass (auraClass) {
+  getAurasByClass (auraClass) {
     const { config: { auras } } = this
 
-    await this.knex()
+    const currTimestampMs = this.helpers.date.timestampMs()
+
+    return this.knex()
+      .join('users', 'users.user_uuid', '=', 'auras.owner_uuid')
       .whereIn('aura_id', auras.layout.idsByClass[auraClass])
+      .andWhere('tsuOnlineExtension', '>', currTimestampMs)
+      .andWhere((knex) => {
+        knex
+          .where({ tic: -1, tsuActive: -1 })
+          .orWhere('tic', '>', 0)
+          .orWhere('tsuActive', '>', 0)
+      })
+  }
+
+  getAurasById (aura_id) {
+    const currTimestampMs = this.helpers.date.timestampMs()
+    return this.knex()
+      .join('users', 'users.user_uuid', '=', 'auras.owner_uuid')
+      .where('tsuOnlineExtension', '>', currTimestampMs)
+      .andWhere({ aura_id })
       .andWhere((knex) => {
         knex
           .where({ tic: -1, tsuActive: -1 })
@@ -21,8 +39,11 @@ export default class extends ServiceSuperclass {
   }
 
   getUserAurasById (owner_uuid, aura_id) {
+    const currTimestampMs = this.helpers.date.timestampMs()
     return this.knex()
-      .where({ aura_id, owner_uuid })
+      .join('users', 'users.user_uuid', '=', 'auras.owner_uuid')
+      .where('tsuOnlineExtension', '>', currTimestampMs)
+      .andWhere({ aura_id, owner_uuid })
       .andWhere((knex) => {
         knex
           .where({ tic: -1, tsuActive: -1 })

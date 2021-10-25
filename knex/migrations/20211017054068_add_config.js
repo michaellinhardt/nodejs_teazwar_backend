@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const { createTableDefaultSetupNoUuid } = require('../../helpers/files/knex.helper')
+const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
 const tableName = 'config'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
-    createTableDefaultSetupNoUuid(knex, table)
+    createTableDefaultSetup(knex, table)
 
     table.string('config_group')
     table.string('config_key').notNullable()

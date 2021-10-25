@@ -128,7 +128,7 @@ export default class {
 
     if (t.userId) {
       d.user = await s.users.getByUserId(t.userId)
-      d.user_uuid = _.get(d, 'user.uuid', null)
+      d.user_uuid = _.get(d, 'user.user_uuid', null)
 
     } else {
       delete d.user
@@ -147,7 +147,7 @@ export default class {
 
   async authorizeAdmin () {
     const { services: s, data: d } = this
-    const { uuid: user_uuid } = d.user
+    const { user_uuid } = d.user
 
     if (d.user && (d.user.username === 'teazyou'
     || d.user.username === 'teazwar')) {
@@ -218,6 +218,7 @@ export default class {
       this.modules[name] = new Module({
         ...ressources,
         services: this.services,
+        modules: this.modules,
         auras,
       })
     })

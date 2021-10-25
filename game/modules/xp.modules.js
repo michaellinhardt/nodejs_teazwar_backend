@@ -34,9 +34,10 @@ export default class extends ModuleSuperclass {
   }
 
   async addXpGainToChatters (users, chattersFlatten) {
-    const { services: s, config: { xp } } = this
+    const { services: s, config: { xp }, modules: m, helpers: h } = this
 
     const xpbonus_perma_group = await s.config.get('xpbonus_perma_group')
+    const aurasInstanceXpBonusMultiplier = await m.auras.getInstancesByClass('xpbonus_multiplier')
 
     const updates = []
     _.forEach(users, user => {
@@ -44,15 +45,40 @@ export default class extends ModuleSuperclass {
       const xpbonus_perma_total = xpbonus_perma_group + xpbonus_perma_self
       const xpbonus_perma_real_value = xp.xpPerMin * (xpbonus_perma_total / 100)
 
-      const userXpPerMin = xp.xpPerMin + xpbonus_perma_real_value
+      const xp_with_bonus_perma = xp.xpPerMin + xpbonus_perma_real_value
+
+      let xp_with_both_bonus = xp_with_bonus_perma
+
+      _.forEach(aurasInstanceXpBonusMultiplier, aura => {
+        const multiplier = aura.getParam('group')
+        xp_with_both_bonus += (multiplier / 100) * xp_with_both_bonus
+      })
 
       const count_seen = _.get(chattersFlatten, `${user.username}.count_seen`, 0)
+      _.set(chattersFlatten, user.user_uuid, { count_seen, display_name: user.display_name })
 
-      const xpGain = count_seen * userXpPerMin
+      const xpGain = count_seen * xp_with_both_bonus
 
-      updates.push({ user_uuid: user.uuid, level_xp: user.level_xp + xpGain })
+      updates.push({ user_uuid: user.user_uuid, level_xp: user.level_xp + xpGain })
     })
 
+    const multipliersReport = []
+    const auraTicUpdates = aurasInstanceXpBonusMultiplier
+      .map(aura => {
+        const multiplier = aura.getParam('group')
+        const owner_uuid = aura.getDatabase('owner_uuid')
+        const count_seen = _.get(chattersFlatten, `${owner_uuid}.count_seen`, 1)
+        const display_name = _.get(chattersFlatten, `${owner_uuid}.display_name`, 'error')
+        multipliersReport.push({ multiplier, display_name })
+        return aura.databaseDecrementTic(count_seen)
+      })
+
+    if (multipliersReport.length) {
+      s.socketsInfra.emitSayDiscord(
+        ['spam_xpbonus_multipliers', h.format.xpBonusMultipliers(multipliersReport)])
+    }
+
+    await this.services.auras.addOrUpdArray(auraTicUpdates)
     await this.services.userXp.addOrUpdArray(updates)
   }
 

@@ -8,4 +8,7 @@ module.exports = {
   xpBonusGroupDetails: ({ follower, discord, subscriber }) =>
     `${follower} Fol. ${subscriber} Sub. ${discord} Disc.`,
 
+  xpBonusMultipliers: (multipliersReport) =>
+    `=${multipliersReport.map(m => `[ +${m.multiplier}% ${m.display_name} ]`).join('=')}=`,
+
 }

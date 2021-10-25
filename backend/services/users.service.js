@@ -4,11 +4,11 @@ import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const { twitch, cron } = require('../../config')
 const table = 'users'
-const isUuid = true
+const uuid_field = 'user_uuid'
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources, isUuid) }
+  constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
   getOnlineBots () {
     const currTimestampMs = this.helpers.date.timestampMs()
@@ -35,10 +35,9 @@ export default class extends ServiceSuperclass {
     const user = await this.knex()
       .select('*')
       .whereIn('username', usernames)
-      .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
-      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
-      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
-    if (user) { user.uuid = user.user_uuid }
+      .join('user_xp', 'users.user_uuid', '=', 'user_xp.user_uuid')
+      .join('user_stats', 'users.user_uuid', '=', 'user_stats.user_uuid')
+      .join('user_attributes', 'users.user_uuid', '=', 'user_attributes.user_uuid')
     return user
   }
 
@@ -49,7 +48,11 @@ export default class extends ServiceSuperclass {
   setOnline (chatter_list) {
     const { helpers: h } = this
     const tsuOnlineTchat = h.date.timestampMs() + cron.itvOnlineTchat
-    return this.updAllWhereIn('username', chatter_list, { tsuOnlineTchat })
+    return this.updAllWhereIn('username', chatter_list, {
+      tsuOnlineTchat,
+      // TODO: remove the fake online extension
+      tsuOnlineExtension: tsuOnlineTchat,
+    })
   }
 
   socketDisconnected (socket_id) {
@@ -97,7 +100,7 @@ export default class extends ServiceSuperclass {
     const isBotMultiplier = user.isBot === 'yes' ? cron.itvFollowingBotsMultiplier : 1
     const isFollower = isFollowing.length === 1 ? 'yes' : 'no'
     const countFollow = isFollowing.length === 1 ? user.countFollow + 1 : user.countFollow
-    return this.updAllWhere({ uuid: user.uuid }, {
+    return this.updAllWhere({ user_uuid: user.user_uuid }, {
       isFollower,
       countFollow,
       tsnCheckChatterUnFollow: currTimestampMs
@@ -125,14 +128,14 @@ export default class extends ServiceSuperclass {
   }
 
   setDiscordIds (user, discord) {
-    return this.updAllWhere({ uuid: user.uuid },
+    return this.updAllWhere({ user_uuid: user.user_uuid },
       { discord_id: discord.discord_id, guild_id: discord.guild_id })
   }
 
   async getByUserUuid (uuid) {
     const user = await this.knex()
       .select('*')
-      .where('users.uuid', uuid)
+      .where('users.user_uuid', uuid)
       .first()
     return user
   }
@@ -141,11 +144,10 @@ export default class extends ServiceSuperclass {
     const user = await this.knex()
       .select('*')
       .where('users.user_id', user_id)
-      .join('user_xp', 'users.uuid', '=', 'user_xp.user_uuid')
-      .join('user_stats', 'users.uuid', '=', 'user_stats.user_uuid')
-      .join('user_attributes', 'users.uuid', '=', 'user_attributes.user_uuid')
+      .join('user_xp', 'users.user_uuid', '=', 'user_xp.user_uuid')
+      .join('user_stats', 'users.user_uuid', '=', 'user_stats.user_uuid')
+      .join('user_attributes', 'users.user_uuid', '=', 'user_attributes.user_uuid')
       .first()
-    if (user) { user.uuid = user.user_uuid }
     return user
   }
 
@@ -188,11 +190,11 @@ export default class extends ServiceSuperclass {
       const isExisting = existingUsers.find(e => e.user_id === twitchUser.id)
 
       if (isExisting) {
-        user.uuid = isExisting.uuid
+        user.user_uuid = isExisting.user_uuid
         updates.push(user)
 
       } else {
-        user.uuid = this.helpers.string.uuid()
+        user.user_uuid = this.helpers.string.uuid()
         adds.push(user)
       }
     })

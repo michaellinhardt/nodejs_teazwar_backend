@@ -3,15 +3,15 @@ import _ from 'lodash'
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'user_stats'
-const isUuid = false
+const uuid_field = false
 
 export default class extends ServiceSuperclass {
 
-  constructor (ressources) { super(table, __filename, ressources, isUuid) }
+  constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
   async addMissingEntry (users) {
     const addOrUpdate = []
-    _.forEach(users, user => addOrUpdate.push({ user_uuid: user.uuid }))
+    _.forEach(users, user => addOrUpdate.push({ user_uuid: user.user_uuid }))
     await this.addOrUpdArray(addOrUpdate)
   }
 
@@ -27,7 +27,7 @@ export default class extends ServiceSuperclass {
       tslChatLine: this.helpers.date.timestampMs(),
     }
 
-    await this.updAllWhere({ user_uuid: user.uuid }, updateStats)
+    await this.updAllWhere({ user_uuid: user.user_uuid }, updateStats)
 
     return updateStats
   }
@@ -36,7 +36,7 @@ export default class extends ServiceSuperclass {
     const { helpers: h } = this
     const currTimestampMs = h.date.timestampMs()
 
-    const userStats = await this.getAllLastWhereIn('user_uuid', users.map(u => u.uuid))
+    const userStats = await this.getAllLastWhereIn('user_uuid', users.map(u => u.user_uuid))
     const updates = []
 
     _.forEach(users, user => {
@@ -49,7 +49,7 @@ export default class extends ServiceSuperclass {
         label.replace('chat', 'extension')
       }
 
-      const userStat = userStats.find(u => u.user_uuid === user.uuid)
+      const userStat = userStats.find(u => u.user_uuid === user.user_uuid)
 
       const update = _.pick(userStat, [
         'user_uuid',
