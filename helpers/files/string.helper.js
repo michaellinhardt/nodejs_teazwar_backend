@@ -13,6 +13,18 @@ module.exports = {
 
   firstCharUpper,
 
+  camelCaseString: (string, char) => {
+    const nameSplit = string.split(char)
+
+    const firstName = nameSplit.shift()
+
+    const lastName = nameSplit
+      .map(n => firstCharUpper(n))
+      .join('')
+
+    return `${firstName}${lastName}`
+  },
+
   camelCaseFileName: filename => {
     const nameSplit = filename.split('.')
 
