@@ -79,7 +79,10 @@ module.exports = {
 
   getServerEmitter,
 
-  createSocketServer: () => new Server(),
+  createSocketServer: () => new Server({
+    cors: {
+      origin: '*',
+    } }),
 
   startSocketServer: io => {
     const pubClient = createClient({
