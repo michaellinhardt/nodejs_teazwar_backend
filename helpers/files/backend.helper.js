@@ -59,7 +59,11 @@ const runRoute = async (body = {}, requestType = 'script') => {
   const flattenKey = `${method}${path}`
   const ctrl = ControllersFlatten[flattenKey]
 
-  if (!ctrl) { return ({ payload: { error_key: 'controller_notFound' } }) }
+  if (!ctrl) {
+    const payload = { payload: { error_key: 'controller_notFound' } }
+    logCall(body, payload)
+    return payload
+  }
 
   const routeParam = _.clone(ctrl)
   delete routeParam.Controller
@@ -71,6 +75,13 @@ const runRoute = async (body = {}, requestType = 'script') => {
   const payload = _.get(controller || {}, 'payload', { error_key: 'server_error' })
 
   if (!log) { return controller }
+
+  logCall(body, payload)
+
+  return controller
+}
+
+const logCall = (body = {}, payload = {}) => {
 
   console.info(`\n=======[ ${body.method.toUpperCase()} ${body.path} ]=======`)
   delete body.jwtoken
@@ -98,9 +109,6 @@ const runRoute = async (body = {}, requestType = 'script') => {
 
   if (body_big_data) { body.big_data = body_big_data }
   if (payload_big_data) { payload.big_data = payload_big_data }
-
-  return controller
-
 }
 
 module.exports = {

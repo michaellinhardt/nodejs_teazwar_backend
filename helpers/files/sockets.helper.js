@@ -89,7 +89,6 @@ module.exports = {
       socket: {
         host: 'localhost',
         port: 6379,
-
       },
     })
     const subClient = pubClient.duplicate()

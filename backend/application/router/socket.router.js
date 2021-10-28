@@ -10,8 +10,11 @@ const emitter = SocketHelper.getServerEmitter('socket.router')
 
 const onAny = async (socket, infraData = {}, extensionData = {}) => {
   let data = {}
+  let call_uuid
   if (typeof (infraData) === 'string') {
     data = extensionData
+    call_uuid = infraData
+
   } else if (typeof (infraData) === 'object' && !Array.isArray(infraData)) {
     data = infraData
   } else {
@@ -22,12 +25,15 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
   data.path = _.get(data, 'path', '')
   data.method = _.get(data, 'method', '')
   data.jwtoken = _.get(data, 'jwtoken', undefined)
+  data.call_uuid = call_uuid
+
   _.set(data, 'big_data.redis', redis)
   _.set(data, 'big_data.socket', socket)
 
   try {
     const { payload = {} } = await runRoute(data)
     await SocketHelper.dispatchSayOrder(payload, emitter)
+    if (call_uuid) { socket.emit(call_uuid, payload) }
 
   } catch (err) {
     console.error(err)
@@ -35,6 +41,7 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)
+    if (call_uuid) { socket.emit(call_uuid, payload) }
   }
 }
 
