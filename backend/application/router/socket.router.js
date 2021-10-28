@@ -8,9 +8,15 @@ let redis = null
 
 const emitter = SocketHelper.getServerEmitter('socket.router')
 
-const onAny = async (socket, data = {}) => {
-  if (typeof (data) !== 'object' || Array.isArray(data)) {
+const onAny = async (socket, infraData = {}, extensionData = {}) => {
+  let data = {}
+  if (typeof (infraData) === 'string') {
+    data = extensionData
+  } else if (typeof (infraData) === 'object' && !Array.isArray(infraData)) {
+    data = infraData
+  } else {
     return { error_key: 'socketRouter_dataFormat' }
+
   }
 
   data.path = _.get(data, 'path', '')
@@ -63,7 +69,7 @@ module.exports = {
   init: (io, redisHandler) => io.on('connection', (socket) => {
     if (!redis) { redis = redisHandler }
     socket.on('disconnect', reason => onDisconnect(socket, reason))
-    socket.onAny((data = {}) => onAny(socket, data))
+    socket.onAny((...args) => onAny(socket, ...args))
     console.info('socket connection: ', socket.id)
   }),
 }
