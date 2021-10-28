@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import ControllerSuperclass from '../application/superclass/controller.superclass'
 
 export default [
@@ -33,8 +32,8 @@ export default [
     route: ['post', '/socket/disconnected'],
     Controller: class extends ControllerSuperclass {
       validator () {
-        const { body: { infra_name } } = this
-        if (!infra_name || _.isEmpty(infra_name)) {
+        const { body: { infra_name, socket_id } } = this
+        if (!infra_name && !socket_id) {
           this.StopPipeline('socketDisconnected_missingData')
         }
       }
@@ -42,10 +41,16 @@ export default [
       handler () {
         const { body: { infra_name, reason }, services: s } = this
 
-        const sayKey = infra_name === 'twitch'
-          ? 'server_twitchbot_socketDisconnected' : 'server_discordbot_socketDisconnected'
+        if (infra_name) {
+          const sayKey = infra_name === 'twitch'
+            ? 'server_twitchbot_socketDisconnected' : 'server_discordbot_socketDisconnected'
 
-        s.socketsInfra.emitSayDiscord([sayKey, reason])
+          s.socketsInfra.emitSayDiscord([sayKey, reason])
+          return true
+        }
+
+        // const
+
       }
     },
   },

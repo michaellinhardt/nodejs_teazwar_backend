@@ -33,7 +33,10 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
   try {
     const { payload = {} } = await runRoute(data)
     await SocketHelper.dispatchSayOrder(payload, emitter)
-    if (call_uuid) { socket.emit(call_uuid, payload) }
+    if (call_uuid) {
+      delete payload.say
+      socket.emit(call_uuid, { ressources: payload })
+    }
 
   } catch (err) {
     console.error(err)
@@ -41,7 +44,10 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)
-    if (call_uuid) { socket.emit(call_uuid, payload) }
+    if (call_uuid) {
+      delete payload.say
+      socket.emit(call_uuid, { ressources: payload })
+    }
   }
 }
 
@@ -50,7 +56,7 @@ const onDisconnect = async (socket, reason) => {
     path: '/socket/disconnected',
     method: 'post',
     reason,
-    infra_name: 'unknow',
+    socket_id: socket.id,
   }
   _.set(data, 'big_data.redis', redis)
   _.set(data, 'big_data.socket', socket)
@@ -69,7 +75,6 @@ const onDisconnect = async (socket, reason) => {
 
     return payload
   }
-
 }
 
 module.exports = {

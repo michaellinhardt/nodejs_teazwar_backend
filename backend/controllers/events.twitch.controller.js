@@ -32,11 +32,10 @@ export default [
 
         } else {
           const isUser = await s.users.getByUsername(username)
-          const isDiscordId = _.get(isUser, 'discord_id', null)
-          const discordKey = isDiscordId ? ` <@${isDiscordId}> ` : ''
+          const discordPing = this.helpers.format.userDiscordPing(isUser)
 
           const event = self ? 'server_twitchbot_joined' : 'stream_viewer_joined'
-          s.socketsInfra.emitSayDiscord([event, discordKey, username])
+          s.socketsInfra.emitSayDiscord([event, discordPing, username])
         }
 
       }

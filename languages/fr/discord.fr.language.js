@@ -10,6 +10,9 @@ module.exports = {
   spam_welcome: '🙋 bonjour spam',
   debug_welcome: '🙋 bonjour debug',
 
+  stream_connection_unregistered: '🎬 un utilisateur non enregistré à lancé le stream',
+  stream_connection_registered: '🎬 [[?]] est en train de regarder le stream',
+
   game_xpbonus_perma_group: '👨‍👩‍👧‍👦 xp bonus de group recalculé à [?]% ( [.?] )',
 
   server_twitchbot_socketConnected: '🟪 [twitch.bot] connection socket établi',

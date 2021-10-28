@@ -14,7 +14,7 @@ export default [
 
         await s.chatters.addOrIncrementCountSeen(chatter_list)
 
-        await s.users.setOnline(chatter_list)
+        await s.users.setOnlineTchat(chatter_list)
 
         s.socketsInfra.emitSayDiscord(
           ['spam_chatters_listing', chatter_list.length, chatter_list.join(', ')])

@@ -41,18 +41,45 @@ export default class extends ServiceSuperclass {
     return user
   }
 
+  setJwtokenByUserUuid (user_uuid, jwtoken) {
+    return this.setJwtoken({ user_uuid }, jwtoken)
+  }
+
+  setJwtokenByUserId (user_id, jwtoken, socket_id) {
+    return this.setJwtoken({ user_id }, jwtoken, socket_id)
+  }
+
+  setJwtoken (where, jwtoken, socket_id = '') {
+    const currTimestampMs = this.helpers.date.timestampMs()
+    const tsuOnlineExtension = currTimestampMs + cron.itvOnlineExtension
+    const tsuOnlineTchat = currTimestampMs + cron.itvOnlineTchat
+    return this.updAllWhere(where, {
+      jwtoken,
+      tsuOnlineExtension,
+      tsuOnlineTchat,
+      socket_id,
+    })
+  }
+
   getByUsernames (usernames) {
     return this.getAllFirstWhereIn('username', usernames)
   }
 
-  setOnline (chatter_list) {
+  setOnlineExtension (user_id) {
+    const { helpers: h } = this
+    const currTimestampMs = h.date.timestampMs()
+    const tsuOnlineExtension = currTimestampMs + cron.itvOnlineExtension
+    const tsuOnlineTchat = currTimestampMs + cron.itvOnlineTchat
+    return this.updAllWhere({ user_id }, {
+      tsuOnlineExtension,
+      tsuOnlineTchat,
+    })
+  }
+
+  setOnlineTchat (chatter_list) {
     const { helpers: h } = this
     const tsuOnlineTchat = h.date.timestampMs() + cron.itvOnlineTchat
-    return this.updAllWhereIn('username', chatter_list, {
-      tsuOnlineTchat,
-      // TODO: remove the fake online extension
-      tsuOnlineExtension: tsuOnlineTchat,
-    })
+    return this.updAllWhereIn('username', chatter_list, { tsuOnlineTchat })
   }
 
   socketDisconnected (socket_id) {
@@ -132,10 +159,10 @@ export default class extends ServiceSuperclass {
       { discord_id: discord.discord_id, guild_id: discord.guild_id })
   }
 
-  async getByUserUuid (uuid) {
+  async getByUserUuid (user_uuid) {
     const user = await this.knex()
       .select('*')
-      .where('users.user_uuid', uuid)
+      .where('users.user_uuid', user_uuid)
       .first()
     return user
   }

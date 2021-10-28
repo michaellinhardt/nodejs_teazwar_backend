@@ -23,7 +23,7 @@ module.exports = {
 
       return !isTwitch
         ? { jwtoken, user_uuid: jwtoken.sub }
-        : { jwtoken }
+        : { jwtoken, user_id: jwtoken.user_id }
 
     } catch (err) {
       console.error(err)
