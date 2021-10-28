@@ -38,8 +38,8 @@ export default [
         }
       }
 
-      handler () {
-        const { body: { infra_name, reason }, services: s } = this
+      async handler () {
+        const { body: { infra_name, reason, socket_id }, services: s } = this
 
         if (infra_name) {
           const sayKey = infra_name === 'twitch'
@@ -47,10 +47,21 @@ export default [
 
           s.socketsInfra.emitSayDiscord([sayKey, reason])
           return true
+        } else if (socket_id) {
+          const isUser = await s.users.getBySocketId(socket_id)
+          if (isUser) {
+            await s.users.disconnectedSocket(isUser.user_uuid)
+            return s.socketsInfra.emitSayDiscord(
+              ['stream_deconnection_registered', isUser.username])
+          }
+
+          const isStranger = await s.strangers.getBySocketId(socket_id)
+          if (isStranger) {
+            await s.strangers.disconnectedSocket(isStranger.opaque_user_id)
+
+            return s.socketsInfra.emitSayDiscord(['stream_deconnection_unregistered'])
+          }
         }
-
-        // const
-
       }
     },
   },

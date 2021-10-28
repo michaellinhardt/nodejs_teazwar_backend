@@ -6,11 +6,11 @@ exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
-    table.string('opaque_user_id', 155).notNullable()
+    table.string('opaque_user_id').notNullable()
     table.unique('opaque_user_id')
 
-    table.unique('jwtoken')
-    table.string('socket_id').notNullable()
+    table.text('jwtoken')
+    table.string('socket_id')
 
   }).then(() => {
     // const { config } = require('../seeds')

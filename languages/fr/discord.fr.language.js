@@ -10,8 +10,10 @@ module.exports = {
   spam_welcome: '🙋 bonjour spam',
   debug_welcome: '🙋 bonjour debug',
 
-  stream_connection_unregistered: '🎬 un utilisateur non enregistré à lancé le stream',
-  stream_connection_registered: '🎬 [[?]] est en train de regarder le stream',
+  stream_deconnection_unregistered: '🎮 un utilisateur s\'est déconnecté de TeazWar',
+  stream_deconnection_registered: '🎮 [[?]] s\'est déconnecté de TeazWar',
+  stream_connection_unregistered: '🎮 un utilisateur s\'est connecté sur TeazWar',
+  stream_connection_registered: '🎮 [[?]] s\'est connecté sur TeazWar',
 
   game_xpbonus_perma_group: '👨‍👩‍👧‍👦 xp bonus de group recalculé à [?]% ( [.?] )',
 

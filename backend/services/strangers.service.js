@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 import ServiceSuperclass from '../application/superclass/service.superclass'
 
 const table = 'strangers'
@@ -12,12 +10,20 @@ export default class extends ServiceSuperclass {
   async addOrUpdOpaqueUser (opaque_user_id, jwtoken, socket_id) {
     await this.helpers.knex.get().raw(`
     INSERT INTO ${table} (opaque_user_id, jwtoken, socket_id)
-      VALUES (?, ?, ?)
+      VALUES (?, ?, ?) AS new
       ON DUPLICATE KEY UPDATE
-      jwtoken=VALUES(?),
-      socket_id=VALUES(?);
-  `, [opaque_user_id, jwtoken, socket_id, jwtoken, socket_id])
+      jwtoken=new.jwtoken,
+      socket_id=new.socket_id;
+  `, [opaque_user_id, jwtoken, socket_id])
     return { opaque_user_id, jwtoken, socket_id }
+  }
+
+  getBySocketId (socket_id) {
+    return this.getFirstWhere({ socket_id })
+  }
+
+  disconnectedSocket (opaque_user_id) {
+    return this.updAllWhere({ opaque_user_id }, { socket_id: null })
   }
 
 }

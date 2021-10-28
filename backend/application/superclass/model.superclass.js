@@ -208,9 +208,9 @@ export default class {
 
     return knex.raw(`
     INSERT INTO ${this.table} (${fields.join(', ')})
-      VALUES (${valueString.join(', ')})
+      VALUES (${valueString.join(', ')}) AS new
       ON DUPLICATE KEY UPDATE
-      ${fields.map(f => `${f}=VALUES(${f})`).join(', ')}
+      ${fields.map(f => `${f}=new.${f}`).join(', ')}
   `, valueBinds)
   }
 
@@ -249,9 +249,9 @@ export default class {
 
     return knex.raw(`
     INSERT INTO ${this.table} (${fields.join(', ')})
-      VALUES ${valuesString.join(', ')}
+      VALUES ${valuesString.join(', ')} AS new
       ON DUPLICATE KEY UPDATE
-      ${fields.map(f => `${f}=VALUES(${f})`).join(', ')}
+      ${fields.map(f => `${f}=new.${f}`).join(', ')}
   `, valueBinds)
   }
 

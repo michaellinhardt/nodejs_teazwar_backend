@@ -49,6 +49,10 @@ export default class extends ServiceSuperclass {
     return this.setJwtoken({ user_id }, jwtoken, socket_id)
   }
 
+  disconnectedSocket (user_uuid) {
+    return this.updAllWhere({ user_uuid }, { socket_id: null })
+  }
+
   setJwtoken (where, jwtoken, socket_id = '') {
     const currTimestampMs = this.helpers.date.timestampMs()
     const tsuOnlineExtension = currTimestampMs + cron.itvOnlineExtension
@@ -59,6 +63,10 @@ export default class extends ServiceSuperclass {
       tsuOnlineTchat,
       socket_id,
     })
+  }
+
+  getBySocketId (socket_id) {
+    return this.getFirstWhere({ socket_id })
   }
 
   getByUsernames (usernames) {
