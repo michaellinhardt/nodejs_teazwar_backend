@@ -8,6 +8,10 @@ module.exports = {
   sleepWhenCronRouterError: msOneSec,
   sleepWhenCronTaskError: msOneSec,
 
+  itvNothingTosay: 300,
+  itvSayDiscord: 500,
+  itvSayTwitch: 1000,
+
   itvWhenSuccess: 100,
   itvTwitchApiCall: msOneSec * 2,
   tsnTwitchApiCall: 0,

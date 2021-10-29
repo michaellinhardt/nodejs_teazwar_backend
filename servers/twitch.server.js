@@ -3,7 +3,7 @@ const { render } = require('prettyjson')
 const _ = require('lodash')
 const h = require('../helpers')
 const emitter = h.sockets.getServerEmitter('twitch.bot')
-const { backend: { log } } = require('../config')
+const { backend: { log }, cron: { itvSayTwitch, itvNothingTosay } } = require('../config')
 
 let twitch = null
 let say = null
@@ -69,6 +69,18 @@ const listen_events = twitch => {
     backend('post', '/twitch/part', { channel, username, self }))
 }
 
+const sayLoop = async () => {
+  let isSay = true
+  try {
+    isSay = await h.twitch.executeSay(twitch)
+
+  } catch (err) {
+    console.debug('error in sayLoop', err.message)
+  }
+  const interval = isSay ? itvSayTwitch : itvNothingTosay
+  setTimeout(sayLoop, interval)
+}
+
 const start_twitch = async () => {
   h.redis.connect('twitch.bot')
   twitch = h.twitch.getTwitch()
@@ -85,6 +97,8 @@ const start_twitch = async () => {
     onSocketMessage,
     backend,
   })
+
+  sayLoop()
 
   return socket
 }

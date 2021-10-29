@@ -19,6 +19,9 @@ const getChannelByName = (discord, name) => {
   return discord.channels.cache.get(channelId)
 }
 
+const sayArray = []
+const sayLast = {}
+
 module.exports = {
 
   getDiscord: () => {
@@ -46,8 +49,21 @@ module.exports = {
     return (message_key, ...args) => {
       const channel = (message_key.split('_'))[0]
       const message = getLang(message_key, ...args)
-      discord[`_${channel}`].say(message)
+      sayArray.push([channel, message])
+      // discord[`_${channel}`].say(message)
     }
+  },
+
+  executeSay: async discord => {
+    if (!sayArray.length) { return false }
+    const [channel, message] = sayArray.shift()
+
+    const lastMessage = _.get(sayLast, channel, undefined)
+    if (lastMessage === message) { return false }
+
+    _.set(sayLast, channel, message)
+    await discord[`_${channel}`].say(message)
+    return true
   },
 
   replyInteraction: (index = 0, interaction, ephemeral, message_key, ...args) => {

@@ -3,7 +3,9 @@ const _ = require('lodash')
 const { render } = require('prettyjson')
 const h = require('../helpers')
 const {
-  discord: { teazyou_discord_user_id, sleepWhenBackendError }, backend: { log },
+  discord: { teazyou_discord_user_id, sleepWhenBackendError },
+  backend: { log },
+  cron: { itvSayDiscord, itvNothingTosay },
 } = require('../config')
 const emitter = h.sockets.getServerEmitter('discord.bot')
 
@@ -107,6 +109,19 @@ const executePayloadOrder = async payload => {
   await h.sockets.dispatchSayOrder(payload, emitter)
 }
 
+const sayLoop = async () => {
+  let isSay = true
+  try {
+    isSay = await h.discord.executeSay(discord)
+
+  } catch (err) {
+    console.debug('error in sayLoop', err.message)
+  }
+
+  const interval = isSay ? itvSayDiscord : itvNothingTosay
+  setTimeout(sayLoop, interval)
+}
+
 const start_discord = async () => {
   h.redis.connect('discord.bot')
   discord = h.discord.getDiscord()
@@ -134,6 +149,8 @@ const start_discord = async () => {
   h.discord.onDiscordMessage(discord, backend)
 
   clearBienvenueChannel()
+
+  sayLoop()
 
   return socket
 }
