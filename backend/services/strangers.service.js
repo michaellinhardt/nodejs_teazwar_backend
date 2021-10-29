@@ -23,11 +23,18 @@ export default class extends ServiceSuperclass {
     return this.updAllWhere({ opaque_user_id }, { socket_id: null })
   }
 
-  cleanTable () {
+  getOutdatedStrangers () {
     const currTimestampMs = this.helpers.date.timestampMs()
     const expireAfterTimestamp = currTimestampMs - this.config.cron.itvStrangerDelete
     return this.knex()
+      .select('*')
       .where('tslStrangerSeen', '<=', expireAfterTimestamp)
+  }
+
+  deleteByUserOpaqueIds (opaqueUserIds) {
+    return this.knex()
+      .select('*')
+      .whereIn('opaque_user_id', opaqueUserIds)
       .del()
   }
 

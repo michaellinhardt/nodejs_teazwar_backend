@@ -80,9 +80,9 @@ export default [
     route: ['post', '/cron/strangers/clean'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p } = this
+        const { modules: m, services: s, payloads: p } = this
 
-        const nbStrangersClean = await s.strangers.cleanTable()
+        const nbStrangersClean = await m.strangers.cleanTable()
 
         s.socketsInfra.emitSayDiscord(['server_strangers_clean', nbStrangersClean])
 

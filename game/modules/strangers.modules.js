@@ -19,7 +19,29 @@ export default class extends ModuleSuperclass {
 
     await s.strangers.addOrUpdOpaqueUser(stranger)
 
+    await s.strangerCutscene.addCutscene('stranger_welcome')
+
     return stranger
+  }
+
+  async cleanTable () {
+    const { services: s } = this
+
+    const outdatedStranger = await s.strangers.getOutdatedStrangers()
+    const opaqueUserIds = outdatedStranger.map(s => s.opaque_user_id)
+
+    const nbStrangersClean = await this.deleteStrangersByOpaqueUserIds(opaqueUserIds)
+
+    return nbStrangersClean
+  }
+
+  async deleteStrangersByOpaqueUserIds (opaqueUserIds) {
+    const { services: s, modules: m } = this
+
+    const nbStrangersClean = await s.strangers.deleteByUserOpaqueIds(opaqueUserIds)
+    await m.strangerCutscene.deleteStrangerCutscenes(opaqueUserIds)
+
+    return nbStrangersClean
   }
 
 }

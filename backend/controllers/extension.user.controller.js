@@ -55,7 +55,7 @@ export default [
         } else if (opaque_user_id) {
 
           if (!d.stranger) {
-            d.stranger = await m.stranger.addOrUpdStrangerFromData()
+            d.stranger = await m.strangers.addOrUpdStrangerFromData()
           }
 
           return logStranger(opaque_user_id)
