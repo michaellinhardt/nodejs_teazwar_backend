@@ -39,8 +39,9 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
     }
 
   } catch (err) {
-    console.error(err)
+    console.error(err, data)
     const error_location = `socket_router${data.path.split('/').join('..')}`
+
     const { payload = {} } = await BackendHelper
       .discordReportError(error_location, err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)
