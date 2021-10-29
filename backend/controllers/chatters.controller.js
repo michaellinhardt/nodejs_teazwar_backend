@@ -38,7 +38,7 @@ export default [
 
         const chatterUsernames = chatters.map(c => c.username)
 
-        const users = m.users.createByUsernames(chatterUsernames)
+        const users = await m.users.createByUsernames(chatterUsernames)
 
         const updatedUsernames = users.updated.map(u => u.display_name).join(', ')
         const addedUsernames = users.added.map(u => u.display_name).join(', ')
