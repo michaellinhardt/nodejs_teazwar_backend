@@ -52,7 +52,7 @@ export default [
           if (isUser) {
             await s.users.disconnectedSocket(isUser.user_uuid)
             return s.socketsInfra.emitSayDiscord(
-              ['stream_deconnection_registered', isUser.username])
+              ['stream_deconnection_registered', isUser.display_name])
           }
 
           const isStranger = await s.strangers.getBySocketId(socket_id)
