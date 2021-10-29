@@ -14,7 +14,7 @@ export default [
       }
 
       async handler () {
-        const { data: d, body: b, services: s, apis: a, helpers: h } = this
+        const { data: d, body: b, services: s, helpers: h, modules: m } = this
 
         const user_id = _.get(d, 'jwtoken.user_id', undefined)
         const opaque_user_id = _.get(d, 'jwtoken.opaque_user_id', undefined)
@@ -47,11 +47,12 @@ export default [
           const isUser = await s.users.getByUserId(user_id)
           if (isUser) { return logUser(isUser) }
 
-          const twitchUsers = await a.users.getByUserIds([user_id])
-          const users = await s.users.addOrUpdate(twitchUsers)
+          const userIds = [user_id]
+          const users = await m.users.createByUserIds(userIds)
+
           const allUsers = users.added.concat(users.updated)
-          await s.chatters.setUsersAsValidated(allUsers)
           const user = allUsers[0]
+
           s.socketsInfra
             .emitSayDiscord(['stream_extension_validate_account', user.display_name])
 

@@ -28,7 +28,7 @@ export default [
     route: ['post', '/cron/chatters/validate'],
     Controller: class extends ControllerSuperclass {
       async handler () {
-        const { services: s, payloads: p, apis: a } = this
+        const { services: s, payloads: p, modules: m } = this
 
         const chatters = await s.chatters.getNextTwitchUpdateList()
 
@@ -38,12 +38,7 @@ export default [
 
         const chatterUsernames = chatters.map(c => c.username)
 
-        const twitchUsers = await a.users.getByUsernames(chatterUsernames)
-
-        const users = await s.users.addOrUpdate(twitchUsers)
-        const allUsers = users.added.concat(users.updated)
-
-        await s.chatters.setUsersAsValidated(allUsers)
+        const users = m.users.createByUsernames(chatterUsernames)
 
         const updatedUsernames = users.updated.map(u => u.display_name).join(', ')
         const addedUsernames = users.added.map(u => u.display_name).join(', ')

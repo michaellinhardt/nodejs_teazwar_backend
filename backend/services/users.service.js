@@ -237,13 +237,6 @@ export default class extends ServiceSuperclass {
     const allUsers = adds.concat(updates)
     await this.addOrUpdArray(allUsers)
 
-    // TESt
-    if (adds.length) {
-      await this.services.userXp.addMissingEntry(adds)
-      await this.services.userStats.addMissingEntry(adds)
-      await this.services.userAttributes.addMissingEntry(adds)
-    }
-
     return { added: adds, updated: updates }
 
   }
