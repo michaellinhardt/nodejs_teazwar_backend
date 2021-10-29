@@ -14,8 +14,8 @@ module.exports = {
   delation_none: '👌 @[?] , je ne détecte aucun bot présent sur le tchat',
   delation_detected: '🤖 @[?] , je détecte [?] bots présent sur le tchat: [?]',
 
-  level_up_one: '✨ LVL UP =[ @[?] [?] ]=',
-  level_up_multi: '✨ LVL UP =[?]=',
+  level_up_one: '✨ =[ @[?] [?] ]=',
+  level_up_multi: '✨ =[?]=',
 
   discord_verfy_noUser: '🙊 Oups, @[?] , ton compte est en cours de création. J\'ai détruit le code que tu viens d\'utiliser. Recommence la procédure depuis discord dans 5 minutes',
   discord_verfy_noOtp: '🙊 Oups, @[?] , je ne trouve aucun code discord associé à ta demande. Vérifie que tu as bien taper le code, ou demande en un nouveau',
