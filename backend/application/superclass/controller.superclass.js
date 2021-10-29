@@ -132,7 +132,7 @@ export default class {
     const isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
 
     if (isUser && isUser.jwtoken === decryptedJwtoken.jwtoken.token) {
-      d.jwtoken = decryptedJwtoken
+      d.jwtoken = decryptedJwtoken.jwtoken
       d.user = isUser
       d.user_id = isUser.user_id
       d.user_uuid = isUser.user_uuid
