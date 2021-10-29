@@ -38,25 +38,21 @@ export default class {
       isAdmin = false,
       isSubscriber = false,
       isFollower = false,
-      isTwitch = false,
     } = this.routeParam
 
     // console.info(this.helpers.jwtoken.generate('1e8b6bf0-1b50-11ec-85ec-4d033c80c035'))
 
-    await this.identify(isTwitch)
+    if (!isTeazwar) {
+      await this.identify()
+
+    } else { await this.identifyTeazwar() }
 
     if (path.startsWith('/command/')) {
-      await this.authorizeTeazwar()
       await this.identifyChatUser()
     }
 
-    if (!d.user && (!isPublic || isTeazwar || isAdmin || isSubscriber || isFollower)) {
+    if (!isTeazwar && !d.user && (!isPublic || isAdmin || isSubscriber || isFollower)) {
       this.StopPipeline('jwtoken_notPublic')
-    }
-
-    const teazwarUsername = config.twitch.chatbot.tmiOpts.identity.username.toLowerCase()
-    if (isTeazwar && d.user.username.toLowerCase() !== teazwarUsername.toLowerCase()) {
-      this.StopPipeline('jwtoken_reserved')
     }
 
     if ((isAdmin || isSubscriber || isFollower)
@@ -86,7 +82,20 @@ export default class {
     throw new this.renders.StopPipeline(error_key)
   }
 
-  async identify (isTwitch = false) {
+  identifyTeazwar () {
+    const { body: b, config: c } = this
+
+    if (!b.jwtoken || typeof (b.jwtoken) !== 'string' || !b.jwtoken.length) {
+      return this.StopPipeline('jwtoken_teazwarTokenMissing')
+    }
+
+    if (b.jwtoken !== c.jwt.teazwarToken) {
+      return this.StopPipeline('jwtoken_teazwarTokenInvalid')
+    }
+
+  }
+
+  async identify () {
     const { helpers: h, services: s, data: d, body: b } = this
 
     if (b.jwtoken) {
@@ -95,18 +104,15 @@ export default class {
         this.StopPipeline('jwtoken_missing')
       }
 
-      const decryptedJwtoken = h.jwtoken.decrypt(b.jwtoken, isTwitch)
+      const decryptedJwtoken = h.jwtoken.decrypt(b.jwtoken)
       if (decryptedJwtoken === false) {
         this.StopPipeline('jwtoken_invalid')
       }
 
-      let isUser = null
-      if (decryptedJwtoken.user_uuid && decryptedJwtoken.jwtoken) {
-        isUser = await s.users.getByUserUuid(decryptedJwtoken.user_uuid)
+      d.jwtoken = decryptedJwtoken.jwtoken
+      if (!decryptedJwtoken.user_id) { return true }
 
-      } else if (decryptedJwtoken.user_id && decryptedJwtoken.jwtoken) {
-        isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
-      }
+      const isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
 
       if (isUser && isUser.jwtoken === decryptedJwtoken.jwtoken.token) {
         d.jwtoken = decryptedJwtoken
@@ -114,8 +120,6 @@ export default class {
         d.user_id = isUser.user_id
         d.user_uuid = isUser.user_uuid
       }
-
-      d.jwtoken = decryptedJwtoken.jwtoken
 
     }
   }
@@ -132,14 +136,6 @@ export default class {
       delete d.user_uuid
     }
 
-  }
-
-  authorizeTeazwar () {
-    const { data: d } = this
-    const botUsername = config.twitch.chatbot.tmiOpts.identify.username
-    if (!d.user || !d.user.username !== botUsername) {
-      this.StopPipeline('priviliege_onlyTeazwar')
-    }
   }
 
   async authorizeAdmin () {

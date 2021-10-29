@@ -15,7 +15,7 @@ const sleepUntilNextTask = async (payload = {}) => {
   const removeValue = 5
   const sleepRemove = payload.sleep > removeValue ? removeValue : 0
   const sleepTime = payload.sleep - sleepRemove
-  if (config.backend.log) { console.info('SLEEP ->', sleepTime) }
+  if (config.backend.isLog) { console.info('SLEEP ->', sleepTime) }
   await h.code.sleep(sleepTime)
 }
 

@@ -5,7 +5,7 @@ const jwt = require('../../config/files/jwt.config')
 
 module.exports = {
 
-  decrypt: (token, isTwitch = false) => {
+  decrypt: (token, isTwitch = true) => {
     try {
       const verifyOptions = !isTwitch ? {
         issuer: jwt.signOptions.issuer,
@@ -15,15 +15,18 @@ module.exports = {
 
       } : { algorithms: ['HS256'] }
 
-      const secret = !isTwitch ? jwt.publicKEY : jwt.twitchSecret
+      // const secret = !isTwitch ? jwt.publicKEY : jwt.twitchSecret
+      const secret = jwt.twitchSecret
 
       const jwtoken = jsonwebtoken.verify(token, secret, verifyOptions)
 
       jwtoken.token = token
 
-      return !isTwitch
-        ? { jwtoken, user_uuid: jwtoken.sub }
-        : { jwtoken, user_id: jwtoken.user_id }
+      return { jwtoken, user_id: jwtoken.user_id }
+
+      // return !isTwitch
+      //   ? { jwtoken, user_uuid: jwtoken.sub }
+      //   : { jwtoken, user_id: jwtoken.user_id }
 
     } catch (err) {
       console.error(err)

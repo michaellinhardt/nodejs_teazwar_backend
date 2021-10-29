@@ -6,12 +6,11 @@ exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {
     createTableDefaultSetup(knex, table)
 
-    table.string('username').defaultTo('')
-    table.integer('count_seen').defaultTo(0)
-
-    table.biginteger('tsuTwitchDataUpToDate').defaultTo(0)
-
+    table.string('username').notNullable()
     table.unique('username')
+
+    table.integer('count_seen').defaultTo(0)
+    table.biginteger('tsuTwitchDataUpToDate').defaultTo(0)
 
   }).then(() => {
     // const { chatters } = require('../seeds')

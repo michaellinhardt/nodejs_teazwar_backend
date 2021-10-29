@@ -33,8 +33,9 @@ module.exports = {
   stream_aura_create: '🌕 création de l\'aura [[?]] pour [.?][[?]]',
   stream_aura_delete: '🌑 supression de l\'aura [[?]] pour [.?][[?]]',
 
-  stream_chatters_validate_add: '👨‍💻 [?] nouveaux utilisateurs: [?]',
-  stream_chatters_validate_update: '👨‍💻 [?] utilisateurs mis à jours: [?]',
+  stream_extension_validate_account: '👨‍💻 [?] à créer son compte via l\'extension',
+  stream_chatters_validate_add: '👨‍💻 [?] nouveaux utilisateurs détecté sur le tchat: [?]',
+  stream_chatters_validate_update: '👨‍💻 [?] utilisateurs mis à jours depuis le tchat: [?]',
 
   stream_viewer_joined: '➡️ [.?][[?]] à rejoins le tchat twitch',
   stream_viewer_leaved: '⬅️ [.?][[?]] à quitté le tchat twitch',
@@ -60,6 +61,7 @@ module.exports = {
   server_discordbot_verifying: '🟦 [discord.bot] code de vérification généré pour <@[.?]>',
   server_chatters_clean: '⏱ [cron.server] nettoyage SQL de [?] \'chatters\'',
   server_auras_clean: '⏱ [cron.server] nettoyage SQL de [?] \'auras\'',
+  server_strangers_clean: '⏱ [cron.server] nettoyage SQL de [?] \'strangers\'',
 
   debug_discord_report: `🪲 <@${config.discord.teazyou_discord_user_id}> [.?] ➡️ [.?]`,
 

@@ -12,6 +12,9 @@ exports.up = function (knex) {
     table.text('jwtoken')
     table.string('socket_id')
 
+    table.integer('tslStrangerMessage').defaultTo(0)
+    table.biginteger('tslStrangerSeen').defaultTo(0)
+
   }).then(() => {
     // const { config } = require('../seeds')
     // return knex(tableName).insert(config)

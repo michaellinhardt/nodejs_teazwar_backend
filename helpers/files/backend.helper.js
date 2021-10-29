@@ -1,6 +1,6 @@
 const prettyjson = require('prettyjson')
 const _ = require('lodash')
-const { jwt: { teazwarToken }, backend: { log } } = require('../../config')
+const { jwt: { teazwarToken }, backend: { isLog } } = require('../../config')
 
 let ControllersFlatten = null
 const getFlattenControllers = () => {
@@ -74,7 +74,7 @@ const runRoute = async (body = {}, requestType = 'script') => {
 
   const payload = _.get(controller || {}, 'payload', { error_key: 'server_error' })
 
-  if (!log) { return controller }
+  if (!isLog) { return controller }
 
   logCall(body, payload)
 

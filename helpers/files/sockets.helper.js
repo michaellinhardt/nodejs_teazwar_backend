@@ -1,10 +1,12 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { io } = require('socket.io-client')
+const { io: clientIO } = require('socket.io-client')
 const { backend, jwt: { teazwarToken } } = require('../../config')
-const socketUrl = `${backend.uri}:${backend.socketPort}`
+const socketUrl = `${backend.httpsUrl}:${backend.socketPort}`
 
-const { Server } = require('socket.io')
+const http = require('http')
+const https = require('https')
+
 const { createAdapter } = require('@socket.io/redis-adapter')
 const { Emitter } = require('@socket.io/redis-emitter')
 const { createClient } = require('redis')
@@ -39,38 +41,51 @@ const dispatchSayOrder = async (payload, emitterAddr = 'unknow') => {
 }
 
 const reportConnection = async (infra_name, emitter) => {
+  let result = null
+  try {
 
-  const { runRouteTeazwar } = require('./backend.helper')
+    const { runRouteTeazwar } = require('./backend.helper')
 
-  const body = {
-    method: 'post',
-    path: '/debug/socket-redis/connected',
-    infra_name,
+    const body = {
+      method: 'post',
+      path: '/debug/socket-redis/connected',
+      infra_name,
+    }
+    result = await runRouteTeazwar(body)
+    await dispatchSayOrder(result.payload, emitter)
+    return result.payload
+
+  } catch (err) {
+    console.info('error while reporting socket-redis connection, by ', infra_name, err.message)
   }
-  const { payload = {} } = await runRouteTeazwar(body)
-  await dispatchSayOrder(payload, emitter)
-  return payload
+
+  return result ? result.payload : { error_key: 'socketHelper_reportConnection' }
 }
 
 const getServerEmitter = (infra_name) => {
-  if (!emitterHandler) {
-    const redisClient = createClient({ host: 'localhost', port: 6379 })
-    const emitter = new Emitter(redisClient)
+  try {
+    if (!emitterHandler) {
+      const redisClient = createClient({ host: 'localhost', port: 6379 })
+      const emitter = new Emitter(redisClient)
 
-    emitterHandler = (target, ...args) => (!target || !args || _.isEmpty(args)) ? null
-      : emitter.to(target).emit(...args)
+      emitterHandler = (target, ...args) => (!target || !args || _.isEmpty(args)) ? null
+        : emitter.to(target).emit(...args)
 
-    reportConnection(infra_name, emitterHandler)
+      reportConnection(infra_name, emitterHandler)
+    }
+  } catch (err) {
+    console.info('error while trying to get the socket emitter by ', infra_name, err.message)
   }
 
   return emitterHandler
+
 }
 
 module.exports = {
 
   dispatchSayOrder,
 
-  getSocket: () => io(socketUrl),
+  getSocket: () => clientIO(socketUrl),
 
   getSocketEmitter: socket => {
     return (path, data = {}) => socket.emit({
@@ -79,12 +94,17 @@ module.exports = {
 
   getServerEmitter,
 
-  createSocketServer: () => new Server({
-    cors: {
-      origin: '*',
-    } }),
+  createSocketHttps: () => https.createServer({
+    cors: { origin: '*' },
+    key: backend.key,
+    cert: backend.cert,
+  }),
 
-  startSocketServer: io => {
+  createSocketHttp: () => http.createServer(),
+
+  startSocketServer: serverSocket => {
+    serverSocket.listen(backend.socketPort)
+
     const pubClient = createClient({
       socket: {
         host: 'localhost',
@@ -92,12 +112,23 @@ module.exports = {
       },
     })
     const subClient = pubClient.duplicate()
+
+    const ioServer = require('socket.io')
+    const io = ioServer()
     io.adapter(createAdapter(pubClient, subClient))
-    io.listen(backend.socketPort)
+    io.attach(serverSocket, {
+      cors: { origin: '*' },
+    })
+
+    return io
   },
 
   openInfraSocket: (infra_name, methods) => {
-    const socket = io(socketUrl)
+    const socket = clientIO(socketUrl, {
+      key: backend.key,
+      cert: backend.cert,
+      ca: backend.ca,
+    })
     socket.on('connect', () => {
       console.log('Infra Socket Connected: ', socket.id)
       socket.onAny(data => methods.onSocketMessage(socket, data))
@@ -123,8 +154,8 @@ module.exports = {
 
       methods.onSocketDisconnect(socket)
     })
-    socket.on('connect_error', () => {
-      console.log('Infra Socket Connection Error')
+    socket.on('connect_error', (error) => {
+      console.log('Infra Socket Connection Error', error.message)
       methods.onSocketError(socket)
     })
     return socket

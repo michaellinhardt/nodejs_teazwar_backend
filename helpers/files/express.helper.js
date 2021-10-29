@@ -1,10 +1,13 @@
 
 import prettyjson from 'prettyjson'
 import http from 'http'
+import https from 'https'
 import express from 'express'
+import cors from 'cors'
+
 const { backend } = require('../../config')
 
-const log = message => backend.log ? process.stdout.write(`${message}\n`) : null
+const log = message => backend.isLog ? process.stdout.write(`${message}\n`) : null
 
 const Middlewares = {
   dumpRequest: (req, res, next) => {
@@ -34,18 +37,34 @@ module.exports = {
   getApp: () => express(),
 
   prepareApp: app => {
-    app.set('port', backend.httpPort)
+    app.set('httpPort', backend.httpPort)
+    app.set('httpsPort', backend.httpsPort)
     app.use(express.json())
     app.use(express.urlencoded({ extended: true }))
+    app.use(cors())
 
     app.use('/', Middlewares.dumpRequest)
     app.use('/', Middlewares.dumpResponse)
   },
 
+  createHttpsServer: app => https.createServer({
+    key: backend.key,
+    cert: backend.cert,
+    ca: backend.ca,
+  }, app),
+
   createHttpServer: app => http.createServer(app),
 
-  startHttpServer: (httpServer, app) => httpServer.listen(
-    app.get('port'),
-    () => process.stdout.write(`Server HTTP is running on port ${app.get('port')}\r\n`)),
+  startHttpServer: (httpServer, app) => {
+    httpServer.listen(
+      app.get('httpPort'),
+      () => process.stdout.write(`Server HTTP is running on port ${app.get('httpPort')}\r\n`))
+  },
+
+  startHttpsServer: (httpsServer, app) => {
+    httpsServer.listen(
+      app.get('httpsPort'),
+      () => process.stdout.write(`Server HTTPS is running on port ${app.get('httpsPort')}\r\n`))
+  },
 
 }

@@ -12,13 +12,19 @@ const start_backend = () => {
 
   HttpsRouter.init(app, RedisHelper)
 
-  const httpServer = ExpressHelper.createHttpServer(app)
-  const io = SocketHelper.createSocketServer()
+  // HTTP
+  // const httpServer = ExpressHelper.createHttpServer(app)
+  // const httpSocket = SocketHelper.createSocketHttp()
+  // ExpressHelper.startHttpServer(httpServer, app)
+  // const ioHttp = SocketHelper.startSocketServer(httpSocket)
+  // SocketRouter.init(ioHttp, RedisHelper)
 
-  SocketRouter.init(io, RedisHelper)
-
-  SocketHelper.startSocketServer(io)
-  ExpressHelper.startHttpServer(httpServer, app)
+  // HTTPS
+  const httpsServer = ExpressHelper.createHttpsServer(app)
+  const httpsSocket = SocketHelper.createSocketHttps()
+  ExpressHelper.startHttpsServer(httpsServer, app)
+  const ioHttps = SocketHelper.startSocketServer(httpsSocket)
+  SocketRouter.init(ioHttps, RedisHelper)
 }
 
 start_backend()

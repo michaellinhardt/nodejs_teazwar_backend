@@ -1,5 +1,5 @@
 const {
-  msOneSec, msOneMin, msOneHour, msOneDay,
+  msOneSec, msOneMin, msOneHour, msOneDay, msOneMonth,
 } = require('../../helpers/files/date.helper')
 
 module.exports = {
@@ -18,6 +18,8 @@ module.exports = {
 
   itvCheckChatterUnFollow: msOneDay,
   itvCheckChatterNewFollower: msOneMin * 5,
+
+  itvStrangerDelete: msOneMonth * 3,
 
   itvFollowingBotsMultiplier: 5,
 
@@ -97,16 +99,24 @@ module.exports = {
     path: '/chatters/clean',
     isTwitchApi: false,
     itvWhenSuccess: 0,
-    itvWhenEmpty: msOneHour,
-    itvWhenError: msOneHour,
+    itvWhenEmpty: msOneDay,
+    itvWhenError: msOneDay,
     // isEnabled: false,
   }, {
 
     path: '/auras/clean',
     isTwitchApi: false,
     itvWhenSuccess: 0,
-    itvWhenEmpty: msOneHour,
-    itvWhenError: msOneHour,
+    itvWhenEmpty: msOneDay,
+    itvWhenError: msOneDay,
+    // isEnabled: false,
+  }, {
+
+    path: '/strangers/clean',
+    isTwitchApi: false,
+    itvWhenSuccess: 0,
+    itvWhenEmpty: msOneDay,
+    itvWhenError: msOneDay,
     // isEnabled: false,
   }],
 }

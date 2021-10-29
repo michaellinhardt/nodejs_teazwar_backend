@@ -24,8 +24,8 @@ export default class extends ServiceSuperclass {
   setUsersAsValidated (users) {
     const currTimestampMs = this.helpers.date.timestampMs()
     const tsuTwitchDataUpToDate = currTimestampMs + cron.itvTwitchDataRevalidate
-    const usernames = users.map(u => u.username)
-    return this.updAllWhereIn('username', usernames, { tsuTwitchDataUpToDate })
+    const updates = users.map(u => ({ username: u.username, tsuTwitchDataUpToDate }))
+    return this.addOrUpdArray(updates)
   }
 
   cleanTable () {

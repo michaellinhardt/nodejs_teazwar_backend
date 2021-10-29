@@ -7,15 +7,8 @@ export default class extends ServiceSuperclass {
 
   constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
-  async addOrUpdOpaqueUser (opaque_user_id, jwtoken, socket_id) {
-    await this.helpers.knex.get().raw(`
-    INSERT INTO ${table} (opaque_user_id, jwtoken, socket_id)
-      VALUES (?, ?, ?) AS new
-      ON DUPLICATE KEY UPDATE
-      jwtoken=new.jwtoken,
-      socket_id=new.socket_id;
-  `, [opaque_user_id, jwtoken, socket_id])
-    return { opaque_user_id, jwtoken, socket_id }
+  addOrUpdOpaqueUser (stranger) {
+    return this.addOrUpd(stranger)
   }
 
   getBySocketId (socket_id) {
@@ -24,6 +17,14 @@ export default class extends ServiceSuperclass {
 
   disconnectedSocket (opaque_user_id) {
     return this.updAllWhere({ opaque_user_id }, { socket_id: null })
+  }
+
+  cleanTable () {
+    const currTimestampMs = this.helpers.date.timestampMs()
+    const expireAfterTimestamp = currTimestampMs - this.config.cron.itvStrangerDelete
+    return this.knex()
+      .where('tslStrangerSeen', '<=', expireAfterTimestamp)
+      .del()
   }
 
 }
