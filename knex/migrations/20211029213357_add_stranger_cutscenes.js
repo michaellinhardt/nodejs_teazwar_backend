@@ -1,6 +1,6 @@
 const { createTableDefaultSetup } = require('../../helpers/files/knex.helper')
 
-const tableName = 'user_cutscenes'
+const tableName = 'stranger_cutscenes'
 
 exports.up = function (knex) {
   return knex.schema.createTable(tableName, table => {

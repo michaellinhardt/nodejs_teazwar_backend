@@ -24,7 +24,7 @@ export default class extends ServiceSuperclass {
   }
 
   deleteByUserOpaqueIds (opaqueUserIds) {
-    return this.delAllWhereIn('opaque_user_id', { opaqueUserIds })
+    return this.delAllWhereIn('opaque_user_id', opaqueUserIds)
   }
 
 }

@@ -19,7 +19,7 @@ export default class extends ModuleSuperclass {
 
     await s.strangers.addOrUpdOpaqueUser(stranger)
 
-    await s.strangerCutscene.addCutscene('stranger_welcome')
+    await s.strangerCutscenes.addCutscene('stranger_welcome')
 
     return stranger
   }
@@ -39,7 +39,7 @@ export default class extends ModuleSuperclass {
     const { services: s, modules: m } = this
 
     const nbStrangersClean = await s.strangers.deleteByUserOpaqueIds(opaqueUserIds)
-    await m.strangerCutscene.deleteStrangerCutscenes(opaqueUserIds)
+    await m.strangerCutscenes.deleteStrangerCutscenes(opaqueUserIds)
 
     return nbStrangersClean
   }
