@@ -110,7 +110,14 @@ export default class {
       }
 
       d.jwtoken = decryptedJwtoken.jwtoken
-      if (!decryptedJwtoken.user_id) { return true }
+      if (!decryptedJwtoken.user_id) {
+        const opaque_user_id = _.get(decryptedJwtoken, 'jwtoken.opaque_user_id', undefined)
+        if (opaque_user_id) {
+          const isStranger = await s.strangers.getByOpaqueUserId(opaque_user_id)
+          d.opaque_user_id = _.get(isStranger, 'opaque_user_id', undefined)
+        }
+        return true
+      }
 
       const isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
 

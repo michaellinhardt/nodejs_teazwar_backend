@@ -15,6 +15,10 @@ export default class extends ServiceSuperclass {
     return this.getFirstWhere({ socket_id })
   }
 
+  getByOpaqueUserId (opaque_user_id) {
+    return this.getFirstWhere({ opaque_user_id })
+  }
+
   disconnectedSocket (opaque_user_id) {
     return this.updAllWhere({ opaque_user_id }, { socket_id: null })
   }
