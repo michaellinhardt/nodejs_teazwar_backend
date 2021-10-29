@@ -104,38 +104,38 @@ export default class {
 
   async identify () {
     const { helpers: h, services: s, data: d, body: b } = this
+    if (!b.jwtoken) { return false }
 
-    if (b.jwtoken) {
+    if (typeof (b.jwtoken) !== 'string' || !b.jwtoken.length) {
+      this.StopPipeline('jwtoken_missing')
+    }
 
-      if (typeof (b.jwtoken) !== 'string' || !b.jwtoken.length) {
-        this.StopPipeline('jwtoken_missing')
-      }
+    const decryptedJwtoken = h.jwtoken.decrypt(b.jwtoken)
+    if (decryptedJwtoken === false) {
+      this.StopPipeline('jwtoken_invalid')
+    }
 
-      const decryptedJwtoken = h.jwtoken.decrypt(b.jwtoken)
-      if (decryptedJwtoken === false) {
-        this.StopPipeline('jwtoken_invalid')
-      }
+    d.jwtoken = decryptedJwtoken.jwtoken
 
-      d.jwtoken = decryptedJwtoken.jwtoken
-      if (!decryptedJwtoken.user_id) {
-        const opaque_user_id = _.get(decryptedJwtoken, 'jwtoken.opaque_user_id', undefined)
-        if (opaque_user_id) {
-          const isStranger = await s.strangers.getByOpaqueUserId(opaque_user_id)
-          d.stranger = isStranger
-          d.opaque_user_id = _.get(isStranger, 'opaque_user_id', undefined)
-        }
-        return true
-      }
+    if (!decryptedJwtoken.user_id) {
 
-      const isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
+      const opaque_user_id = _.get(decryptedJwtoken, 'jwtoken.opaque_user_id', undefined)
+      if (!opaque_user_id) { return this.StopPipeline('jwtoken_noOpaqueUserId') }
 
-      if (isUser && isUser.jwtoken === decryptedJwtoken.jwtoken.token) {
-        d.jwtoken = decryptedJwtoken
-        d.user = isUser
-        d.user_id = isUser.user_id
-        d.user_uuid = isUser.user_uuid
-      }
+      const isStranger = await s.strangers.getByOpaqueUserId(opaque_user_id)
+      d.stranger = isStranger
+      d.opaque_user_id = _.get(isStranger || {}, 'opaque_user_id', undefined)
+      return true
 
+    }
+
+    const isUser = await s.users.getByUserId(decryptedJwtoken.user_id)
+
+    if (isUser && isUser.jwtoken === decryptedJwtoken.jwtoken.token) {
+      d.jwtoken = decryptedJwtoken
+      d.user = isUser
+      d.user_id = isUser.user_id
+      d.user_uuid = isUser.user_uuid
     }
   }
 

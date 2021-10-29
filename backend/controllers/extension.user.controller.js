@@ -14,7 +14,7 @@ export default [
       }
 
       async handler () {
-        const { data: d, body: b, services: s, helpers: h, modules: m } = this
+        const { data: d, body: b, services: s, modules: m } = this
 
         const user_id = _.get(d, 'jwtoken.user_id', undefined)
         const opaque_user_id = _.get(d, 'jwtoken.opaque_user_id', undefined)
@@ -28,15 +28,9 @@ export default [
           return this.payloads.user.authSuccess()
         }
 
-        const logStranger = async opaque_user_id => {
+        const logStranger = () => {
           socket.join('strangers')
           s.socketsInfra.emitSayDiscord(['stream_connection_unregistered'])
-          await s.strangers.addOrUpdOpaqueUser({
-            opaque_user_id,
-            jwtoken: d.jwtoken.token,
-            socket_id: socket.id,
-            tslStrangerSeen: h.date.timestampMs(),
-          })
           return this.payloads.user.authSuccess()
         }
 
@@ -58,7 +52,14 @@ export default [
 
           return logUser(user)
 
-        } else if (opaque_user_id) { return logStranger(opaque_user_id) }
+        } else if (opaque_user_id) {
+
+          if (!d.stranger) {
+            d.stranger = await m.stranger.addOrUpdStrangerFromData()
+          }
+
+          return logStranger(opaque_user_id)
+        }
 
         return this.payloads.user.authFail()
 
