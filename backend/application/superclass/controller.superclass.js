@@ -35,6 +35,7 @@ export default class {
       path = '',
       isPublic = false,
       isTeazwar = false,
+      isStranger = false,
       isAdmin = false,
       isSubscriber = false,
       isFollower = false,
@@ -51,12 +52,18 @@ export default class {
       await this.identifyChatUser()
     }
 
-    if (!isTeazwar && !d.user && (!isPublic || isAdmin || isSubscriber || isFollower)) {
+    if (isStranger && (!d.opaque_user_id || !d.stranger)) {
+      this.StopPipeline('jwtoken_strangerMinimum')
+    }
+
+    if (!isTeazwar
+    && !isStranger
+    && !d.user
+    && (!isPublic || isAdmin || isSubscriber || isFollower)) {
       this.StopPipeline('jwtoken_notPublic')
     }
 
-    if ((isAdmin || isSubscriber || isFollower)
-    && !d.user) {
+    if ((isAdmin || isSubscriber || isFollower) && !d.user) {
       this.StopPipeline('jwtoken_priviliege')
     }
 
@@ -114,6 +121,7 @@ export default class {
         const opaque_user_id = _.get(decryptedJwtoken, 'jwtoken.opaque_user_id', undefined)
         if (opaque_user_id) {
           const isStranger = await s.strangers.getByOpaqueUserId(opaque_user_id)
+          d.stranger = isStranger
           d.opaque_user_id = _.get(isStranger, 'opaque_user_id', undefined)
         }
         return true
