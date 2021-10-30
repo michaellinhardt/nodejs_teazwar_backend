@@ -10,11 +10,10 @@ export default [
 
         const data = await m.data.getAllData()
 
-        this.payload.isDataInit = true
         this.payload = {
           ...this.payload,
           ...data,
-          isDataInit: true,
+          isInitData: true,
         }
       }
     },
