@@ -2,20 +2,30 @@
 // const _ = require('lodash')
 // const { render } = require('prettyjson')
 
-class testeuh {
+let callbackTimeout
 
-  onDelete () { console.info('no on delete method') }
+let timeoutRegister
 
+const execTimeout = async () => {
+  if (!callbackTimeout) { return false }
+  await callbackTimeout()
+  callbackTimeout = null
 }
 
-class testeuhh extends testeuh {
-  // onDelete () { console.info('deleted!') }
+const addTimeout = (method, ms) => {
+  // callbackTimeout = method
+  // setTimeout(execTimeout, ms)
+  if (timeoutRegister) { clearTimeout(timeoutRegister) }
+  timeoutRegister = setTimeout(method, ms)
 }
 
 const start = () => {
-  const test = new testeuhh()
-  test.onDelete()
-  process.exit(0)
+
+  addTimeout(() => console.debug(1), 1000)
+  addTimeout(() => console.debug(2), 1000)
+  addTimeout(() => console.debug(3), 1000)
+
+  // process.exit(0)
 }
 
 start()

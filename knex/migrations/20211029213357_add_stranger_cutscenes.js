@@ -8,9 +8,8 @@ exports.up = function (knex) {
 
     table.string('opaque_user_id', 36).notNullable()
 
-    table.string('cutscene').notNullable()
-    table.string('scene').defaultTo(null)
-    table.string('step').defaultTo(null)
+    table.string('cutscene_id').notNullable()
+    table.text('cutscene_data')
 
     table.biginteger('tslCutsceneComplete').defaultTo(0)
 

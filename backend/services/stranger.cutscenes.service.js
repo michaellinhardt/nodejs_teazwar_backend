@@ -8,12 +8,13 @@ export default class extends ServiceSuperclass {
 
   constructor (ressources) { super(table, __filename, ressources, uuid_field) }
 
-  addCutscene (cutscene) {
+  addCutscene (cutscene_id) {
     const opaque_user_id = _.get(this, 'data.jwtoken.opaque_user_id', undefined)
 
     const strangerCutscene = {
       opaque_user_id,
-      cutscene,
+      cutscene_id,
+      cutscene_data: '{}',
     }
 
     return this.add(strangerCutscene)

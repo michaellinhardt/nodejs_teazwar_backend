@@ -13,7 +13,6 @@ export default [
         this.payload = {
           ...this.payload,
           ...data,
-          isInitData: true,
         }
       }
     },
