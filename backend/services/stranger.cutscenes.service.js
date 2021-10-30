@@ -27,4 +27,11 @@ export default class extends ServiceSuperclass {
     return this.delAllWhereIn('opaque_user_id', opaqueUserIds)
   }
 
+  getDataCutscene (opaque_user_id) {
+    return this.getFirstWhere({
+      opaque_user_id,
+      tslCutsceneComplete: 0,
+    })
+  }
+
 }
