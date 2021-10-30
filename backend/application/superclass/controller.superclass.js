@@ -52,8 +52,11 @@ export default class {
       await this.identifyChatUser()
     }
 
-    if (isStranger && (!d.opaque_user_id || !d.stranger)) {
-      this.StopPipeline('jwtoken_strangerMinimum')
+    if (!isTeazwar
+      && !isPublic
+      && ((isStranger && !d.user && !d.stranger && !d.opaque_user_id)
+      || (!isStranger && !d.user))) {
+      this.StopPipeline('jwtoken_strangerOrUserOnly')
     }
 
     if (!isTeazwar
@@ -64,7 +67,7 @@ export default class {
     }
 
     if ((isAdmin || isSubscriber || isFollower) && !d.user) {
-      this.StopPipeline('jwtoken_priviliege')
+      this.StopPipeline('jwtoken_priviliege1')
     }
 
     if (isAdmin) { await this.authorizeAdmin() }
