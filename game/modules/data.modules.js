@@ -10,9 +10,12 @@ export default class extends ModuleSuperclass {
   }
 
   async getAllDataStranger () {
-    const { data: d, modules: m } = this
+    const { data: d, modules: m, helpers: h } = this
+
+    const currTimestamp = h.date.timestampMs()
 
     const cutscene = await m.strangerCutscenes.getDataCutscene(d.stranger.opaque_user_id)
+    cutscene.listener_cutscene_cutscene = currTimestamp
 
     const data = {
       cutscene,
