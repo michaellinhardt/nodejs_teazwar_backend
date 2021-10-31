@@ -9,7 +9,7 @@ exports.up = function (knex) {
     table.string('opaque_user_id', 36).notNullable()
 
     table.string('cutscene_id').notNullable()
-    table.text('cutscene_data')
+    table.string('scene_id').notNullable().defaultTo('entry')
 
     table.biginteger('tslCutsceneComplete').defaultTo(0)
 

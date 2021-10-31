@@ -14,7 +14,6 @@ export default class extends ServiceSuperclass {
     const strangerCutscene = {
       opaque_user_id,
       cutscene_id,
-      cutscene_data: '{}',
     }
 
     return this.add(strangerCutscene)
