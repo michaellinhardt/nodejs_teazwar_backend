@@ -2,6 +2,7 @@
 .vscode
 .DS_Store
 node_modules
+scripts/ressources
 
 # Configuration file for production and test env, with all private keys
 # production.env.js
