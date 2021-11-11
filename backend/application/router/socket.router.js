@@ -39,7 +39,7 @@ const onAny = async (socket, infraData = {}, extensionData = {}) => {
     }
 
   } catch (err) {
-    console.error(err, data)
+    console.error(err.message, payload)
     const error_location = `socket_router${data.path.split('/').join('..')}`
 
     const { payload = {} } = await BackendHelper
@@ -69,7 +69,7 @@ const onDisconnect = async (socket, reason) => {
     return payload
 
   } catch (err) {
-    console.error(err)
+    console.error(err.message, payload)
     const { payload = {} } = await BackendHelper
       .discordReportError('socket_disconnected', err.message)
     await SocketHelper.dispatchSayOrder(payload, emitter)

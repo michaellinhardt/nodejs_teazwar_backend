@@ -13,6 +13,8 @@ exports.up = function (knex) {
 
     table.biginteger('tslCutsceneComplete').defaultTo(0)
 
+    table.unique(['opaque_user_id', 'cutscene_id'])
+
   }).then(() => {
     // const { user_sub_tables } = require('../seeds')
     // return knex(tableName).insert(user_sub_tables)

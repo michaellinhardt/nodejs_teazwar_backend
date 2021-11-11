@@ -33,4 +33,12 @@ export default class extends ModuleSuperclass {
     return this.filterCutsceneForUser(cutscene)
   }
 
+  async completeCutscene (opaque_user_id, cutscene_id) {
+    const { services: s, helpers: h } = this
+
+    const tslCutsceneComplete = h.date.timestampMs()
+    await s.strangerCutscenes.addOrUpd({ opaque_user_id, cutscene_id, tslCutsceneComplete })
+
+  }
+
 }

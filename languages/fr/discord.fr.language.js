@@ -10,6 +10,9 @@ module.exports = {
   spam_welcome: '🙋 bonjour spam',
   debug_welcome: '🙋 bonjour debug',
 
+  stream_unregistered_cutscene_exit: '🎬 un utilisateur à terminé la cutscene [?]',
+  stream_registered_cutscene_exit: '🎬 [?] à terminé la cutscene [?]',
+
   stream_deconnection_unregistered: '🎮 un utilisateur s\'est déconnecté de TeazWar',
   stream_deconnection_registered: '🎮 [[?]] s\'est déconnecté de TeazWar',
   stream_connection_unregistered: '🎮 un utilisateur s\'est connecté sur TeazWar',

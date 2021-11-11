@@ -11,12 +11,14 @@ class AppError extends Error {
   }
   render (renderObject) {
     if (this.status === 'socket') {
-      return console.error('return error by socket', this.payload)
+      // return console.error('return error by socket', this.payload)
+      return this.payload
 
     } else if (this.status === 'http') {
       return renderObject.status(400).json(this.payload)
     }
-    return console.error('return error by script', this.payload)
+    // return console.error('return error by script', this.payload)
+    return this.payload
 
   }
 }
