@@ -25,7 +25,7 @@ module.exports = async () => {
     const input = resolve(`${__dirname}/../input/mvdlc`)
     const inputArray = input.split('/')
     const globalId = inputArray[inputArray.length - 1]
-    const outputFolder = resolve(`${__dirname}/../output`)
+    const outputFolder = resolve(`${__dirname}/../output/${globalId}`)
     try {
       //
       //
